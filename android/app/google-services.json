@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "385551792398",
+    "project_id": "ahlanfeekum-de666",
+    "storage_bucket": "ahlanfeekum-de666.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385551792398:android:4f2fe2132a8069086f3f5f",
+        "android_client_info": {
+          "package_name": "com.example.ahlanfeekum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385551792398-l8v63tp2lpv0ar0mqr2olvl78dhrs792.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4xyYnEaOyimjd0Xq5fa2f2P18oDBIfng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385551792398-l8v63tp2lpv0ar0mqr2olvl78dhrs792.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
