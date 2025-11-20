@@ -2,8 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:ahlanfeekum/core/utils/responsive_utils.dart';
 import 'package:ahlanfeekum/features/auth/presentation/pages/welcome_splash_screen.dart';
 import 'package:ahlanfeekum/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:ahlanfeekum/features/auth/presentation/bloc/auth_state.dart';
@@ -37,6 +37,7 @@ class _InitialSplashScreenState extends State<InitialSplashScreen> {
       listenWhen: (previous, current) =>
           current is AuthAuthenticated ||
           current is AuthUnauthenticated ||
+          current is AuthGuest ||
           current is AuthError,
       listener: (context, state) async {
         // Keep a short splash delay
@@ -44,6 +45,8 @@ class _InitialSplashScreenState extends State<InitialSplashScreen> {
         if (!mounted) return;
         if (state is AuthAuthenticated) {
           Navigator.pushReplacementNamed(context, '/main-navigation');
+        } else if (state is AuthGuest) {
+          Navigator.pushReplacementNamed(context, '/guest-navigation');
         } else {
           _goTo(context, const WelcomeSplashScreen());
         }
@@ -55,7 +58,11 @@ class _InitialSplashScreenState extends State<InitialSplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo from assets
-              Image.asset('assets/icons/logo.png', width: 198.w, height: 108.w),
+              Image.asset(
+                'assets/icons/logo.png', 
+                width: ResponsiveUtils.size(context, mobile: 198, tablet: 230, desktop: 260), 
+                height: ResponsiveUtils.size(context, mobile: 108, tablet: 125, desktop: 142),
+              ),
             ],
           ),
         ),

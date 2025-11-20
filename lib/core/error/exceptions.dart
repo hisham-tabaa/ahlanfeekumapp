@@ -28,3 +28,11 @@ class AuthException implements Exception {
 
   const AuthException(this.message);
 }
+
+class UnauthorizedException implements Exception {
+  final String message;
+
+  const UnauthorizedException([
+    this.message = 'Unauthorized access. Please login again.',
+  ]);
+}

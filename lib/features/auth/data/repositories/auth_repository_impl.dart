@@ -1,8 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/network_info.dart';
+import '../../../../core/services/fcm_service.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/auth_result.dart';
@@ -31,10 +32,24 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     if (await networkInfo.isConnected) {
       try {
+
+        // Get FCM token for notifications
+        String? fcmToken;
+        try {
+          fcmToken = await FCMService.getToken();
+          if (fcmToken != null) {
+          } else {
+          }
+        } catch (e) {
+          // Continue with login even if FCM token fails
+        }
+
         final request = LoginRequest(
           phoneOrEmail: phoneOrEmail,
           password: password,
+          fcmToken: fcmToken,
         );
+
 
         final response = await remoteDataSource.login(request);
 
@@ -54,6 +69,7 @@ class AuthRepositoryImpl implements AuthRepository {
                 true, // You might want to check this from API response
             isPhoneVerified:
                 true, // You might want to check this from API response
+            roleId: loginData.roleId, // Store roleId from login response
           );
 
           final authResult = AuthResult(
@@ -77,7 +93,7 @@ class AuthRepositoryImpl implements AuthRepository {
       } on CacheException catch (e) {
         return Left(CacheFailure(e.message));
       } catch (e) {
-        return Left(UnknownFailure('Unexpected error: $e'));
+        return Left(UnknownFailure(ErrorHandler.getErrorMessage(e)));
       }
     } else {
       return const Left(NetworkFailure('No internet connection'));
@@ -176,41 +192,49 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthResult>> googleSignIn() async {
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      final GoogleSignInAccount? account = await googleSignIn.signIn();
+  Future<Either<Failure, AuthResult>> verifyPhone({
+    required String phone,
+    required String otp,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final response = await remoteDataSource.verifyPhone(phone, otp);
 
-      if (account != null) {
-        // Get the Google authentication token
-        final GoogleSignInAuthentication auth = await account.authentication;
 
-        // TODO: Send Google token to your backend to exchange for your app's JWT token
-        // For now, we'll clear tokens and require proper login
-        await localDataSource.clearUserData();
+        if (response.code == 200 && response.data == true) {
 
-        final user = UserModel(
-          id: account.id,
-          email: account.email,
-          name: account.displayName ?? '',
-          profileImage: account.photoUrl,
-          isEmailVerified: true,
-          isPhoneVerified: false,
-        );
+          // Phone verification successful
+          await localDataSource.clearUserData();
 
-        final authResult = AuthResult(
-          user: user,
-          accessToken:
-              '', // No token - need to implement Google token exchange with backend
-        );
+          // Return success - user needs to complete profile setup
+          final user = UserModel(
+            id: '0', // Temporary ID - will be assigned by backend after registration
+            email: '', // Empty - phone registration doesn't require email
+            phone: phone,
+            name: 'User', // Temporary name - user will set in profile setup
+            isEmailVerified: false,
+            isPhoneVerified: true,
+          );
 
-        // Don't save login state until we have a valid backend token
-        return Right(authResult);
-      } else {
-        return const Left(AuthFailure('Google sign in cancelled'));
+          final authResult = AuthResult(
+            user: user,
+            accessToken: '', // No token - user needs to complete registration
+          );
+
+          // Don't save login state - user needs to complete registration
+          return Right(authResult);
+        } else {
+          return Left(AuthFailure(response.message));
+        }
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      } on NetworkException catch (e) {
+        return Left(NetworkFailure(e.message));
+      } catch (e) {
+        return Left(UnknownFailure('Unexpected error: $e'));
       }
-    } catch (e) {
-      return Left(AuthFailure('Google sign in failed: $e'));
+    } else {
+      return const Left(NetworkFailure('No internet connection'));
     }
   }
 
@@ -247,6 +271,33 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(CacheFailure(e.message));
     } catch (e) {
       return Left(UnknownFailure('Failed to check login status: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> requestPasswordReset({
+    required String emailOrPhone,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final response = await remoteDataSource.requestPasswordReset(
+          emailOrPhone,
+        );
+
+        if (response.code == 200) {
+          return Right(response.message);
+        } else {
+          return Left(ServerFailure(response.message));
+        }
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      } on NetworkException catch (e) {
+        return Left(NetworkFailure(e.message));
+      } catch (e) {
+        return Left(UnknownFailure('Password reset request failed: $e'));
+      }
+    } else {
+      return const Left(NetworkFailure('No internet connection'));
     }
   }
 

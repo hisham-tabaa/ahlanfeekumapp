@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../../../theming/colors.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../bloc/rent_create_bloc.dart';
 import '../../bloc/rent_create_event.dart';
@@ -24,18 +24,53 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
     return BlocBuilder<RentCreateBloc, RentCreateState>(
       builder: (context, state) {
         return SingleChildScrollView(
-          padding: EdgeInsets.all(20.w),
+          padding: EdgeInsets.all(
+            ResponsiveUtils.spacing(
+              context,
+              mobile: 20,
+              tablet: 24,
+              desktop: 28,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
-              SizedBox(height: 32.h),
+              _buildHeader(context),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 32,
+                  tablet: 36,
+                  desktop: 24,
+                ),
+              ),
               _buildModifyDateButton(context, state),
-              SizedBox(height: 32.h),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 32,
+                  tablet: 36,
+                  desktop: 24,
+                ),
+              ),
               _buildWeekdaySelector(context, state),
-              SizedBox(height: 24.h),
-              _buildAvailableDatesList(state),
-              SizedBox(height: 120.h), // Space for floating buttons
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 20,
+                ),
+              ),
+              _buildAvailableDatesList(context, state),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 120,
+                  tablet: 140,
+                  desktop: 160,
+                ),
+              ), // Space for floating buttons
             ],
           ),
         );
@@ -43,13 +78,35 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
     );
   }
 
-  Widget _buildHeader() {
-    return Text(
-      'Available In',
-      style: AppTextStyles.h3.copyWith(
-        color: AppColors.primary,
-        fontSize: 24.sp,
-        fontWeight: FontWeight.w600,
+  Widget _buildHeader(BuildContext context) {
+    return RichText(
+      text: TextSpan(
+        text: 'Available In',
+        style: AppTextStyles.h3.copyWith(
+          color: AppColors.primary,
+          fontSize: ResponsiveUtils.fontSize(
+            context,
+            mobile: 24,
+            tablet: 26,
+            desktop: 28,
+          ),
+          fontWeight: FontWeight.w600,
+        ),
+        children: [
+          TextSpan(
+            text: ' *',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 24,
+                tablet: 26,
+                desktop: 28,
+              ),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -59,10 +116,30 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
       onTap: () => _showCalendarDialog(context, state),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+        padding: EdgeInsets.symmetric(
+          vertical: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 18,
+            desktop: 20,
+          ),
+          horizontal: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 28,
+          ),
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(
+            ResponsiveUtils.radius(
+              context,
+              mobile: 12,
+              tablet: 14,
+              desktop: 16,
+            ),
+          ),
           border: Border.all(color: Colors.grey[300]!),
           boxShadow: [
             BoxShadow(
@@ -79,21 +156,45 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
               'Modify Date',
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textPrimary,
-                fontSize: 16.sp,
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 16,
+                  tablet: 17,
+                  desktop: 18,
+                ),
                 fontWeight: FontWeight.w500,
               ),
             ),
             const Spacer(),
             Container(
-              padding: EdgeInsets.all(8.w),
+              padding: EdgeInsets.all(
+                ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
               decoration: BoxDecoration(
                 color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8.r),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 8,
+                    tablet: 9,
+                    desktop: 10,
+                  ),
+                ),
               ),
               child: Icon(
                 Icons.calendar_month,
                 color: AppColors.primary,
-                size: 20.sp,
+                size: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 20,
+                  tablet: 21,
+                  desktop: 22,
+                ),
               ),
             ),
           ],
@@ -120,14 +221,36 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
           'Available In These Days',
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textPrimary,
-            fontSize: 16.sp,
+            fontSize: ResponsiveUtils.fontSize(
+              context,
+              mobile: 16,
+              tablet: 17,
+              desktop: 18,
+            ),
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 12.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 13,
+            desktop: 14,
+          ),
+        ),
         Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
+          spacing: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 9,
+            desktop: 10,
+          ),
+          runSpacing: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 9,
+            desktop: 10,
+          ),
           children: weekdays.map((weekday) {
             final isSelected = _selectedWeekdays.contains(weekday);
             return GestureDetector(
@@ -142,19 +265,44 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                 _updateAvailabilityBasedOnWeekdays(context);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveUtils.spacing(
+                    context,
+                    mobile: 16,
+                    tablet: 17,
+                    desktop: 18,
+                  ),
+                  vertical: ResponsiveUtils.spacing(
+                    context,
+                    mobile: 8,
+                    tablet: 9,
+                    desktop: 10,
+                  ),
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : Colors.white,
                   border: Border.all(
                     color: isSelected ? AppColors.primary : Colors.grey[300]!,
                   ),
-                  borderRadius: BorderRadius.circular(20.r),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveUtils.radius(
+                      context,
+                      mobile: 20,
+                      tablet: 21,
+                      desktop: 22,
+                    ),
+                  ),
                 ),
                 child: Text(
                   weekday,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: isSelected ? Colors.white : AppColors.textPrimary,
-                    fontSize: 12.sp,
+                    fontSize: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 12,
+                      tablet: 13,
+                      desktop: 14,
+                    ),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -166,16 +314,22 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
     );
   }
 
-  Widget _buildAvailableDatesList(RentCreateState state) {
+  Widget _buildAvailableDatesList(BuildContext context, RentCreateState state) {
     final now = DateTime.now();
     final startOfNext7Days = now;
     final endOfNext7Days = now.add(const Duration(days: 6));
 
     // Get next 7 days that are NOT selected
     final unselectedNext7Days = <DateTime>[];
-    for (var date = startOfNext7Days; date.isBefore(endOfNext7Days.add(const Duration(days: 1))); date = date.add(const Duration(days: 1))) {
+    for (
+      var date = startOfNext7Days;
+      date.isBefore(endOfNext7Days.add(const Duration(days: 1)));
+      date = date.add(const Duration(days: 1))
+    ) {
       // Check if this date is not selected
-      final isSelected = state.formData.availableDates.any((selectedDate) => isSameDay(selectedDate, date));
+      final isSelected = state.formData.availableDates.any(
+        (selectedDate) => isSameDay(selectedDate, date),
+      );
       if (!isSelected) {
         unselectedNext7Days.add(date);
       }
@@ -194,38 +348,103 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
             'Selected Dates',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
-              fontSize: 16.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 16,
+                tablet: 17,
+                desktop: 18,
+              ),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 12,
+              tablet: 13,
+              desktop: 14,
+            ),
+          ),
           ...selectedDates.map((date) {
             final dayName = _getDayName(date);
             final formattedDate = _formatDate(date);
-            
+
             return Container(
-              margin: EdgeInsets.only(bottom: 8.h),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              margin: EdgeInsets.only(
+                bottom: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 16,
+                  tablet: 17,
+                  desktop: 18,
+                ),
+                vertical: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 13,
+                  desktop: 14,
+                ),
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(8.r),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 8,
+                    tablet: 9,
+                    desktop: 10,
+                  ),
+                ),
                 border: Border.all(color: Colors.grey[200]!),
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(6.w),
+                    padding: EdgeInsets.all(
+                      ResponsiveUtils.spacing(
+                        context,
+                        mobile: 6,
+                        tablet: 7,
+                        desktop: 8,
+                      ),
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(6.r),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveUtils.radius(
+                          context,
+                          mobile: 6,
+                          tablet: 7,
+                          desktop: 8,
+                        ),
+                      ),
                     ),
                     child: Icon(
                       Icons.check_circle,
                       color: Colors.green,
-                      size: 16.sp,
+                      size: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 16,
+                        tablet: 17,
+                        desktop: 18,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 16.w),
+                  SizedBox(
+                    width: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,7 +453,12 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                           dayName,
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: AppColors.textPrimary,
-                            fontSize: 14.sp,
+                            fontSize: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 14,
+                              tablet: 15,
+                              desktop: 16,
+                            ),
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -242,7 +466,12 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                           formattedDate,
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
-                            fontSize: 12.sp,
+                            fontSize: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 12,
+                              tablet: 13,
+                              desktop: 14,
+                            ),
                           ),
                         ),
                       ],
@@ -250,14 +479,28 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      context.read<RentCreateBloc>().add(RemoveAvailableDateEvent(date));
+                      context.read<RentCreateBloc>().add(
+                        RemoveAvailableDateEvent(date),
+                      );
                     },
                     child: Container(
-                      padding: EdgeInsets.all(6.w),
+                      padding: EdgeInsets.all(
+                        ResponsiveUtils.spacing(
+                          context,
+                          mobile: 6,
+                          tablet: 7,
+                          desktop: 8,
+                        ),
+                      ),
                       child: Icon(
                         Icons.close,
                         color: Colors.red,
-                        size: 18.sp,
+                        size: ResponsiveUtils.fontSize(
+                          context,
+                          mobile: 18,
+                          tablet: 19,
+                          desktop: 20,
+                        ),
                       ),
                     ),
                   ),
@@ -265,47 +508,120 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
               ),
             );
           }).toList(),
-          if (unselectedNext7Days.isNotEmpty) SizedBox(height: 24.h),
+          if (unselectedNext7Days.isNotEmpty)
+            SizedBox(
+              height: ResponsiveUtils.spacing(
+                context,
+                mobile: 24,
+                tablet: 28,
+                desktop: 32,
+              ),
+            ),
         ],
-        
+
         // Show unselected dates from next 7 days
         if (unselectedNext7Days.isNotEmpty) ...[
           Text(
             'Available Next 7 Days',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
-              fontSize: 16.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 16,
+                tablet: 17,
+                desktop: 18,
+              ),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 12,
+              tablet: 13,
+              desktop: 14,
+            ),
+          ),
           ...unselectedNext7Days.map((date) {
             final dayName = _getDayName(date);
             final formattedDate = _formatDate(date);
-            
+
             return Container(
-              margin: EdgeInsets.only(bottom: 8.h),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              margin: EdgeInsets.only(
+                bottom: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 16,
+                  tablet: 17,
+                  desktop: 18,
+                ),
+                vertical: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 13,
+                  desktop: 14,
+                ),
+              ),
               decoration: BoxDecoration(
                 color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(8.r),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 8,
+                    tablet: 9,
+                    desktop: 10,
+                  ),
+                ),
                 border: Border.all(color: Colors.grey[200]!),
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(6.w),
+                    padding: EdgeInsets.all(
+                      ResponsiveUtils.spacing(
+                        context,
+                        mobile: 6,
+                        tablet: 7,
+                        desktop: 8,
+                      ),
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.grey[200],
-                      borderRadius: BorderRadius.circular(6.r),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveUtils.radius(
+                          context,
+                          mobile: 6,
+                          tablet: 7,
+                          desktop: 8,
+                        ),
+                      ),
                     ),
                     child: Icon(
                       Icons.radio_button_unchecked,
                       color: Colors.grey[500],
-                      size: 16.sp,
+                      size: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 16,
+                        tablet: 17,
+                        desktop: 18,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 16.w),
+                  SizedBox(
+                    width: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,7 +630,12 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                           dayName,
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.grey[600],
-                            fontSize: 14.sp,
+                            fontSize: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 14,
+                              tablet: 15,
+                              desktop: 16,
+                            ),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -322,7 +643,12 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                           formattedDate,
                           style: AppTextStyles.bodySmall.copyWith(
                             color: Colors.grey[500],
-                            fontSize: 12.sp,
+                            fontSize: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 12,
+                              tablet: 13,
+                              desktop: 14,
+                            ),
                           ),
                         ),
                       ],
@@ -333,33 +659,69 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
             );
           }).toList(),
         ],
-        
+
         // Empty state
         if (selectedDates.isEmpty && unselectedNext7Days.isEmpty)
           Container(
-            padding: EdgeInsets.all(24.w),
+            padding: EdgeInsets.all(
+              ResponsiveUtils.spacing(
+                context,
+                mobile: 24,
+                tablet: 26,
+                desktop: 28,
+              ),
+            ),
             child: Center(
               child: Column(
                 children: [
                   Icon(
                     Icons.calendar_today_outlined,
-                    size: 48.sp,
+                    size: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 48,
+                      tablet: 52,
+                      desktop: 56,
+                    ),
                     color: Colors.grey[400],
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
+                  ),
                   Text(
                     'No dates available in next 7 days',
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: Colors.grey[600],
-                      fontSize: 16.sp,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 16,
+                        tablet: 17,
+                        desktop: 18,
+                      ),
                     ),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 8,
+                      tablet: 9,
+                      desktop: 10,
+                    ),
+                  ),
                   Text(
                     'Select weekdays or use the calendar for future dates',
                     style: AppTextStyles.bodySmall.copyWith(
                       color: Colors.grey[500],
-                      fontSize: 12.sp,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 12,
+                        tablet: 13,
+                        desktop: 14,
+                      ),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -376,12 +738,14 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
     final now = DateTime.now();
     final startOfNext7Days = now;
     final endOfNext7Days = now.add(const Duration(days: 6));
-    
+
     // Only remove dates from next 7 days that were added by weekday selection
-    final currentDates = List<DateTime>.from(bloc.state.formData.availableDates);
+    final currentDates = List<DateTime>.from(
+      bloc.state.formData.availableDates,
+    );
     for (final date in currentDates) {
       // Only remove if it's in next 7 days (likely added by weekday selection)
-      if (date.isAfter(startOfNext7Days.subtract(const Duration(days: 1))) && 
+      if (date.isAfter(startOfNext7Days.subtract(const Duration(days: 1))) &&
           date.isBefore(endOfNext7Days.add(const Duration(days: 1)))) {
         final weekdayName = _getWeekdayName(date.weekday);
         if (!_selectedWeekdays.contains(weekdayName)) {
@@ -389,14 +753,19 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
         }
       }
     }
-    
+
     // Add dates for selected weekdays in next 7 days only
-    for (var date = startOfNext7Days; date.isBefore(endOfNext7Days.add(const Duration(days: 1))); date = date.add(const Duration(days: 1))) {
+    for (
+      var date = startOfNext7Days;
+      date.isBefore(endOfNext7Days.add(const Duration(days: 1)));
+      date = date.add(const Duration(days: 1))
+    ) {
       final weekdayName = _getWeekdayName(date.weekday);
       if (_selectedWeekdays.contains(weekdayName)) {
         // Check if not already added
-        final isAlreadySelected = bloc.state.formData.availableDates
-            .any((existingDate) => isSameDay(existingDate, date));
+        final isAlreadySelected = bloc.state.formData.availableDates.any(
+          (existingDate) => isSameDay(existingDate, date),
+        );
         if (!isAlreadySelected) {
           bloc.add(AddAvailableDateEvent(date));
         }
@@ -418,20 +787,40 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
   }
 
   String _getDayName(DateTime date) {
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const days = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
     return days[date.weekday - 1];
   }
 
   String _formatDate(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
-                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return '${date.day.toString().padLeft(2, '0')} - ${months[date.month - 1]} - ${date.year}';
   }
 
   void _showCalendarDialog(BuildContext context, RentCreateState state) {
     // Get the bloc instance from the current context
     final bloc = context.read<RentCreateBloc>();
-    
+
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -440,13 +829,34 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
             return Dialog(
               backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 16,
+                    tablet: 17,
+                    desktop: 18,
+                  ),
+                ),
               ),
               child: Container(
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.all(
+                  ResponsiveUtils.spacing(
+                    context,
+                    mobile: 20,
+                    tablet: 24,
+                    desktop: 28,
+                  ),
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveUtils.radius(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
+                  ),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -455,72 +865,131 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                       'Select Available Dates',
                       style: AppTextStyles.h4.copyWith(
                         color: AppColors.textPrimary,
-                        fontSize: 18.sp,
+                        fontSize: ResponsiveUtils.fontSize(
+                          context,
+                          mobile: 18,
+                          tablet: 19,
+                          desktop: 20,
+                        ),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 20,
+                        tablet: 21,
+                        desktop: 22,
+                      ),
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveUtils.radius(
+                            context,
+                            mobile: 12,
+                            tablet: 14,
+                            desktop: 16,
+                          ),
+                        ),
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveUtils.radius(
+                            context,
+                            mobile: 12,
+                            tablet: 14,
+                            desktop: 16,
+                          ),
+                        ),
                         child: StreamBuilder<RentCreateState>(
                           stream: bloc.stream,
                           initialData: bloc.state,
                           builder: (context, snapshot) {
                             final currentState = snapshot.data ?? bloc.state;
-                            
+
                             return TableCalendar<DateTime>(
                               firstDay: DateTime.now(),
-                              lastDay: DateTime.now().add(const Duration(days: 365)),
+                              lastDay: DateTime.now().add(
+                                const Duration(days: 365),
+                              ),
                               focusedDay: _focusedDay,
                               selectedDayPredicate: (day) {
-                                return currentState.formData.availableDates.any((date) => isSameDay(date, day));
+                                return currentState.formData.availableDates.any(
+                                  (date) => isSameDay(date, day),
+                                );
                               },
                               calendarFormat: CalendarFormat.month,
                               startingDayOfWeek: StartingDayOfWeek.sunday,
                               headerStyle: HeaderStyle(
                                 formatButtonVisible: false,
                                 titleCentered: true,
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
                                 ),
                                 titleTextStyle: AppTextStyles.h4.copyWith(
                                   color: AppColors.primary,
-                                  fontSize: 16.sp,
+                                  fontSize: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 16,
+                                    tablet: 17,
+                                    desktop: 18,
+                                  ),
                                   fontWeight: FontWeight.w600,
                                 ),
                                 leftChevronIcon: Icon(
                                   Icons.chevron_left,
                                   color: AppColors.primary,
+                                  size: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 20,
+                                    tablet: 21,
+                                    desktop: 22,
+                                  ),
                                 ),
                                 rightChevronIcon: Icon(
                                   Icons.chevron_right,
                                   color: AppColors.primary,
+                                  size: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 20,
+                                    tablet: 21,
+                                    desktop: 22,
+                                  ),
                                 ),
                               ),
                               daysOfWeekStyle: DaysOfWeekStyle(
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: Colors.white,
                                 ),
                                 weekdayStyle: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
-                                  fontSize: 12.sp,
+                                  fontSize: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 12,
+                                    tablet: 13,
+                                    desktop: 14,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                 ),
                                 weekendStyle: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
-                                  fontSize: 12.sp,
+                                  fontSize: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 12,
+                                    tablet: 13,
+                                    desktop: 14,
+                                  ),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               calendarStyle: CalendarStyle(
                                 outsideDaysVisible: false,
-                                tableBorder: TableBorder.all(color: Colors.transparent),
+                                tableBorder: TableBorder.all(
+                                  color: Colors.transparent,
+                                ),
                                 selectedDecoration: BoxDecoration(
                                   color: AppColors.primary,
                                   shape: BoxShape.circle,
@@ -529,19 +998,31 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                                   color: AppColors.primary.withOpacity(0.3),
                                   shape: BoxShape.circle,
                                 ),
-                                defaultTextStyle: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 14.sp,
-                                ),
-                                weekendTextStyle: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontSize: 14.sp,
-                                ),
-                                defaultDecoration: BoxDecoration(
+                                defaultTextStyle: AppTextStyles.bodySmall
+                                    .copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontSize: ResponsiveUtils.fontSize(
+                                        context,
+                                        mobile: 14,
+                                        tablet: 15,
+                                        desktop: 16,
+                                      ),
+                                    ),
+                                weekendTextStyle: AppTextStyles.bodySmall
+                                    .copyWith(
+                                      color: AppColors.textPrimary,
+                                      fontSize: ResponsiveUtils.fontSize(
+                                        context,
+                                        mobile: 14,
+                                        tablet: 15,
+                                        desktop: 16,
+                                      ),
+                                    ),
+                                defaultDecoration: const BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
                                 ),
-                                weekendDecoration: BoxDecoration(
+                                weekendDecoration: const BoxDecoration(
                                   color: Colors.white,
                                   shape: BoxShape.circle,
                                 ),
@@ -550,12 +1031,18 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                                 setState(() {
                                   _focusedDay = focusedDay;
                                 });
-                                
-                                final isAlreadySelected = currentState.formData.availableDates
-                                    .any((date) => isSameDay(date, selectedDay));
-                                
+
+                                final isAlreadySelected = currentState
+                                    .formData
+                                    .availableDates
+                                    .any(
+                                      (date) => isSameDay(date, selectedDay),
+                                    );
+
                                 if (isAlreadySelected) {
-                                  bloc.add(RemoveAvailableDateEvent(selectedDay));
+                                  bloc.add(
+                                    RemoveAvailableDateEvent(selectedDay),
+                                  );
                                 } else {
                                   bloc.add(AddAvailableDateEvent(selectedDay));
                                 }
@@ -565,7 +1052,14 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 20,
+                        tablet: 21,
+                        desktop: 22,
+                      ),
+                    ),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -573,16 +1067,35 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 12.h),
+                          padding: EdgeInsets.symmetric(
+                            vertical: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 12,
+                              tablet: 13,
+                              desktop: 14,
+                            ),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveUtils.radius(
+                                context,
+                                mobile: 8,
+                                tablet: 9,
+                                desktop: 10,
+                              ),
+                            ),
                           ),
                         ),
                         child: Text(
                           'Done',
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.white,
-                            fontSize: 16.sp,
+                            fontSize: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 16,
+                              tablet: 17,
+                              desktop: 18,
+                            ),
                             fontWeight: FontWeight.w600,
                           ),
                         ),

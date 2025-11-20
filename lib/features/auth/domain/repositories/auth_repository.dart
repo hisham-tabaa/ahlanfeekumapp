@@ -18,13 +18,20 @@ abstract class AuthRepository {
     required String otp,
   });
 
-  Future<Either<Failure, AuthResult>> googleSignIn();
+  Future<Either<Failure, AuthResult>> verifyPhone({
+    required String phone,
+    required String otp,
+  });
 
   Future<Either<Failure, void>> logout();
 
   Future<Either<Failure, User?>> getCurrentUser();
 
   Future<Either<Failure, bool>> isLoggedIn();
+
+  Future<Either<Failure, String>> requestPasswordReset({
+    required String emailOrPhone,
+  });
 
   Future<Either<Failure, AuthResult>> confirmPasswordReset({
     required String emailOrPhone,

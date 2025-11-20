@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../auth/presentation/widgets/custom_button.dart';
@@ -46,10 +46,13 @@ class _ChangePasswordSheetState extends State<ChangePasswordSheet> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 24.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32),
+            vertical: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveUtils.radius(context, mobile: 24, tablet: 28, desktop: 32))),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -58,30 +61,30 @@ class _ChangePasswordSheetState extends State<ChangePasswordSheet> {
               Text(
                 'Change Password',
                 style: AppTextStyles.h2.copyWith(
-                  fontSize: 20.sp,
+                  fontSize: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
               CustomTextField(
                 controller: _oldPasswordController,
                 hintText: 'Old Password',
                 obscureText: true,
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
               CustomTextField(
                 controller: _newPasswordController,
                 hintText: 'New Password',
                 obscureText: true,
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
               CustomTextField(
                 controller: _confirmPasswordController,
                 hintText: 'Repeat New Password',
                 obscureText: true,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
               BlocBuilder<ProfileBloc, ProfileState>(
                 builder: (context, state) {
                   return CustomButton(
@@ -113,7 +116,7 @@ class _ChangePasswordSheetState extends State<ChangePasswordSheet> {
                   );
                 },
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
             ],
           ),
         ),

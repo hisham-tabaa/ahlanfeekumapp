@@ -38,11 +38,15 @@ class RentCreateState extends Equatable {
   factory RentCreateState.initial() {
     return RentCreateState(
       formData: PropertyFormData(),
-      steps: PropertyCreationStep.values.map((step) => PropertyCreationStepStatus(
-        step: step,
-        isCompleted: false,
-        isActive: step == PropertyCreationStep.propertyDetails,
-      )).toList(),
+      steps: PropertyCreationStep.values
+          .map(
+            (step) => PropertyCreationStepStatus(
+              step: step,
+              isCompleted: false,
+              isActive: step == PropertyCreationStep.propertyDetails,
+            ),
+          )
+          .toList(),
     );
   }
 
@@ -67,10 +71,7 @@ class RentCreateState extends Equatable {
   }
 
   RentCreateState clearMessages() {
-    return copyWith(
-      errorMessage: null,
-      successMessage: null,
-    );
+    return copyWith(errorMessage: null, successMessage: null);
   }
 
   PropertyCreationStep get currentStep {
@@ -82,7 +83,7 @@ class RentCreateState extends Equatable {
       case PropertyCreationStep.propertyDetails:
         return formData.isStep1Valid;
       case PropertyCreationStep.location:
-        return formData.isBothDetailsAndLocationValid;
+        return formData.isLocationStepValid;
       case PropertyCreationStep.availability:
         return formData.isStep5Valid;
       case PropertyCreationStep.photos:
@@ -102,7 +103,11 @@ class RentCreateState extends Equatable {
     return currentStepIndex == PropertyCreationStep.values.length - 1;
   }
 
-  RentCreateState updateStepStatus(int stepIndex, {bool? isCompleted, bool? isActive}) {
+  RentCreateState updateStepStatus(
+    int stepIndex, {
+    bool? isCompleted,
+    bool? isActive,
+  }) {
     final updatedSteps = List<PropertyCreationStepStatus>.from(steps);
     if (stepIndex >= 0 && stepIndex < updatedSteps.length) {
       updatedSteps[stepIndex] = PropertyCreationStepStatus(
@@ -123,21 +128,18 @@ class RentCreateState extends Equatable {
         isActive: index == stepIndex,
       );
     }).toList();
-    
-    return copyWith(
-      currentStepIndex: stepIndex,
-      steps: updatedSteps,
-    );
+
+    return copyWith(currentStepIndex: stepIndex, steps: updatedSteps);
   }
 
   @override
   List<Object?> get props => [
-        status,
-        formData,
-        currentStepIndex,
-        steps,
-        errorMessage,
-        successMessage,
-        isLoading,
-      ];
+    status,
+    formData,
+    currentStepIndex,
+    steps,
+    errorMessage,
+    successMessage,
+    isLoading,
+  ];
 }

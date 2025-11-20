@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../theming/text_styles.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../search/presentation/bloc/search_bloc.dart';
 import '../../../../search/presentation/bloc/search_state.dart';
 import '../../bloc/rent_create_bloc.dart';
@@ -24,6 +24,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
   final _descriptionController = TextEditingController();
   final _houseRulesController = TextEditingController();
   final _importantInfoController = TextEditingController();
+  final _areaController = TextEditingController();
 
   @override
   void dispose() {
@@ -31,6 +32,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
     _descriptionController.dispose();
     _houseRulesController.dispose();
     _importantInfoController.dispose();
+    _areaController.dispose();
     super.dispose();
   }
 
@@ -42,22 +44,55 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
         if (_titleController.text != (rentState.formData.propertyTitle ?? '')) {
           _titleController.text = rentState.formData.propertyTitle ?? '';
         }
+        if (_areaController.text !=
+            (rentState.formData.area?.toString() ?? '')) {
+          _areaController.text = rentState.formData.area?.toString() ?? '';
+        }
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(20.w),
+          padding: EdgeInsets.all(
+            ResponsiveUtils.spacing(
+              context,
+              mobile: 20,
+              tablet: 24,
+              desktop: 28,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionTitle('Property Type'),
-              SizedBox(height: 12.h),
+              _buildSectionTitle(context, 'Property Type'),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 14,
+                  desktop: 16,
+                ),
+              ),
               _buildPropertyTypeSelector(),
 
-              SizedBox(height: 24.h),
-              _buildSectionTitle('Property Title'),
-              SizedBox(height: 12.h),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 32,
+                ),
+              ),
+              _buildSectionTitle(context, 'Property Title'),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 14,
+                  desktop: 16,
+                ),
+              ),
               _buildTextField(
+                context,
                 controller: _titleController,
-                hintText: '130',
+                hintText: 'Title',
                 onChanged: (value) {
                   context.read<RentCreateBloc>().add(
                     UpdatePropertyTitleEvent(value),
@@ -65,15 +100,44 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                 },
               ),
 
-              SizedBox(height: 24.h),
-              _buildSectionTitle('Property Details'),
-              SizedBox(height: 16.h),
-              _buildPropertyCounters(rentState),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 32,
+                ),
+              ),
+              _buildSectionTitle(context, 'Property Details'),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 16,
+                  tablet: 18,
+                  desktop: 20,
+                ),
+              ),
+              _buildPropertyCounters(context, rentState),
 
-              SizedBox(height: 24.h),
-              _buildSectionTitle('Property Description'),
-              SizedBox(height: 12.h),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 20, // Reduced spacing on desktop
+                ),
+              ),
+              _buildSectionTitle(context, 'Property Description'),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 14,
+                  desktop: 12, // Reduced spacing on desktop
+                ),
+              ),
               _buildTextField(
+                context,
                 controller: _descriptionController,
                 hintText: 'Type Here',
                 maxLines: 4,
@@ -84,46 +148,53 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                 },
               ),
 
-              SizedBox(height: 24.h),
-              _buildSectionTitle('More Features'),
-              SizedBox(height: 12.h),
-              _buildPropertyFeatures(),
-
-              SizedBox(height: 24.h),
-              _buildSectionTitle('Instructions'),
-              SizedBox(height: 16.h),
-
-              _buildSubSectionTitle('House Rules'),
-              SizedBox(height: 8.h),
-              _buildTextField(
-                controller: _houseRulesController,
-                hintText: 'Type Here',
-                maxLines: 3,
-                onChanged: (value) {
-                  context.read<RentCreateBloc>().add(
-                    UpdateHouseRulesEvent(value),
-                  );
-                },
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 20, // Reduced spacing on desktop
+                ),
               ),
-
-              SizedBox(height: 16.h),
-              _buildSubSectionTitle('Important Information'),
-              SizedBox(height: 8.h),
-              _buildTextField(
-                controller: _importantInfoController,
-                hintText: 'Type Here',
-                maxLines: 3,
-                onChanged: (value) {
-                  context.read<RentCreateBloc>().add(
-                    UpdateImportantInfoEvent(value),
-                  );
-                },
+              _buildSectionTitle(context, 'More Features'),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 14,
+                  desktop: 16,
+                ),
               ),
+              _buildPropertyFeatures(context),
 
-              SizedBox(height: 24.h),
-              _buildGovernorateSelector(),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 24, // Reduced spacing on desktop
+                ),
+              ),
+              _buildInstructionsSection(context),
 
-              SizedBox(height: 100.h), // Space for bottom navigation
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 32,
+                ),
+              ),
+              _buildGovernorateSelector(context),
+
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 100,
+                  tablet: 110,
+                  desktop: 120,
+                ),
+              ), // Space for bottom navigation
             ],
           ),
         );
@@ -131,38 +202,238 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: AppTextStyles.h4.copyWith(
-        color: AppColors.textPrimary,
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w600,
+  Widget _buildSectionTitle(
+    BuildContext context,
+    String title, {
+    bool isRequired = true,
+  }) {
+    return RichText(
+      text: TextSpan(
+        text: title,
+        style: AppTextStyles.h4.copyWith(
+          color: AppColors.textPrimary,
+          fontSize: ResponsiveUtils.fontSize(
+            context,
+            mobile: 14,
+            tablet: 15,
+            desktop: 16,
+          ),
+          fontWeight: FontWeight.w600,
+        ),
+        children: isRequired
+            ? [
+                TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 14,
+                      tablet: 15,
+                      desktop: 16,
+                    ),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ]
+            : null,
       ),
     );
   }
 
-  Widget _buildSubSectionTitle(String title) {
-    return Text(
-      title,
-      style: AppTextStyles.bodyMedium.copyWith(
-        color: AppColors.textPrimary,
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w500,
+  Widget _buildSubSectionTitle(
+    BuildContext context,
+    String title, {
+    bool isRequired = true,
+  }) {
+    return RichText(
+      text: TextSpan(
+        text: title,
+        style: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.textPrimary,
+          fontSize: ResponsiveUtils.fontSize(
+            context,
+            mobile: 14,
+            tablet: 15,
+            desktop: 16,
+          ),
+          fontWeight: FontWeight.w500,
+        ),
+        children: isRequired
+            ? [
+                TextSpan(
+                  text: ' *',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 14,
+                      tablet: 15,
+                      desktop: 16,
+                    ),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ]
+            : null,
       ),
     );
   }
 
-  Widget _buildTextField({
+  Widget _buildInstructionsSection(BuildContext context) {
+    // Desktop: 2-column layout for House Rules and Important Info
+    if (ResponsiveUtils.isDesktop(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle(context, 'Instructions'),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 18,
+              desktop: 16,
+            ),
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSubSectionTitle(context, 'House Rules'),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 8,
+                        tablet: 9,
+                        desktop: 10,
+                      ),
+                    ),
+                    _buildTextField(
+                      context,
+                      controller: _houseRulesController,
+                      hintText: 'Type Here',
+                      maxLines: 5,
+                      onChanged: (value) {
+                        context.read<RentCreateBloc>().add(
+                          UpdateHouseRulesEvent(value),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildSubSectionTitle(context, 'Important Information'),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 8,
+                        tablet: 9,
+                        desktop: 10,
+                      ),
+                    ),
+                    _buildTextField(
+                      context,
+                      controller: _importantInfoController,
+                      hintText: 'Type Here',
+                      maxLines: 5,
+                      onChanged: (value) {
+                        context.read<RentCreateBloc>().add(
+                          UpdateImportantInfoEvent(value),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
+    // Mobile/Tablet: Traditional single column
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionTitle(context, 'Instructions'),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 18,
+            desktop: 20,
+          ),
+        ),
+        _buildSubSectionTitle(context, 'House Rules'),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 9,
+            desktop: 10,
+          ),
+        ),
+        _buildTextField(
+          context,
+          controller: _houseRulesController,
+          hintText: 'Type Here',
+          maxLines: 3,
+          onChanged: (value) {
+            context.read<RentCreateBloc>().add(UpdateHouseRulesEvent(value));
+          },
+        ),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 18,
+            desktop: 20,
+          ),
+        ),
+        _buildSubSectionTitle(context, 'Important Information'),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 9,
+            desktop: 10,
+          ),
+        ),
+        _buildTextField(
+          context,
+          controller: _importantInfoController,
+          hintText: 'Type Here',
+          maxLines: 3,
+          onChanged: (value) {
+            context.read<RentCreateBloc>().add(UpdateImportantInfoEvent(value));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTextField(
+    BuildContext context, {
     required TextEditingController controller,
     required String hintText,
     int maxLines = 1,
     required Function(String) onChanged,
+    bool isRequired = true,
   }) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 12, tablet: 13, desktop: 14),
+        ),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
         boxShadow: [
           BoxShadow(
@@ -177,26 +448,69 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
         maxLines: maxLines,
         onChanged: onChanged,
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: isRequired ? '$hintText *' : hintText,
           hintStyle: AppTextStyles.bodyMedium.copyWith(
             color: Colors.grey[400],
-            fontSize: 12.sp,
+            fontSize: ResponsiveUtils.fontSize(
+              context,
+              mobile: 12,
+              tablet: 13,
+              desktop: 14,
+            ),
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(
+              ResponsiveUtils.radius(
+                context,
+                mobile: 12,
+                tablet: 13,
+                desktop: 14,
+              ),
+            ),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(
+              ResponsiveUtils.radius(
+                context,
+                mobile: 12,
+                tablet: 13,
+                desktop: 14,
+              ),
+            ),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(
+              ResponsiveUtils.radius(
+                context,
+                mobile: 12,
+                tablet: 13,
+                desktop: 14,
+              ),
+            ),
             borderSide: BorderSide(color: AppColors.primary, width: 1.5),
           ),
           contentPadding: EdgeInsets.symmetric(
-            horizontal: 18.w,
-            vertical: maxLines > 1 ? 16.h : 14.h,
+            horizontal: ResponsiveUtils.spacing(
+              context,
+              mobile: 18,
+              tablet: 19,
+              desktop: 20,
+            ),
+            vertical: maxLines > 1
+                ? ResponsiveUtils.spacing(
+                    context,
+                    mobile: 16,
+                    tablet: 17,
+                    desktop: 18,
+                  )
+                : ResponsiveUtils.spacing(
+                    context,
+                    mobile: 14,
+                    tablet: 15,
+                    desktop: 16,
+                  ),
           ),
         ),
       ),
@@ -210,8 +524,18 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           return BlocBuilder<RentCreateBloc, RentCreateState>(
             builder: (context, rentState) {
               return Wrap(
-                spacing: 12.w,
-                runSpacing: 12.h,
+                spacing: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 13,
+                  desktop: 14,
+                ),
+                runSpacing: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 13,
+                  desktop: 14,
+                ),
                 children: searchState.propertyTypes.map((type) {
                   final isSelected =
                       type.id == rentState.formData.propertyTypeId;
@@ -230,14 +554,128 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           );
         }
         return SizedBox(
-          height: 48.h,
+          height: ResponsiveUtils.size(
+            context,
+            mobile: 48,
+            tablet: 52,
+            desktop: 56,
+          ),
           child: const Center(child: CircularProgressIndicator()),
         );
       },
     );
   }
 
-  Widget _buildPropertyCounters(RentCreateState state) {
+  Widget _buildPropertyCounters(BuildContext context, RentCreateState state) {
+    final isDesktop = ResponsiveUtils.isDesktop(context);
+
+    if (isDesktop) {
+      // Two-column grid layout for desktop
+      return Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: CounterWidget(
+                  title: 'Bedrooms',
+                  value: state.formData.bedrooms,
+                  minValue: 0,
+                  maxValue: 20,
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateBedroomsEvent(value),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: CounterWidget(
+                  title: 'Bathrooms',
+                  value: state.formData.bathrooms,
+                  minValue: 0,
+                  maxValue: 20,
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateBathroomsEvent(value),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: CounterWidget(
+                  title: 'Number Of Beds',
+                  value: state.formData.numberOfBeds,
+                  minValue: 0,
+                  maxValue: 20,
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateNumberOfBedsEvent(value),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: CounterWidget(
+                  title: 'Living Rooms',
+                  value: state.formData.livingRooms,
+                  minValue: 0,
+                  maxValue: 20,
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateLivingRoomsEvent(value),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: CounterWidget(
+                  title: 'Floor',
+                  value: state.formData.floor,
+                  minValue: 0,
+                  maxValue: 50,
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(UpdateFloorEvent(value));
+                  },
+                ),
+              ),
+              SizedBox(width: 16),
+              Expanded(
+                child: CounterWidget(
+                  title: 'Maximum Number Of Guests',
+                  value: state.formData.maximumNumberOfGuests,
+                  minValue: 0,
+                  maxValue: 50,
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateMaxGuestsEvent(value),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          _buildAreaField(context, state),
+        ],
+      );
+    }
+
+    // Single column layout for mobile and tablet
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -250,7 +688,14 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             context.read<RentCreateBloc>().add(UpdateBedroomsEvent(value));
           },
         ),
-        SizedBox(height: 20.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 21,
+            desktop: 22,
+          ),
+        ),
         CounterWidget(
           title: 'Bathrooms',
           value: state.formData.bathrooms,
@@ -260,7 +705,14 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             context.read<RentCreateBloc>().add(UpdateBathroomsEvent(value));
           },
         ),
-        SizedBox(height: 20.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 21,
+            desktop: 22,
+          ),
+        ),
         CounterWidget(
           title: 'Number Of Beds',
           value: state.formData.numberOfBeds,
@@ -270,7 +722,14 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             context.read<RentCreateBloc>().add(UpdateNumberOfBedsEvent(value));
           },
         ),
-        SizedBox(height: 20.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 21,
+            desktop: 22,
+          ),
+        ),
         CounterWidget(
           title: 'Floor',
           value: state.formData.floor,
@@ -280,7 +739,14 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             context.read<RentCreateBloc>().add(UpdateFloorEvent(value));
           },
         ),
-        SizedBox(height: 20.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 21,
+            desktop: 22,
+          ),
+        ),
         CounterWidget(
           title: 'Maximum Number Of Guests',
           value: state.formData.maximumNumberOfGuests,
@@ -290,7 +756,14 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             context.read<RentCreateBloc>().add(UpdateMaxGuestsEvent(value));
           },
         ),
-        SizedBox(height: 20.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 21,
+            desktop: 22,
+          ),
+        ),
         CounterWidget(
           title: 'Living Rooms',
           value: state.formData.livingRooms,
@@ -300,19 +773,155 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             context.read<RentCreateBloc>().add(UpdateLivingRoomsEvent(value));
           },
         ),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 21,
+            desktop: 22,
+          ),
+        ),
+        _buildAreaField(context, state),
       ],
     );
   }
 
-  Widget _buildPropertyFeatures() {
+  Widget _buildAreaField(BuildContext context, RentCreateState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Area (m²)',
+          style: AppTextStyles.bodyMedium.copyWith(
+            color: AppColors.textPrimary,
+            fontSize: ResponsiveUtils.fontSize(
+              context,
+              mobile: 14,
+              tablet: 16,
+              desktop: 18,
+            ),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 10,
+            desktop: 12,
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(
+              ResponsiveUtils.radius(
+                context,
+                mobile: 12,
+                tablet: 13,
+                desktop: 14,
+              ),
+            ),
+            border: Border.all(color: Colors.grey.withValues(alpha: 0.25)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: TextField(
+            controller: _areaController,
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              final intValue = int.tryParse(value);
+              context.read<RentCreateBloc>().add(UpdateAreaEvent(intValue));
+            },
+            decoration: InputDecoration(
+              hintText: 'Enter area in m²',
+              hintStyle: AppTextStyles.bodyMedium.copyWith(
+                color: Colors.grey[400],
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 12,
+                  tablet: 13,
+                  desktop: 14,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 12,
+                    tablet: 13,
+                    desktop: 14,
+                  ),
+                ),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 12,
+                    tablet: 13,
+                    desktop: 14,
+                  ),
+                ),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 12,
+                    tablet: 13,
+                    desktop: 14,
+                  ),
+                ),
+                borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 18,
+                  tablet: 19,
+                  desktop: 20,
+                ),
+                vertical: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 14,
+                  tablet: 15,
+                  desktop: 16,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPropertyFeatures(BuildContext context) {
     return BlocBuilder<SearchBloc, SearchState>(
       builder: (context, searchState) {
         if (searchState is LookupsLoaded) {
           return BlocBuilder<RentCreateBloc, RentCreateState>(
             builder: (context, rentState) {
               return Wrap(
-                spacing: 8.w,
-                runSpacing: 8.h,
+                spacing: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+                runSpacing: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
                 children: searchState.propertyFeatures.map((feature) {
                   final isSelected = rentState.formData.propertyFeatureIds
                       .contains(feature.id);
@@ -351,12 +960,19 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
     );
   }
 
-  Widget _buildGovernorateSelector() {
+  Widget _buildGovernorateSelector(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('Governorate'),
-        SizedBox(height: 12.h),
+        _buildSectionTitle(context, 'Governorate'),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 14,
+            desktop: 16,
+          ),
+        ),
         BlocBuilder<SearchBloc, SearchState>(
           builder: (context, searchState) {
             if (searchState is LookupsLoaded) {
@@ -364,12 +980,29 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                 builder: (context, rentState) {
                   return Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 18.w,
-                      vertical: 12.h,
+                      horizontal: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 18,
+                        tablet: 19,
+                        desktop: 20,
+                      ),
+                      vertical: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 12,
+                        tablet: 13,
+                        desktop: 14,
+                      ),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveUtils.radius(
+                          context,
+                          mobile: 12,
+                          tablet: 13,
+                          desktop: 14,
+                        ),
+                      ),
                       border: Border.all(
                         color: Colors.grey.withValues(alpha: 0.25),
                       ),
@@ -388,13 +1021,23 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                         icon: Icon(
                           Icons.expand_more,
                           color: AppColors.primary,
-                          size: 18.sp,
+                          size: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 18,
+                            tablet: 19,
+                            desktop: 20,
+                          ),
                         ),
                         hint: Text(
                           'Select Governorate',
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.grey[400],
-                            fontSize: 14.sp,
+                            fontSize: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 14,
+                              tablet: 15,
+                              desktop: 16,
+                            ),
                           ),
                         ),
                         items: searchState.governates.map((governorate) {
@@ -404,7 +1047,12 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                               governorate.displayName,
                               style: AppTextStyles.bodyMedium.copyWith(
                                 color: AppColors.textPrimary,
-                                fontSize: 14.sp,
+                                fontSize: ResponsiveUtils.fontSize(
+                                  context,
+                                  mobile: 14,
+                                  tablet: 15,
+                                  desktop: 16,
+                                ),
                               ),
                             ),
                           );

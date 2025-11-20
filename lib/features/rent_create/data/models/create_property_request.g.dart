@@ -17,6 +17,7 @@ CreatePropertyStepOneRequest _$CreatePropertyStepOneRequestFromJson(
       floor: (json['floor'] as num).toInt(),
       maximumNumberOfGuest: (json['maximumNumberOfGuest'] as num).toInt(),
       livingrooms: (json['livingrooms'] as num).toInt(),
+      area: (json['area'] as num).toInt(),
       propertyDescription: json['propertyDescription'] as String,
       hourseRules: json['hourseRules'] as String,
       importantInformation: json['importantInformation'] as String,
@@ -30,6 +31,8 @@ CreatePropertyStepOneRequest _$CreatePropertyStepOneRequestFromJson(
       propertyFeatureIds: (json['propertyFeatureIds'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      latitude: json['latitude'] as String?,
+      longitude: json['longitude'] as String?,
     );
 
 Map<String, dynamic> _$CreatePropertyStepOneRequestToJson(
@@ -43,6 +46,7 @@ Map<String, dynamic> _$CreatePropertyStepOneRequestToJson(
       'floor': instance.floor,
       'maximumNumberOfGuest': instance.maximumNumberOfGuest,
       'livingrooms': instance.livingrooms,
+      'area': instance.area,
       'propertyDescription': instance.propertyDescription,
       'hourseRules': instance.hourseRules,
       'importantInformation': instance.importantInformation,
@@ -54,6 +58,8 @@ Map<String, dynamic> _$CreatePropertyStepOneRequestToJson(
       'propertyTypeId': instance.propertyTypeId,
       'governorateId': instance.governorateId,
       'propertyFeatureIds': instance.propertyFeatureIds,
+      'latitude': instance.latitude,
+      'longitude': instance.longitude,
     };
 
 CreatePropertyStepTwoRequest _$CreatePropertyStepTwoRequestFromJson(

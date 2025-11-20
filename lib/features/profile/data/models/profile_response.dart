@@ -117,9 +117,29 @@ class ProfilePropertyDto {
       return null;
     }
 
+    // Debug: Check what image field we receive from backend
+    final mainImageValue = json['mainImage'] as String?;
+    final propertyTitle = json['propertyTitle'] as String? ?? 'Unknown';
+
+
+    // Check for alternative field names
+    if (mainImageValue == null) {
+      final alternativeFields = [
+        'MainImage',
+        'image',
+        'Image',
+        'imageUrl',
+        'ImageUrl',
+      ];
+      for (final field in alternativeFields) {
+        if (json.containsKey(field) && json[field] != null) {
+        }
+      }
+    }
+
     return ProfilePropertyDto(
       id: json['id'] as String? ?? '',
-      propertyTitle: json['propertyTitle'] as String? ?? '',
+      propertyTitle: propertyTitle,
       hotelName: json['hotelName'] as String?,
       address: json['address'] as String?,
       streetAndBuildingNumber: json['streetAndBuildingNumber'] as String?,

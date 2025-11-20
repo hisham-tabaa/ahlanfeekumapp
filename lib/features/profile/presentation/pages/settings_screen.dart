@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../auth/presentation/widgets/custom_button.dart';
@@ -86,30 +86,36 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
         final profile = state.profile;
 
-        return RefreshIndicator(
-          onRefresh: () async {
-            context.read<ProfileBloc>().add(const RefreshProfileEvent());
-          },
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 16.h),
-                _buildHeader(profile),
-                SizedBox(height: 24.h),
-                _buildStatistics(profile),
-                SizedBox(height: 32.h),
-                _buildEditProfileSection(context, state),
-                SizedBox(height: 32.h),
-                _buildChangePasswordSection(context, state),
-                SizedBox(height: 32.h),
-                _buildFavoritesSection(profile),
-                SizedBox(height: 24.h),
-                _buildMyPropertiesSection(profile),
-                SizedBox(height: 40.h),
-              ],
+        return ResponsiveLayout(
+          maxWidth: 800,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<ProfileBloc>().add(const RefreshProfileEvent());
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32),
+        vertical: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)
+      ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
+                  _buildHeader(profile),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                  _buildStatistics(profile),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 36, desktop: 40)),
+                  _buildEditProfileSection(context, state),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 36, desktop: 40)),
+                  _buildChangePasswordSection(context, state),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 36, desktop: 40)),
+                  _buildFavoritesSection(profile),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                  _buildMyPropertiesSection(profile),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 44, desktop: 48)),
+                ],
+              ),
             ),
           ),
         );
@@ -121,7 +127,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Row(
       children: [
         _buildAvatar(profile?.profilePhotoUrl),
-        SizedBox(width: 16.w),
+        SizedBox(width: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,16 +135,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Text(
                 profile?.name ?? '---',
                 style: AppTextStyles.h2.copyWith(
-                  fontSize: 20.sp,
+                  fontSize: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary,
                 ),
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 4, tablet: 5, desktop: 6)),
               Text(
                 profile?.email ?? '',
                 style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: 14.sp,
+                  fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                   color: AppColors.textSecondary,
                 ),
               ),
@@ -160,26 +166,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
       alignment: Alignment.bottomRight,
       children: [
         CircleAvatar(
-          radius: 40.w,
+          radius: ResponsiveUtils.size(context, mobile: 40, tablet: 44, desktop: 48),
           backgroundColor: AppColors.primary.withValues(alpha: 0.1),
           backgroundImage: imageUrl != null
               ? CachedNetworkImageProvider(imageUrl)
               : null,
           child: imageUrl == null
-              ? Icon(Icons.person, size: 40.sp, color: AppColors.textSecondary)
+              ? Icon(Icons.person, size: ResponsiveUtils.size(context, mobile: 40, tablet: 44, desktop: 48), color: AppColors.textSecondary)
               : null,
         ),
         GestureDetector(
           onTap: _onPickProfilePhoto,
           child: Container(
-            width: 32.w,
-            height: 32.w,
+            width: ResponsiveUtils.size(context, mobile: 32, tablet: 36, desktop: 40),
+            height: ResponsiveUtils.size(context, mobile: 32, tablet: 36, desktop: 40),
             decoration: BoxDecoration(
               color: AppColors.primary,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2.w),
+              border: Border.all(color: Colors.white, width: ResponsiveUtils.size(context, mobile: 2, tablet: 2.5, desktop: 3)),
             ),
-            child: Icon(Icons.edit, size: 16.sp, color: Colors.white),
+            child: Icon(Icons.edit, size: ResponsiveUtils.size(context, mobile: 16, tablet: 18, desktop: 20), color: Colors.white),
           ),
         ),
       ],
@@ -192,10 +198,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+        vertical: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -240,10 +249,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildEditProfileSection(BuildContext context, ProfileState state) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -258,11 +267,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           Text(
             'My Profile',
             style: AppTextStyles.h2.copyWith(
-              fontSize: 20.sp,
+              fontSize: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           CustomTextField(
             controller: _nameController,
             hintText: 'Full Name',
@@ -271,7 +280,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           CustomTextField(
             controller: _phoneController,
             hintText: 'Phone Number',
@@ -281,7 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           CustomTextField(
             controller: _emailController,
             hintText: 'Email Address',
@@ -290,7 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           CustomTextField(
             controller: _addressController,
             hintText: 'Location',
@@ -299,7 +308,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               color: AppColors.textSecondary,
             ),
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
           CustomButton(
             text: 'Save Changes',
             isLoading: state.isUpdating,
@@ -326,10 +335,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Widget _buildChangePasswordSection(BuildContext context, ProfileState state) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -347,32 +356,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Text(
                 'Password',
                 style: AppTextStyles.h2.copyWith(
-                  fontSize: 20.sp,
+                  fontSize: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
                   fontWeight: FontWeight.w600,
                 ),
               ),
               TextButton(onPressed: () {}, child: const Text('Change')),
             ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
           CustomTextField(
             controller: _oldPasswordController,
             hintText: 'Old Password',
             obscureText: true,
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           CustomTextField(
             controller: _newPasswordController,
             hintText: 'New Password',
             obscureText: true,
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           CustomTextField(
             controller: _confirmPasswordController,
             hintText: 'Repeat New Password',
             obscureText: true,
           ),
-          SizedBox(height: 24.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
           CustomButton(
             text: 'Change Password',
             isLoading: state.isChangingPassword,
@@ -443,16 +452,16 @@ class _StatItem extends StatelessWidget {
         Text(
           value,
           style: AppTextStyles.h2.copyWith(
-            fontSize: 18.sp,
+            fontSize: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
           ),
         ),
-        SizedBox(height: 4.h),
+        SizedBox(height: ResponsiveUtils.spacing(context, mobile: 4, tablet: 5, desktop: 6)),
         Text(
           label,
           style: AppTextStyles.bodyMedium.copyWith(
-            fontSize: 12.sp,
+            fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 13, desktop: 14),
             color: AppColors.textSecondary,
           ),
         ),
@@ -466,9 +475,9 @@ class _StatDivider extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: 1,
-      height: 40.h,
+      height: ResponsiveUtils.size(context, mobile: 40, tablet: 44, desktop: 48),
       color: AppColors.border,
-      margin: EdgeInsets.symmetric(horizontal: 12.w),
+      margin: EdgeInsets.symmetric(horizontal: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
     );
   }
 }
@@ -492,25 +501,25 @@ class _PropertiesSection extends StatelessWidget {
         Text(
           title,
           style: AppTextStyles.h2.copyWith(
-            fontSize: 20.sp,
+            fontSize: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 4.h),
+        SizedBox(height: ResponsiveUtils.spacing(context, mobile: 4, tablet: 5, desktop: 6)),
         Text(
           subtitle,
           style: AppTextStyles.bodyMedium.copyWith(
-            fontSize: 14.sp,
+            fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
             color: AppColors.textSecondary,
           ),
         ),
-        SizedBox(height: 16.h),
+        SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
         SizedBox(
-          height: 160.h,
+          height: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: properties.length,
-            separatorBuilder: (_, __) => SizedBox(width: 12.w),
+            separatorBuilder: (_, __) => SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
             itemBuilder: (context, index) {
               final property = properties[index];
               return _PropertyCard(property: property);
@@ -532,10 +541,10 @@ class _PropertyCard extends StatelessWidget {
     final imageUrl = property.mainImageUrl;
 
     return Container(
-      width: 200.w,
+      width: ResponsiveUtils.size(context, mobile: 200, tablet: 220, desktop: 240),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -549,24 +558,24 @@ class _PropertyCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(16.r),
-              topRight: Radius.circular(16.r),
+              topLeft: Radius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
+              topRight: Radius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
             ),
             child: imageUrl != null
                 ? CachedNetworkImage(
                     imageUrl: imageUrl,
-                    height: 100.h,
+                    height: ResponsiveUtils.size(context, mobile: 100, tablet: 110, desktop: 120),
                     width: double.infinity,
                     fit: BoxFit.cover,
                   )
                 : Container(
-                    height: 100.h,
+                    height: ResponsiveUtils.size(context, mobile: 100, tablet: 110, desktop: 120),
                     color: AppColors.border,
                     child: Icon(Icons.image, color: AppColors.textSecondary),
                   ),
           ),
           Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -575,26 +584,26 @@ class _PropertyCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.bodyMedium.copyWith(
-                    fontSize: 14.sp,
+                    fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                     fontWeight: FontWeight.w600,
                     color: AppColors.textPrimary,
                   ),
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 4, tablet: 5, desktop: 6)),
                 Text(
                   property.address ?? property.streetAndBuildingNumber ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.bodySmall.copyWith(
-                    fontSize: 12.sp,
+                    fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 13, desktop: 14),
                     color: AppColors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 8.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
                 Text(
                   '${property.pricePerNight.toStringAsFixed(0)} SYP/night',
                   style: AppTextStyles.bodyMedium.copyWith(
-                    fontSize: 14.sp,
+                    fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                     fontWeight: FontWeight.w600,
                     color: AppColors.primary,
                   ),

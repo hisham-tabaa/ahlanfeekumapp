@@ -34,3 +34,9 @@ class LoadUserReservationsEvent extends ProfileEvent {
 
   const LoadUserReservationsEvent(this.userId);
 }
+
+class RemoveFavoriteEvent extends ProfileEvent {
+  final String propertyId;
+
+  const RemoveFavoriteEvent(this.propertyId);
+}

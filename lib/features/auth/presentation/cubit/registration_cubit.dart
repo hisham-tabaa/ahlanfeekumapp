@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../domain/usecases/register_user_usecase.dart';
 import '../../data/models/register_user_request.dart';
 
@@ -17,6 +18,7 @@ class RegistrationState {
   final String password;
   final String confirmPassword;
   final String? profilePhotoPath;
+  final XFile? profilePhotoFile; // Added for web compatibility
   final bool isLoading;
   final String? error;
   final bool success;
@@ -36,6 +38,7 @@ class RegistrationState {
     this.password = '',
     this.confirmPassword = '',
     this.profilePhotoPath,
+    this.profilePhotoFile,
     this.isLoading = false,
     this.error,
     this.success = false,
@@ -55,6 +58,7 @@ class RegistrationState {
     String? password,
     String? confirmPassword,
     String? profilePhotoPath,
+    XFile? profilePhotoFile,
     bool? isLoading,
     String? error,
     bool? success,
@@ -73,6 +77,7 @@ class RegistrationState {
       password: password ?? this.password,
       confirmPassword: confirmPassword ?? this.confirmPassword,
       profilePhotoPath: profilePhotoPath ?? this.profilePhotoPath,
+      profilePhotoFile: profilePhotoFile ?? this.profilePhotoFile,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       success: success ?? this.success,
@@ -106,6 +111,9 @@ class RegistrationCubit extends Cubit<RegistrationState> {
       emit(state.copyWith(confirmPassword: value));
   void setProfilePhoto(String? path) =>
       emit(state.copyWith(profilePhotoPath: path));
+  void setProfilePhotoFile(XFile? file) => emit(
+    state.copyWith(profilePhotoPath: file?.path, profilePhotoFile: file),
+  );
   void setRegistrationMethod(RegistrationMethod method) =>
       emit(state.copyWith(registrationMethod: method));
 
@@ -138,10 +146,12 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     final hasLower = RegExp(r'[a-z]').hasMatch(state.password);
     final hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(state.password);
     if (!hasUpper || !hasLower || !hasSpecial) {
-      emit(state.copyWith(
-        error:
-            "Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase ('a'-'z')., Passwords must have at least one uppercase ('A'-'Z').",
-      ));
+      emit(
+        state.copyWith(
+          error:
+              "Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase ('a'-'z')., Passwords must have at least one uppercase ('A'-'Z').",
+        ),
+      );
       return;
     }
     if (state.password != state.confirmPassword) {
@@ -153,6 +163,7 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     final fullPhoneNumber = '${state.countryCode}${state.phoneNumber}';
     final req = RegisterUserRequest(
       profilePhotoPath: state.profilePhotoPath,
+      profilePhotoFile: state.profilePhotoFile,
       name: state.name,
       latitude: state.latitude.isEmpty ? 'string' : state.latitude,
       longitude: state.longitude.isEmpty ? 'string' : state.longitude,

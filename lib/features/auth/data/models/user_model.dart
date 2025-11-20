@@ -13,6 +13,7 @@ class UserModel extends User {
     super.profileImage,
     required super.isEmailVerified,
     required super.isPhoneVerified,
+    super.roleId,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +30,7 @@ class UserModel extends User {
       profileImage: user.profileImage,
       isEmailVerified: user.isEmailVerified,
       isPhoneVerified: user.isPhoneVerified,
+      roleId: user.roleId,
     );
   }
 }

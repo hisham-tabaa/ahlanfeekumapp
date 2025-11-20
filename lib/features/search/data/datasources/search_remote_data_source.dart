@@ -22,7 +22,6 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       final response = await _dio.get(AppConstants.propertyTypesEndpoint);
       return LookupResponse.fromJson(response.data);
     } catch (e) {
-      print('🚨 Error fetching property types: $e');
       rethrow;
     }
   }
@@ -33,7 +32,6 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       final response = await _dio.get(AppConstants.propertyFeaturesEndpoint);
       return LookupResponse.fromJson(response.data);
     } catch (e) {
-      print('🚨 Error fetching property features: $e');
       rethrow;
     }
   }
@@ -44,7 +42,6 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       final response = await _dio.get(AppConstants.governatesEndpoint);
       return LookupResponse.fromJson(response.data);
     } catch (e) {
-      print('🚨 Error fetching governates: $e');
       rethrow;
     }
   }
@@ -54,24 +51,15 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
     Map<String, dynamic> queries,
   ) async {
     try {
-      print('🔍 Search Properties Request:');
-      print(
-        '🔍 URI: ${AppConstants.baseUrl}${AppConstants.searchPropertyEndpoint}',
-      );
-      print('🔍 Method: GET');
-      print('🔍 Query Parameters: $queries');
 
       final response = await _dio.get(
         AppConstants.searchPropertyEndpoint,
         queryParameters: queries,
       );
 
-      print('✅ Search Properties Response: ${response.statusCode}');
-      print('✅ Found ${response.data['totalCount'] ?? 0} properties');
 
       return PropertySearchResponse.fromJson(response.data);
     } catch (e) {
-      print('🚨 Error searching properties: $e');
       rethrow;
     }
   }
@@ -79,6 +67,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
 
 abstract class SearchRemoteDataSourceHelper {
   static Map<String, dynamic> filterToQueryMap(SearchFilter filter) {
+    
     final Map<String, dynamic> queryMap = {};
 
     if (filter.filterText != null && filter.filterText!.isNotEmpty) {
@@ -90,11 +79,17 @@ abstract class SearchRemoteDataSourceHelper {
     }
 
     if (filter.checkInDate != null) {
-      queryMap['CheckInDate'] = filter.checkInDate;
+      // Convert milliseconds to MM/DD/YYYY format
+      final checkInDateTime = DateTime.fromMillisecondsSinceEpoch(filter.checkInDate!);
+      final checkInFormatted = '${checkInDateTime.month}/${checkInDateTime.day}/${checkInDateTime.year}';
+      queryMap['CheckInDate'] = checkInFormatted;
     }
 
     if (filter.checkOutDate != null) {
-      queryMap['CheckOutDate'] = filter.checkOutDate;
+      // Convert milliseconds to MM/DD/YYYY format
+      final checkOutDateTime = DateTime.fromMillisecondsSinceEpoch(filter.checkOutDate!);
+      final checkOutFormatted = '${checkOutDateTime.month}/${checkOutDateTime.day}/${checkOutDateTime.year}';
+      queryMap['CheckOutDate'] = checkOutFormatted;
     }
 
     if (filter.pricePerNightMin != null) {
@@ -171,6 +166,9 @@ abstract class SearchRemoteDataSourceHelper {
 
     queryMap['SkipCount'] = filter.skipCount;
     queryMap['MaxResultCount'] = filter.maxResultCount;
+
+    
+    // Show which of the 4 basic filters are included
 
     return queryMap;
   }

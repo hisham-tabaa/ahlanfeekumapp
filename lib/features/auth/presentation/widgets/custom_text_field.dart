@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 
@@ -59,6 +59,48 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final labelFontSize = ResponsiveUtils.fontSize(
+      context,
+      mobile: 14,
+      tablet: 15,
+      desktop: 16,
+    );
+    
+    final inputFontSize = ResponsiveUtils.fontSize(
+      context,
+      mobile: 15,
+      tablet: 16,
+      desktop: 17,
+    );
+    
+    final borderRadius = ResponsiveUtils.radius(
+      context,
+      mobile: 12,
+      tablet: 14,
+      desktop: 16,
+    );
+    
+    final horizontalPadding = ResponsiveUtils.spacing(
+      context,
+      mobile: 16,
+      tablet: 18,
+      desktop: 20,
+    );
+    
+    final verticalPadding = ResponsiveUtils.spacing(
+      context,
+      mobile: 14,
+      tablet: 16,
+      desktop: 18,
+    );
+    
+    final iconSize = ResponsiveUtils.size(
+      context,
+      mobile: 20,
+      tablet: 22,
+      desktop: 24,
+    );
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,11 +108,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
           Text(
             widget.labelText!,
             style: AppTextStyles.label.copyWith(
-              fontSize: 14.sp,
+              fontSize: labelFontSize,
               color: AppColors.textPrimary,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 8,
+              tablet: 10,
+              desktop: 12,
+            ),
+          ),
         ],
         TextFormField(
           controller: widget.controller,
@@ -86,17 +135,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
           focusNode: widget.focusNode,
           textInputAction: widget.textInputAction,
           onFieldSubmitted: widget.onFieldSubmitted,
-          style: AppTextStyles.inputText.copyWith(fontSize: 16.sp),
+          style: AppTextStyles.inputText.copyWith(fontSize: inputFontSize),
           decoration: InputDecoration(
             hintText: widget.hintText,
-            hintStyle: AppTextStyles.inputHint.copyWith(fontSize: 16.sp),
+            hintStyle: AppTextStyles.inputHint.copyWith(fontSize: inputFontSize),
             prefixIcon: widget.prefixIcon,
             suffixIcon: widget.obscureText
                 ? IconButton(
                     icon: Icon(
                       _isObscured ? Icons.visibility_off : Icons.visibility,
                       color: AppColors.textSecondary,
-                      size: 20.sp,
+                      size: iconSize,
                     ),
                     onPressed: () {
                       setState(() {
@@ -108,28 +157,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
             filled: true,
             fillColor: AppColors.inputBackground,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: AppColors.border),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: AppColors.border),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: AppColors.error),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
+              borderRadius: BorderRadius.circular(borderRadius),
               borderSide: const BorderSide(color: AppColors.error, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 16.h,
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
             ),
             counterText: '',
           ),

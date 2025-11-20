@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../../../../core/network/api_result.dart';
 import '../../data/models/search_filter.dart';
 import '../../domain/entities/search_entities.dart';
 import '../../domain/repositories/search_repository.dart';
@@ -40,11 +39,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         _searchRepository.getGovernates(),
       ]);
 
-      final propertyTypesResult =
-          results[0] as ApiResult<List<LookupItemEntity>>;
-      final propertyFeaturesResult =
-          results[1] as ApiResult<List<LookupItemEntity>>;
-      final governatesResult = results[2] as ApiResult<List<LookupItemEntity>>;
+      final propertyTypesResult = results[0];
+      final propertyFeaturesResult = results[1];
+      final governatesResult = results[2];
 
       // Load recent searches
       final recentSearches = await _loadRecentSearches();
@@ -97,7 +94,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     SearchPropertiesEvent event,
     Emitter<SearchState> emit,
   ) async {
-    print('🔍 SearchBloc: Searching properties with filter');
     emit(const SearchLoading());
 
     final result = await _searchRepository.searchProperties(event.filter);
@@ -213,7 +209,6 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     final currentState = state as SearchLoaded;
     if (currentState.hasReachedMax) return;
 
-    print('🔍 SearchBloc: Loading more properties with skip count: ${event.filter.skipCount}');
 
     final result = await _searchRepository.searchProperties(event.filter);
 

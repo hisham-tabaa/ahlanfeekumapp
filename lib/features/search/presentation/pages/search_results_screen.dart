@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/search_bloc.dart';
 import '../bloc/search_event.dart';
@@ -8,6 +7,9 @@ import '../../domain/entities/search_entities.dart';
 import '../../data/models/search_filter.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
+import '../../../../core/utils/responsive_utils.dart';
+import '../../../../core/utils/web_compatible_network_image.dart';
+import '../../../../core/utils/web_scroll_behavior.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   const SearchResultsScreen({super.key});
@@ -25,9 +27,6 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   @override
   void initState() {
     super.initState();
-    print(
-      '🔍 SearchResultsScreen initState - Current bloc state: ${context.read<SearchBloc>().state.runtimeType}',
-    );
 
     // Set up pagination scroll listener
     _scrollController.addListener(_onScroll);
@@ -36,18 +35,30 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args =
           ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-      print('🔍 Route arguments: $args');
 
       final filter = args != null && args['filter'] != null
           ? args['filter'] as SearchFilter
           : const SearchFilter(); // Use default filter if none provided
 
       _currentFilter = filter;
-      print('🔍 Using filter: ${filter.toJson()}');
-      print('🔍 Triggering search properties directly...');
 
-      // Always trigger search directly, no need for lookups
-      context.read<SearchBloc>().add(SearchPropertiesEvent(filter: filter));
+      // Check if lookups are loaded, if not load them first
+      final currentState = context.read<SearchBloc>().state;
+      if (currentState is! LookupsLoaded && currentState is! SearchLoaded) {
+        // Load lookups first, then search
+        context.read<SearchBloc>().add(const LoadLookupsEvent());
+        // The search will be triggered after lookups are loaded
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            context.read<SearchBloc>().add(
+              SearchPropertiesEvent(filter: filter),
+            );
+          }
+        });
+      } else {
+        // Lookups already loaded, search directly
+        context.read<SearchBloc>().add(SearchPropertiesEvent(filter: filter));
+      }
     });
   }
 
@@ -72,73 +83,77 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
-      body: BlocBuilder<SearchBloc, SearchState>(
-        builder: (context, state) {
-          if (state is SearchLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: ResponsiveLayout(
+        child: BlocBuilder<SearchBloc, SearchState>(
+          builder: (context, state) {
+            if (state is SearchLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state is SearchError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+            if (state is SearchError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: ResponsiveUtils.fontSize(context, mobile: 64, tablet: 72, desktop: 80),
+                      color: Colors.grey[400],
+                    ),
+                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
+                    Text(
+                      'Something went wrong',
+                      style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
+                    ),
+                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                    Text(
+                      state.message,
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: Colors.grey[500],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
+                    ElevatedButton(
+                      onPressed: () => context.read<SearchBloc>().add(
+                        const LoadLookupsEvent(),
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (state is SearchLoaded) {
+              return Column(
                 children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64.sp,
-                    color: Colors.grey[400],
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    'Something went wrong',
-                    style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    state.message,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.grey[500],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 16.h),
-                  ElevatedButton(
-                    onPressed: () => context.read<SearchBloc>().add(
-                      const LoadLookupsEvent(),
-                    ),
-                    child: const Text('Retry'),
+                  _buildSearchHeader(state),
+                  Expanded(
+                    child: state.properties.isEmpty
+                        ? _buildEmptyState()
+                        : _buildPropertyGrid(state.properties),
                   ),
                 ],
-              ),
-            );
-          }
+              );
+            }
 
-          if (state is SearchLoaded) {
-            return Column(
-              children: [
-                _buildSearchHeader(state),
-                Expanded(
-                  child: state.properties.isEmpty
-                      ? _buildEmptyState()
-                      : _buildPropertyGrid(state.properties),
-                ),
-              ],
-            );
-          }
+            if (state is LookupsLoaded) {
+              return const Center(
+                child: Text('Start searching to see results'),
+              );
+            }
 
-          if (state is LookupsLoaded) {
-            return const Center(child: Text('Start searching to see results'));
-          }
-
-          return const Center(child: Text('Loading...'));
-        },
+            return const Center(child: Text('Loading...'));
+          },
+        ),
       ),
     );
   }
 
   Widget _buildSearchHeader(SearchLoaded state) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
       color: Colors.white,
       child: Column(
         children: [
@@ -148,8 +163,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: AppColors.inputBackground,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: AppColors.border.withOpacity(0.3)),
+                    borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16)),
+                    border: Border.all(
+                      color: AppColors.border.withOpacity(0.3),
+                    ),
                   ),
                   child: TextFormField(
                     controller: _searchController,
@@ -161,40 +178,46 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                       prefixIcon: Icon(
                         Icons.search,
                         color: AppColors.textSecondary,
-                        size: 20.sp,
+                        size: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
                       ),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 12.h,
+                        horizontal: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20),
+                        vertical: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
                       ),
                     ),
+                    onFieldSubmitted: (value) {
+                      if (value.trim().isNotEmpty && _currentFilter != null) {
+                        final newFilter = _currentFilter!.copyWith(
+                          filterText: value.trim(),
+                          address: value.trim(),
+                        );
+                        _currentFilter = newFilter;
+                        context.read<SearchBloc>().add(
+                          SearchPropertiesEvent(filter: newFilter),
+                        );
+                      }
+                    },
                   ),
                 ),
               ),
-              SizedBox(width: 12.w),
+              SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
               GestureDetector(
                 onTap: () async {
-                  print('🔧 Filter button tapped from search results');
-                  
+
                   if (!mounted) {
-                    print('🔧 Widget not mounted');
                     return;
                   }
-                  
+
                   try {
-                    print('🔧 Navigating to filter with filter: ${state.currentFilter.toJson()}');
-                    
+
                     await Navigator.of(context).pushNamed(
                       '/filter',
                       arguments: {'filter': state.currentFilter},
                     );
-                    
-                    print('🔧 Filter navigation completed');
+
                   } catch (e) {
-                    print('🚨 Error navigating to filter: $e');
-                    print('🚨 Stack trace: ${StackTrace.current}');
-                    
+
                     // Fallback navigation
                     if (mounted) {
                       try {
@@ -202,30 +225,28 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                           '/filter',
                           arguments: {'filter': const SearchFilter()},
                         );
-                        print('🔧 Fallback filter navigation completed');
                       } catch (fallbackError) {
-                        print('🚨 Fallback filter navigation failed: $fallbackError');
                       }
                     }
                   }
                 },
                 child: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16)),
                     border: Border.all(color: AppColors.border),
                   ),
                   child: Icon(
                     Icons.tune,
                     color: AppColors.textSecondary,
-                    size: 20.sp,
+                    size: ResponsiveUtils.fontSize(context, mobile: 20, tablet: 22, desktop: 24),
                   ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -257,71 +278,102 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     // Sort properties based on selected sort option
     List<PropertyEntity> sortedProperties = List.from(properties);
     if (_selectedSort == 'Lowest Price') {
-      sortedProperties.sort((a, b) => a.pricePerNight.compareTo(b.pricePerNight));
+      sortedProperties.sort(
+        (a, b) => a.pricePerNight.compareTo(b.pricePerNight),
+      );
     } else if (_selectedSort == 'Highest Price') {
-      sortedProperties.sort((a, b) => b.pricePerNight.compareTo(a.pricePerNight));
+      sortedProperties.sort(
+        (a, b) => b.pricePerNight.compareTo(a.pricePerNight),
+      );
     }
-    
-    return GridView.builder(
+
+    return WebScrollUtils.gridView(
       controller: _scrollController,
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 160.w,
-        crossAxisSpacing: 12.w,
-        mainAxisSpacing: 16.h,
-        childAspectRatio: 160.w / 260.h,
+        maxCrossAxisExtent: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+        crossAxisSpacing: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
+        mainAxisSpacing: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20),
+        childAspectRatio: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200) / ResponsiveUtils.size(context, mobile: 260, tablet: 280, desktop: 300),
       ),
       itemCount: sortedProperties.length,
       itemBuilder: (context, index) {
         final property = sortedProperties[index];
-        return _buildPropertyCard(property);
+        return _buildPropertyCard(context, property);
       },
     );
   }
 
-  Widget _buildPropertyCard(PropertyEntity property) {
-    return SizedBox(
-      width: 160.w,
-      height: 260.h,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Fixed height image container
-          SizedBox(
-            width: 160.w,
-            height: 150.h,
-            child: Stack(
-              children: [
-                Container(
-                  width: 160.w,
-                  height: 150.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16.r),
-                    child: property.mainImage != null 
-                        ? Image.network(
-                            _buildFullImageUrl(property.mainImage!),
-                            width: 160.w,
-                            height: 150.h,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
+  Widget _buildPropertyCard(BuildContext context, PropertyEntity property) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          '/property-detail',
+          arguments: property.id,
+        );
+      },
+      child: SizedBox(
+        width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+        height: ResponsiveUtils.size(context, mobile: 260, tablet: 280, desktop: 300),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Fixed height image container
+              SizedBox(
+                width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                height: ResponsiveUtils.size(context, mobile: 150, tablet: 170, desktop: 190),
+                child: Stack(
+                  children: [
+                    Container(
+                      width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                      height: ResponsiveUtils.size(context, mobile: 150, tablet: 170, desktop: 190),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
+                        child: property.mainImage != null
+                            ? WebCompatibleNetworkImage(
+                                imageUrl: _buildFullImageUrl(property.mainImage!),
+                                width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                                height: ResponsiveUtils.size(context, mobile: 150, tablet: 170, desktop: 190),
+                                fit: BoxFit.cover,
+                                errorWidget: (context, url, error) {
+                                  return Image.asset(
+                                    'assets/images/bulding.jpg',
+                                    width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                                    height: ResponsiveUtils.size(context, mobile: 150, tablet: 170, desktop: 190),
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                                        height: ResponsiveUtils.size(context, mobile: 120, tablet: 135, desktop: 150),
+                                        color: Colors.grey[300],
+                                        child: Icon(
+                                          Icons.image_not_supported,
+                                          color: Colors.grey[500],
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              )
+                            : Image.asset(
                                 'assets/images/bulding.jpg',
-                                width: 160.w,
-                                height: 150.h,
+                                width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                                height: ResponsiveUtils.size(context, mobile: 120, tablet: 135, desktop: 150),
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Container(
-                                    width: 160.w,
-                                    height: 120.h,
+                                    width: ResponsiveUtils.size(context, mobile: 160, tablet: 180, desktop: 200),
+                                    height: ResponsiveUtils.size(context, mobile: 120, tablet: 135, desktop: 150),
                                     color: Colors.grey[300],
                                     child: Icon(
                                       Icons.image_not_supported,
@@ -329,119 +381,102 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                                     ),
                                   );
                                 },
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            'assets/images/bulding.jpg',
-                            width: 160.w,
-                            height: 120.h,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: 160.w,
-                                height: 120.h,
-                                color: Colors.grey[300],
-                                child: Icon(
-                                  Icons.image_not_supported,
-                                  color: Colors.grey[500],
-                                ),
-                              );
-                            },
-                          ),
-                  ),
-                ),
-                Positioned(
-                  top: 12.h,
-                  right: 12.w,
-                  child: Container(
-                    padding: EdgeInsets.all(6.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Icon(
-                      Icons.favorite_border,
-                      color: AppColors.primary,
-                      size: 16.sp,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(8.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Rating badge between image and title
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.warning,
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: Colors.white,
-                          size: 10.sp,
-                        ),
-                        SizedBox(width: 2.w),
-                        Text(
-                          property.rating != null ? property.rating!.toStringAsFixed(1) : '0.0',
-                          style: AppTextStyles.caption.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 10.sp,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Title
-                  Flexible(
-                    child: Text(
-                      property.title,
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.sp,
+                              ),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  // Price
-                  Row(
+                    Positioned(
+                      top: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
+                      right: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
+                      child: Container(
+                        padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 6, tablet: 7, desktop: 8)),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 20, tablet: 22, desktop: 24)),
+                        ),
+                        child: Icon(
+                          Icons.favorite_border,
+                          color: AppColors.primary,
+                          size: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Text(
-                        '\$${property.pricePerNight.toStringAsFixed(0)}',
-                        style: AppTextStyles.bodyLarge.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.sp,
+                      // Rating badge between image and title
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveUtils.spacing(context, mobile: 6, tablet: 7, desktop: 8),
+                          vertical: ResponsiveUtils.spacing(context, mobile: 3, tablet: 4, desktop: 5),
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.warning,
+                          borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 10, tablet: 12, desktop: 14)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.star, color: Colors.white, size: ResponsiveUtils.fontSize(context, mobile: 10, tablet: 11, desktop: 12)),
+                            SizedBox(width: ResponsiveUtils.spacing(context, mobile: 2, tablet: 3, desktop: 4)),
+                            Text(
+                              property.rating != null
+                                  ? property.rating!.toStringAsFixed(1)
+                                  : '0.0',
+                              style: AppTextStyles.caption.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                                fontSize: ResponsiveUtils.fontSize(context, mobile: 10, tablet: 11, desktop: 12),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        ' /Night',
-                        style: AppTextStyles.caption.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 10.sp,
+                      // Title
+                      Flexible(
+                        child: Text(
+                          property.title,
+                          style: AppTextStyles.bodyMedium.copyWith(
+                            color: AppColors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 13, desktop: 14),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
+                      ),
+                      // Price
+                      Row(
+                        children: [
+                          Text(
+                            '\$${property.pricePerNight.toStringAsFixed(0)}',
+                            style: AppTextStyles.bodyLarge.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                            ),
+                          ),
+                          Text(
+                            ' /Night',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary,
+                              fontSize: ResponsiveUtils.fontSize(context, mobile: 10, tablet: 11, desktop: 12),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
-        ],
         ),
       ),
     );
@@ -452,22 +487,16 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64.sp,
-            color: Colors.grey[400],
-          ),
-          SizedBox(height: 16.h),
+          Icon(Icons.search_off, size: ResponsiveUtils.fontSize(context, mobile: 64, tablet: 72, desktop: 80), color: Colors.grey[400]),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           Text(
             'No Results Found',
             style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
           Text(
             'Try adjusting your search filters',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: Colors.grey[500],
-            ),
+            style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey[500]),
           ),
         ],
       ),
@@ -479,22 +508,22 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(ResponsiveUtils.radius(context, mobile: 20, tablet: 22, desktop: 24))),
       ),
       builder: (context) => Container(
-        padding: EdgeInsets.all(24.w),
+        padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 40.w,
-              height: 4.h,
+              width: ResponsiveUtils.size(context, mobile: 40, tablet: 45, desktop: 50),
+              height: ResponsiveUtils.size(context, mobile: 4, tablet: 5, desktop: 6),
               decoration: BoxDecoration(
                 color: AppColors.border,
-                borderRadius: BorderRadius.circular(2.r),
+                borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 2, tablet: 3, desktop: 4)),
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
             Text(
               'Sort By',
               style: AppTextStyles.h4.copyWith(
@@ -502,10 +531,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
             _buildSortOption('Lowest Price'),
             _buildSortOption('Highest Price'),
-            SizedBox(height: 20.h),
+            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
           ],
         ),
       ),
@@ -522,12 +551,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
         Navigator.pop(context);
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
+        margin: EdgeInsets.only(bottom: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
         child: Row(
           children: [
             Container(
-              width: 20.w,
-              height: 20.w,
+              width: ResponsiveUtils.size(context, mobile: 20, tablet: 22, desktop: 24),
+              height: ResponsiveUtils.size(context, mobile: 20, tablet: 22, desktop: 24),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -537,14 +566,10 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                 color: isSelected ? AppColors.green : Colors.transparent,
               ),
               child: isSelected
-                  ? Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 12.sp,
-                    )
+                  ? Icon(Icons.check, color: Colors.white, size: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 13, desktop: 14))
                   : null,
             ),
-            SizedBox(width: 16.w),
+            SizedBox(width: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
             Expanded(
               child: Text(
                 option,
@@ -561,7 +586,8 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       // User reached the end of the list, load more
       _loadMoreResults();
     }
@@ -569,26 +595,26 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
 
   void _loadMoreResults() async {
     if (!mounted) return;
-    
+
     try {
       final bloc = context.read<SearchBloc>();
       if (bloc.isClosed) return;
-      
+
       final state = bloc.state;
-      
-      if (state is SearchLoaded && !state.hasReachedMax && _currentFilter != null) {
-        print('🔍 Loading more results...');
-        
+
+      if (state is SearchLoaded &&
+          !state.hasReachedMax &&
+          _currentFilter != null) {
+
         // Create a new filter with updated skip count for pagination
         final nextPageFilter = _currentFilter!.copyWith(
           skipCount: state.properties.length,
         );
-        
+
         // Add event to load more results
         bloc.add(LoadMorePropertiesEvent(filter: nextPageFilter));
       }
     } catch (e) {
-      print('Error loading more results: $e');
       // Pagination will stop gracefully
     }
   }

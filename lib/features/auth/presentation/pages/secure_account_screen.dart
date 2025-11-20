@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../../theming/colors.dart';
 import '../widgets/custom_button.dart';
@@ -75,37 +75,45 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
         },
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 32),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 8.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 12, desktop: 16)),
 
                 // Error container
                 if (state.error != null)
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.all(12.w),
-                    margin: EdgeInsets.only(bottom: 16.h),
+                    padding: EdgeInsets.all(
+                      ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
+                    ),
+                    margin: EdgeInsets.only(
+                      bottom: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20),
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.red.shade50,
                       border: Border.all(color: Colors.red.shade200),
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveUtils.radius(context, mobile: 8, tablet: 10, desktop: 12),
+                      ),
                     ),
                     child: Row(
                       children: [
                         Icon(
                           Icons.error_outline,
                           color: Colors.red,
-                          size: 20.sp,
+                          size: ResponsiveUtils.size(context, mobile: 20, tablet: 22, desktop: 24),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
                         Expanded(
                           child: Text(
                             state.error!,
                             style: TextStyle(
                               color: Colors.red.shade700,
-                              fontSize: 14.sp,
+                              fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -118,18 +126,18 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                   'Secure Your Account',
                   style: AppTextStyles.h3.copyWith(
                     color: AppColors.textPrimary,
-                    fontSize: 22.sp,
+                    fontSize: ResponsiveUtils.fontSize(context, mobile: 22, tablet: 24, desktop: 26),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 6, tablet: 8, desktop: 10)),
                 Text(
                   'Create A Strong , Long And Hard Guessing Password',
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.textSecondary,
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
 
                 // Password
                 CustomTextField(
@@ -151,7 +159,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                     cubit.clearError();
                   },
                 ),
-                SizedBox(height: 14.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 14, tablet: 16, desktop: 18)),
 
                 // Confirm
                 CustomTextField(
@@ -173,7 +181,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                   },
                 ),
 
-                SizedBox(height: 40.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56)),
 
                 CustomButton(
                   text: state.isLoading ? 'Creating...' : 'Create Account',
@@ -185,7 +193,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                           context.read<RegistrationCubit>().submit();
                         },
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
               ],
             ),
           );

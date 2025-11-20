@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:image_picker/image_picker.dart';
 
 part 'create_property_request.g.dart';
 
@@ -12,6 +13,7 @@ class CreatePropertyStepOneRequest {
   final int floor;
   final int maximumNumberOfGuest;
   final int livingrooms;
+  final int area;
   final String propertyDescription;
   final String hourseRules;
   final String importantInformation;
@@ -23,6 +25,8 @@ class CreatePropertyStepOneRequest {
   final String propertyTypeId;
   final String governorateId;
   final List<String> propertyFeatureIds;
+  final String? latitude;
+  final String? longitude;
 
   const CreatePropertyStepOneRequest({
     required this.propertyTitle,
@@ -33,6 +37,7 @@ class CreatePropertyStepOneRequest {
     required this.floor,
     required this.maximumNumberOfGuest,
     required this.livingrooms,
+    required this.area,
     required this.propertyDescription,
     required this.hourseRules,
     required this.importantInformation,
@@ -44,6 +49,8 @@ class CreatePropertyStepOneRequest {
     required this.propertyTypeId,
     required this.governorateId,
     required this.propertyFeatureIds,
+    this.latitude,
+    this.longitude,
   });
 
   factory CreatePropertyStepOneRequest.fromJson(Map<String, dynamic> json) =>
@@ -101,13 +108,16 @@ class PropertyAvailability {
 @JsonSerializable()
 class PropertyMediaUpload {
   final String propertyId;
-  final String image;
+  final String image; // File path (for backward compatibility)
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  final XFile? imageFile; // XFile for web compatibility
   final int order;
   final bool isActive;
 
   const PropertyMediaUpload({
     required this.propertyId,
     required this.image,
+    this.imageFile,
     required this.order,
     this.isActive = true,
   });

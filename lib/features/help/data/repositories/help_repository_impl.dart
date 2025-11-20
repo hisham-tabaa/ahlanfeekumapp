@@ -1,6 +1,5 @@
-import 'package:dio/dio.dart';
-
 import '../../../../core/network/api_result.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../domain/entities/settings.dart';
 import '../../domain/repositories/help_repository.dart';
 import '../datasources/help_remote_data_source.dart';
@@ -28,14 +27,8 @@ class HelpRepositoryImpl implements HelpRepository {
         isActive: response.isActive,
       );
       return ApiResult.success(settings);
-    } on DioException catch (e) {
-      final errorMessage =
-          e.response?.data?['message'] ??
-          e.response?.statusMessage ??
-          'Failed to load settings';
-      return ApiResult.failure(errorMessage);
     } catch (e) {
-      return ApiResult.failure('An unexpected error occurred: $e');
+      return ApiResult.failure(ErrorHandler.getErrorMessage(e));
     }
   }
 
@@ -44,14 +37,8 @@ class HelpRepositoryImpl implements HelpRepository {
     try {
       await _remoteDataSource.createTicket(request);
       return const ApiResult.success(true);
-    } on DioException catch (e) {
-      final errorMessage =
-          e.response?.data?['message'] ??
-          e.response?.statusMessage ??
-          'Failed to submit ticket';
-      return ApiResult.failure(errorMessage);
     } catch (e) {
-      return ApiResult.failure('An unexpected error occurred: $e');
+      return ApiResult.failure(ErrorHandler.getErrorMessage(e));
     }
   }
 }

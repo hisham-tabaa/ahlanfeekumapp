@@ -1,5 +1,8 @@
+import 'package:image_picker/image_picker.dart';
+
 class RegisterUserRequest {
   final String? profilePhotoPath; // local file path, optional
+  final XFile? profilePhotoFile; // XFile for web compatibility
   final String name;
   final String latitude;
   final String longitude;
@@ -12,6 +15,7 @@ class RegisterUserRequest {
 
   const RegisterUserRequest({
     this.profilePhotoPath,
+    this.profilePhotoFile,
     required this.name,
     required this.latitude,
     required this.longitude,

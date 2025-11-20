@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 const _unset = Object();
 
@@ -13,6 +14,7 @@ class PropertyFormData {
   int floor;
   int maximumNumberOfGuests;
   int livingRooms;
+  int? area;
   String? propertyDescription;
   String? houseRules;
   String? importantInformation;
@@ -21,6 +23,7 @@ class PropertyFormData {
 
   // Step 2: Photos
   List<File> selectedImages;
+  List<XFile> selectedImageFiles; // Added for web compatibility
   int? primaryImageIndex;
 
   // Step 3: Price
@@ -52,12 +55,14 @@ class PropertyFormData {
     this.floor = 1,
     this.maximumNumberOfGuests = 1,
     this.livingRooms = 1,
+    this.area,
     this.propertyDescription,
     this.houseRules,
     this.importantInformation,
     this.propertyFeatureIds = const [],
     this.selectedFeatures = const [],
     this.selectedImages = const [],
+    this.selectedImageFiles = const [],
     this.primaryImageIndex,
     this.pricePerNight,
     this.address,
@@ -82,12 +87,14 @@ class PropertyFormData {
     Object? floor = _unset,
     Object? maximumNumberOfGuests = _unset,
     Object? livingRooms = _unset,
+    Object? area = _unset,
     Object? propertyDescription = _unset,
     Object? houseRules = _unset,
     Object? importantInformation = _unset,
     Object? propertyFeatureIds = _unset,
     Object? selectedFeatures = _unset,
     Object? selectedImages = _unset,
+    Object? selectedImageFiles = _unset,
     Object? primaryImageIndex = _unset,
     Object? pricePerNight = _unset,
     Object? address = _unset,
@@ -123,6 +130,7 @@ class PropertyFormData {
       livingRooms: livingRooms == _unset
           ? this.livingRooms
           : livingRooms as int,
+      area: area == _unset ? this.area : area as int?,
       propertyDescription: propertyDescription == _unset
           ? this.propertyDescription
           : propertyDescription as String?,
@@ -141,6 +149,9 @@ class PropertyFormData {
       selectedImages: selectedImages == _unset
           ? this.selectedImages
           : selectedImages as List<File>,
+      selectedImageFiles: selectedImageFiles == _unset
+          ? this.selectedImageFiles
+          : selectedImageFiles as List<XFile>,
       primaryImageIndex: primaryImageIndex == _unset
           ? this.primaryImageIndex
           : primaryImageIndex as int?,
@@ -177,8 +188,15 @@ class PropertyFormData {
         propertyTitle!.isNotEmpty &&
         propertyTypeId != null &&
         propertyTypeId!.isNotEmpty &&
-        governorateId != null &&
-        governorateId!.isNotEmpty;
+        area != null &&
+        area! > 0 &&
+        propertyDescription != null &&
+        propertyDescription!.isNotEmpty &&
+        houseRules != null &&
+        houseRules!.isNotEmpty &&
+        importantInformation != null &&
+        importantInformation!.isNotEmpty &&
+        propertyFeatureIds.isNotEmpty;
   }
 
   bool get isLocationStepValid {
@@ -187,7 +205,9 @@ class PropertyFormData {
         streetAndBuildingNumber != null &&
         streetAndBuildingNumber!.isNotEmpty &&
         landMark != null &&
-        landMark!.isNotEmpty;
+        landMark!.isNotEmpty &&
+        latitude != null &&
+        longitude != null;
   }
 
   bool get isBothDetailsAndLocationValid {
@@ -195,7 +215,7 @@ class PropertyFormData {
   }
 
   bool get isStep2Valid {
-    return selectedImages.isNotEmpty;
+    return selectedImages.isNotEmpty && primaryImageIndex != null;
   }
 
   bool get isStep3Valid {
@@ -208,7 +228,9 @@ class PropertyFormData {
         streetAndBuildingNumber != null &&
         streetAndBuildingNumber!.isNotEmpty &&
         landMark != null &&
-        landMark!.isNotEmpty;
+        landMark!.isNotEmpty &&
+        latitude != null &&
+        longitude != null;
   }
 
   bool get isStep5Valid {

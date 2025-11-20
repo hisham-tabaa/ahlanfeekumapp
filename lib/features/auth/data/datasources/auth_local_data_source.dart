@@ -13,6 +13,8 @@ abstract class AuthLocalDataSource {
   Future<String?> getRefreshToken();
   Future<void> setLoggedIn(bool isLoggedIn);
   Future<bool> isLoggedIn();
+  Future<void> setGuest(bool isGuest);
+  Future<bool> isGuest();
   Future<void> clearUserData();
   Future<bool> hasValidToken();
   Future<void> clearInvalidTokens();
@@ -105,10 +107,29 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   @override
+  Future<void> setGuest(bool isGuest) async {
+    try {
+      await sharedPreferences.setBool(AppConstants.isGuestKey, isGuest);
+    } catch (e) {
+      throw CacheException('Failed to set guest status: $e');
+    }
+  }
+
+  @override
+  Future<bool> isGuest() async {
+    try {
+      return sharedPreferences.getBool(AppConstants.isGuestKey) ?? false;
+    } catch (e) {
+      throw CacheException('Failed to get guest status: $e');
+    }
+  }
+
+  @override
   Future<void> clearUserData() async {
     try {
       await sharedPreferences.remove(AppConstants.userDataKey);
       await sharedPreferences.remove(AppConstants.isLoggedInKey);
+      await sharedPreferences.remove(AppConstants.isGuestKey);
       await sharedPreferences.remove(AppConstants.accessTokenKey);
       await sharedPreferences.remove(AppConstants.refreshTokenKey);
     } catch (e) {
@@ -117,6 +138,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   // Helper method to check if current token is valid (not a placeholder)
+  @override
   Future<bool> hasValidToken() async {
     try {
       final token = sharedPreferences.getString(AppConstants.accessTokenKey);
@@ -125,11 +147,7 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       }
 
       // Check if it's a placeholder token
-      const placeholderTokens = [
-        'otp_verified_token',
-        'google_token',
-        'password_reset_token',
-      ];
+      const placeholderTokens = ['otp_verified_token', 'password_reset_token'];
 
       return !placeholderTokens.contains(token);
     } catch (e) {
@@ -138,15 +156,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   }
 
   // Helper method to clear invalid tokens
+  @override
   Future<void> clearInvalidTokens() async {
     try {
       final hasValid = await hasValidToken();
       if (!hasValid) {
         await clearUserData();
-        print('🧹 Cleared invalid authentication data');
       }
     } catch (e) {
-      print('🚨 Error clearing invalid tokens: $e');
     }
   }
 }

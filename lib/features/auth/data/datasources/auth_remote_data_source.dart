@@ -1,19 +1,26 @@
 import 'package:dio/dio.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/utils/file_upload_helper.dart';
 import '../models/login_request.dart';
 import '../models/login_response.dart';
 import '../models/otp_response.dart';
 import '../models/otp_verification_response.dart';
 import '../models/register_user_request.dart';
 import '../models/register_user_response.dart';
+import '../models/firebase_auth_request.dart';
 
 abstract class AuthRemoteDataSource {
   Future<LoginResponse> login(LoginRequest request);
+  Future<LoginResponse> firebaseAuth(String idToken, {String? fcmToken});
   Future<OtpResponse> sendOtpEmail(String email);
   Future<OtpResponse> sendOtpPhone(String phone);
   Future<OtpVerificationResponse> verifyOtp(
     String emailOrPhone,
+    String securityCode,
+  );
+  Future<OtpVerificationResponse> verifyPhone(
+    String phone,
     String securityCode,
   );
   Future<OtpResponse> requestPasswordReset(String emailOrPhone);
@@ -36,6 +43,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final url = '${AppConstants.baseUrl}${AppConstants.loginEndpoint}';
       final requestData = request.toJson();
 
+      if (requestData['fcmToken'] != null) {
+      }
+
       final response = await dio.post(
         url,
         data: requestData,
@@ -47,6 +57,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           },
         ),
       );
+
 
       if (response.statusCode == 200) {
         final loginResponse = LoginResponse.fromJson(response.data);
@@ -64,6 +75,56 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw const NetworkException('Network connection error');
       } else if (e.response != null) {
         final errorMessage = e.response?.data?['message'] ?? 'Login failed';
+        throw ServerException(errorMessage, e.response?.statusCode);
+      } else {
+        throw const ServerException('Unknown server error');
+      }
+    } catch (e) {
+      throw ServerException('Unexpected error: $e');
+    }
+  }
+
+  @override
+  Future<LoginResponse> firebaseAuth(String idToken, {String? fcmToken}) async {
+    try {
+      final url = '${AppConstants.baseUrl}${AppConstants.firebaseAuthEndpoint}';
+      final requestData = FirebaseAuthRequest(
+        idToken: idToken,
+        fcmToken: fcmToken,
+      ).toJson();
+
+
+      final response = await dio.post(
+        url,
+        data: requestData,
+        options: Options(
+          headers: {
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        ),
+      );
+
+
+      if (response.statusCode == 200) {
+        final loginResponse = LoginResponse.fromJson(response.data);
+        return loginResponse;
+      } else {
+        throw ServerException(
+          'Firebase auth failed with status code: ${response.statusCode}',
+          response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        throw const NetworkException('Network connection error');
+      } else if (e.response != null) {
+        final errorMessage =
+            e.response?.data?['message'] ?? 'Firebase auth failed';
         throw ServerException(errorMessage, e.response?.statusCode);
       } else {
         throw const ServerException('Unknown server error');
@@ -119,8 +180,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<OtpResponse> sendOtpPhone(String phone) async {
     try {
+
+      // Remove '+' symbol from phone number as backend expects digits only
+      final cleanPhone = phone.replaceAll('+', '');
+
+      // Call backend to generate OTP and send via WhatsApp (backend handles WhatsApp automatically)
+      // Using 'email' parameter as specified in the API curl
       final url =
-          '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?phone=$phone';
+          '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?email=$cleanPhone';
+
 
       final response = await dio.post(
         url,
@@ -133,6 +201,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           },
         ),
       );
+
 
       if (response.statusCode == 200) {
         final otpResponse = OtpResponse.fromJson(response.data);
@@ -199,6 +268,58 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       } else if (e.response != null) {
         final errorMessage =
             e.response?.data?['message'] ?? 'Verify OTP failed';
+        throw ServerException(errorMessage, e.response?.statusCode);
+      } else {
+        throw const NetworkException('Unknown network error');
+      }
+    } catch (e) {
+      throw ServerException('Unexpected error: $e');
+    }
+  }
+
+  @override
+  Future<OtpVerificationResponse> verifyPhone(
+    String phone,
+    String securityCode,
+  ) async {
+    try {
+
+      // Remove '+' symbol from phone number as backend expects digits only
+      final cleanPhone = phone.replaceAll('+', '');
+
+      final url = '${AppConstants.baseUrl}${AppConstants.verifyPhoneEndpoint}';
+      final requestData = {'phone': cleanPhone, 'securityCode': securityCode};
+
+
+      final response = await dio.post(
+        url,
+        data: requestData,
+        options: Options(
+          headers: {
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        ),
+      );
+
+
+      if (response.statusCode == 200) {
+        return OtpVerificationResponse.fromJson(response.data);
+      } else {
+        throw ServerException(
+          'Verify phone failed with status code: ${response.statusCode}',
+          response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        throw const NetworkException('Network connection error');
+      } else if (e.response != null) {
+        final errorMessage =
+            e.response?.data?['message'] ?? 'Verify phone failed';
         throw ServerException(errorMessage, e.response?.statusCode);
       } else {
         throw const NetworkException('Unknown network error');
@@ -309,13 +430,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final url = '${AppConstants.baseUrl}${AppConstants.registerUserEndpoint}';
 
+      // Use XFile if available (web compatible), otherwise fallback to path
+      MultipartFile? profilePhoto;
+      if (request.profilePhotoFile != null) {
+        profilePhoto = await FileUploadHelper.createMultipartFile(
+          request.profilePhotoFile!,
+          filename: 'profile.jpg',
+        );
+      } else if (request.profilePhotoPath != null) {
+        profilePhoto = await FileUploadHelper.createMultipartFileFromPath(
+          request.profilePhotoPath,
+          filename: 'profile.jpg',
+        );
+      }
+
       final formData = FormData.fromMap({
-        'ProfilePhoto': request.profilePhotoPath != null
-            ? await MultipartFile.fromFile(
-                request.profilePhotoPath!,
-                filename: 'profile.jpg',
-              )
-            : '',
+        'ProfilePhoto': profilePhoto ?? '',
         'Name': request.name,
         'Latitude': request.latitude,
         'Longitude': request.longitude,

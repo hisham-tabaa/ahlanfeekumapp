@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'dart:io';
 
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../auth/presentation/widgets/custom_button.dart';
@@ -31,6 +32,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
   final _addressController = TextEditingController();
   bool _isProfilePhotoChanged = false;
   String? _profilePhotoPath;
+  XFile? _profilePhotoFile; // Added for web compatibility
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   String _countryCode = '+963'; // Default to Syria
@@ -322,10 +324,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
               _countryCode = parsedCountryCode;
             });
             _phoneController.text = newPhone;
-            print(
-              '🔄 [PROFILE] Parsed country code: $parsedCountryCode from $phoneNumber',
-            );
-            print('🔄 [PROFILE] Parsed phone: $newPhone');
           }
         } else {
           if (_phoneController.text != phoneNumber) {
@@ -362,6 +360,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       final XFile? pickedFile = await _picker.pickImage(source: source);
       if (pickedFile != null) {
         setState(() {
+          _profilePhotoFile = pickedFile;
           _imageFile = File(pickedFile.path);
           _profilePhotoPath = pickedFile.path;
           _isProfilePhotoChanged = true;
@@ -385,7 +384,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         ),
         titleTextStyle: AppTextStyles.h2.copyWith(
           color: AppColors.textPrimary,
-          fontSize: 18.sp,
+          fontSize: ResponsiveUtils.fontSize(
+            context,
+            mobile: 18,
+            tablet: 20,
+            desktop: 22,
+          ),
         ),
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
@@ -413,310 +417,537 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
         builder: (context, state) {
           final profile = state.profile;
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              children: [
-                // Profile Photo Section
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 60.r,
-                      backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                      backgroundImage: _imageFile != null
-                          ? FileImage(_imageFile!)
-                          : profile?.profilePhotoUrl != null
-                          ? CachedNetworkImageProvider(
-                              profile!.profilePhotoUrl!,
-                            )
-                          : null,
-                      child:
-                          (_imageFile == null &&
-                              profile?.profilePhotoUrl == null)
-                          ? Icon(
-                              Icons.person,
-                              size: 60.sp,
-                              color: AppColors.textSecondary,
-                            )
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: GestureDetector(
-                        onTap: _onPickProfilePhoto,
-                        child: Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2.w),
-                          ),
-                          child: Icon(
-                            Icons.edit,
-                            size: 16.sp,
-                            color: Colors.white,
+          return ResponsiveLayout(
+            maxWidth: 600,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(
+                ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 32,
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Profile Photo Section
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: ResponsiveUtils.size(
+                          context,
+                          mobile: 60,
+                          tablet: 68,
+                          desktop: 76,
+                        ),
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.1,
+                        ),
+                        backgroundImage: _imageFile != null
+                            ? (kIsWeb && _profilePhotoFile != null
+                                      ? NetworkImage(_profilePhotoFile!.path)
+                                      : FileImage(_imageFile!))
+                                  as ImageProvider
+                            : profile?.profilePhotoUrl != null
+                            ? CachedNetworkImageProvider(
+                                profile!.profilePhotoUrl!,
+                              )
+                            : null,
+                        child:
+                            (_imageFile == null &&
+                                profile?.profilePhotoUrl == null)
+                            ? Icon(
+                                Icons.person,
+                                size: ResponsiveUtils.size(
+                                  context,
+                                  mobile: 60,
+                                  tablet: 68,
+                                  desktop: 76,
+                                ),
+                                color: AppColors.textSecondary,
+                              )
+                            : null,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: _onPickProfilePhoto,
+                          child: Container(
+                            padding: EdgeInsets.all(
+                              ResponsiveUtils.spacing(
+                                context,
+                                mobile: 8,
+                                tablet: 10,
+                                desktop: 12,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: ResponsiveUtils.size(
+                                  context,
+                                  mobile: 2,
+                                  tablet: 2.5,
+                                  desktop: 3,
+                                ),
+                              ),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              size: ResponsiveUtils.size(
+                                context,
+                                mobile: 16,
+                                tablet: 18,
+                                desktop: 20,
+                              ),
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 12,
+                      tablet: 14,
+                      desktop: 16,
                     ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                TextButton.icon(
-                  onPressed: _onPickProfilePhoto,
-                  icon: Icon(Icons.edit, size: 16.sp),
-                  label: const Text('Change Photo'),
-                ),
-
-                SizedBox(height: 24.h),
-
-                // Form Fields
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Full Name',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
-                        fontSize: 14.sp,
+                  ),
+                  TextButton.icon(
+                    onPressed: _onPickProfilePhoto,
+                    icon: Icon(
+                      Icons.edit,
+                      size: ResponsiveUtils.size(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 20,
                       ),
                     ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      controller: _nameController,
-                      hintText: 'Enter your full name',
-                    ),
+                    label: const Text('Change Photo'),
+                  ),
 
-                    SizedBox(height: 20.h),
-
-                    Text(
-                      'Your Phone',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
-                        fontSize: 14.sp,
-                      ),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 24,
+                      tablet: 28,
+                      desktop: 32,
                     ),
-                    SizedBox(height: 8.h),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(color: Colors.grey[300]!),
+                  ),
+
+                  // Form Fields
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Full Name',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 15,
+                            desktop: 16,
+                          ),
+                        ),
                       ),
-                      child: Row(
-                        children: [
-                          // Country Code Picker
-                          CountryCodePicker(
-                            key: ValueKey(
-                              _countryCode,
-                            ), // Force rebuild when country code changes
-                            onChanged: (country) {
-                              setState(() {
-                                _countryCode = country.dialCode ?? '+963';
-                              });
-                              print(
-                                '🌍 [PROFILE] Country code changed to: $_countryCode',
-                              );
-                            },
-                            initialSelection: _countryCode,
-                            favorite: const [
-                              '+963',
-                              '+213',
-                              '+1',
-                              '+44',
-                              '+971',
-                            ],
-                            showCountryOnly: false,
-                            showOnlyCountryWhenClosed: false,
-                            alignLeft: false,
-                            textStyle: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                            dialogTextStyle: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                            searchStyle: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 0,
-                            ),
-                            flagWidth: 20.w,
-                            backgroundColor: Colors.transparent,
-                            barrierColor: Colors.black54,
-                            boxDecoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.r),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
+                      CustomTextField(
+                        controller: _nameController,
+                        hintText: 'Enter your full name',
+                      ),
+
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 20,
+                          tablet: 22,
+                          desktop: 24,
+                        ),
+                      ),
+
+                      Text(
+                        'Your Phone',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 15,
+                            desktop: 16,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 12,
+                              tablet: 14,
+                              desktop: 16,
                             ),
                           ),
-
-                          // Divider
-                          Container(
-                            height: 30.h,
-                            width: 1,
-                            color: Colors.grey.shade300,
-                          ),
-
-                          // Phone Number Input
-                          Expanded(
-                            child: TextField(
-                              controller: _phoneController,
-                              keyboardType: TextInputType.phone,
-                              style: AppTextStyles.bodyMedium.copyWith(
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            // Country Code Picker
+                            CountryCodePicker(
+                              key: ValueKey(
+                                _countryCode,
+                              ), // Force rebuild when country code changes
+                              onChanged: (country) {
+                                setState(() {
+                                  _countryCode = country.dialCode ?? '+963';
+                                });
+                              },
+                              initialSelection: _countryCode,
+                              favorite: const [
+                                '+963',
+                                '+213',
+                                '+1',
+                                '+44',
+                                '+971',
+                              ],
+                              showCountryOnly: false,
+                              showOnlyCountryWhenClosed: false,
+                              alignLeft: false,
+                              textStyle: AppTextStyles.bodyMedium.copyWith(
                                 color: AppColors.textPrimary,
                               ),
-                              decoration: InputDecoration(
-                                hintText: 'Phone number',
-                                hintStyle: AppTextStyles.bodyMedium.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12.w,
-                                  vertical: 14.h,
-                                ),
+                              dialogTextStyle: AppTextStyles.bodyMedium
+                                  .copyWith(color: AppColors.textPrimary),
+                              searchStyle: AppTextStyles.bodyMedium.copyWith(
+                                color: AppColors.textPrimary,
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    Text(
-                      'Email Address',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      controller: _emailController,
-                      hintText: 'Enter your email',
-                      keyboardType: TextInputType.emailAddress,
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    Text(
-                      'Location',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      controller: _addressController,
-                      hintText: 'Enter your location',
-                      suffixIcon: Icon(
-                        Icons.location_on_outlined,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    // Password Section
-                    Text(
-                      'Password',
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: AppColors.textSecondary,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 14.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '••••••••••',
-                              style: AppTextStyles.bodyMedium.copyWith(
-                                fontSize: 16.sp,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: ResponsiveUtils.spacing(
+                                  context,
+                                  mobile: 8,
+                                  tablet: 10,
+                                  desktop: 12,
+                                ),
+                                vertical: 0,
                               ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.push(
+                              flagWidth: ResponsiveUtils.size(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider.value(
-                                    value: context.read<ProfileBloc>(),
-                                    child: const ChangePasswordScreen(),
+                                mobile: 20,
+                                tablet: 22,
+                                desktop: 24,
+                              ),
+                              backgroundColor: Colors.transparent,
+                              barrierColor: Colors.black54,
+                              boxDecoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveUtils.radius(
+                                    context,
+                                    mobile: 8,
+                                    tablet: 10,
+                                    desktop: 12,
                                   ),
                                 ),
-                              );
-                            },
-                            child: Text(
-                              'Change',
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
                               ),
                             ),
-                          ),
-                        ],
+
+                            // Divider
+                            Container(
+                              height: ResponsiveUtils.size(
+                                context,
+                                mobile: 30,
+                                tablet: 34,
+                                desktop: 38,
+                              ),
+                              width: 1,
+                              color: Colors.grey.shade300,
+                            ),
+
+                            // Phone Number Input
+                            Expanded(
+                              child: TextField(
+                                controller: _phoneController,
+                                keyboardType: TextInputType.phone,
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  color: AppColors.textPrimary,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Phone number',
+                                  hintStyle: AppTextStyles.bodyMedium.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: ResponsiveUtils.spacing(
+                                      context,
+                                      mobile: 12,
+                                      tablet: 14,
+                                      desktop: 16,
+                                    ),
+                                    vertical: ResponsiveUtils.spacing(
+                                      context,
+                                      mobile: 14,
+                                      tablet: 16,
+                                      desktop: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 20,
+                          tablet: 22,
+                          desktop: 24,
+                        ),
+                      ),
+
+                      Text(
+                        'Email Address',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 15,
+                            desktop: 16,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
+                      CustomTextField(
+                        controller: _emailController,
+                        hintText: 'Enter your email',
+                        keyboardType: TextInputType.emailAddress,
+                      ),
+
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 20,
+                          tablet: 22,
+                          desktop: 24,
+                        ),
+                      ),
+
+                      Text(
+                        'Location',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 15,
+                            desktop: 16,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
+                      CustomTextField(
+                        controller: _addressController,
+                        hintText: 'Enter your location',
+                        suffixIcon: Icon(
+                          Icons.location_on_outlined,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 20,
+                          tablet: 22,
+                          desktop: 24,
+                        ),
+                      ),
+
+                      // Password Section
+                      Text(
+                        'Password',
+                        style: AppTextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 15,
+                            desktop: 16,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveUtils.spacing(
+                            context,
+                            mobile: 16,
+                            tablet: 20,
+                            desktop: 24,
+                          ),
+                          vertical: ResponsiveUtils.spacing(
+                            context,
+                            mobile: 14,
+                            tablet: 16,
+                            desktop: 18,
+                          ),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 12,
+                              tablet: 14,
+                              desktop: 16,
+                            ),
+                          ),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '••••••••••',
+                                style: AppTextStyles.bodyMedium.copyWith(
+                                  fontSize: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 16,
+                                    tablet: 18,
+                                    desktop: 20,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileBloc>(),
+                                      child: const ChangePasswordScreen(),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                'Change',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 14,
+                                    tablet: 15,
+                                    desktop: 16,
+                                  ),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 40,
+                      tablet: 44,
+                      desktop: 48,
                     ),
-                  ],
-                ),
+                  ),
 
-                SizedBox(height: 40.h),
+                  // Save Button
+                  CustomButton(
+                    text: 'Save Changes',
+                    isLoading: state.isUpdating,
+                    onPressed: () {
+                      // Combine country code with phone number
+                      final phone = _phoneController.text.trim();
+                      final fullPhoneNumber = phone.isNotEmpty
+                          ? '$_countryCode$phone'
+                          : '';
 
-                // Save Button
-                CustomButton(
-                  text: 'Save Changes',
-                  isLoading: state.isUpdating,
-                  onPressed: () {
-                    // Combine country code with phone number
-                    final phone = _phoneController.text.trim();
-                    final fullPhoneNumber = phone.isNotEmpty
-                        ? '$_countryCode$phone'
-                        : '';
 
-                    print('📱 [PROFILE UPDATE] Updating phone number');
-                    print('Country Code: $_countryCode');
-                    print('Phone: $phone');
-                    print('Full Phone: $fullPhoneNumber');
+                      final request = UpdateProfileRequest(
+                        name: _nameController.text.trim(),
+                        email: _emailController.text.trim(),
+                        phoneNumber: fullPhoneNumber,
+                        latitude: state.profile?.latitude ?? '0',
+                        longitude: state.profile?.longitude ?? '0',
+                        address: _addressController.text.trim(),
+                        isProfilePhotoChanged: _isProfilePhotoChanged,
+                        profilePhotoPath: _profilePhotoPath,
+                        profilePhotoFile: _profilePhotoFile,
+                      );
 
-                    final request = UpdateProfileRequest(
-                      name: _nameController.text.trim(),
-                      email: _emailController.text.trim(),
-                      phoneNumber: fullPhoneNumber,
-                      latitude: state.profile?.latitude ?? '0',
-                      longitude: state.profile?.longitude ?? '0',
-                      address: _addressController.text.trim(),
-                      isProfilePhotoChanged: _isProfilePhotoChanged,
-                      profilePhotoPath: _profilePhotoPath,
-                    );
 
-                    print('📦 [PROFILE UPDATE] Request: ${request.toJson()}');
+                      context.read<ProfileBloc>().add(
+                        UpdateProfileEvent(request),
+                      );
+                    },
+                    backgroundColor: AppColors.primary,
+                  ),
 
-                    context.read<ProfileBloc>().add(
-                      UpdateProfileEvent(request),
-                    );
-                  },
-                  backgroundColor: AppColors.primary,
-                ),
-
-                SizedBox(height: 40.h),
-              ],
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 40,
+                      tablet: 44,
+                      desktop: 48,
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },

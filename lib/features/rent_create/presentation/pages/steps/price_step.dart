@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../theming/colors.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../bloc/rent_create_bloc.dart';
 import '../../bloc/rent_create_event.dart';
@@ -29,19 +29,42 @@ class _PriceStepState extends State<PriceStep> {
     return BlocBuilder<RentCreateBloc, RentCreateState>(
       builder: (context, state) {
         // Update controller when form data changes
-        if (_priceController.text != (state.formData.pricePerNight?.toString() ?? '')) {
-          _priceController.text = state.formData.pricePerNight?.toString() ?? '';
+        if (_priceController.text !=
+            (state.formData.pricePerNight?.toString() ?? '')) {
+          _priceController.text =
+              state.formData.pricePerNight?.toString() ?? '';
         }
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(20.w),
+          padding: EdgeInsets.all(
+            ResponsiveUtils.spacing(
+              context,
+              mobile: 20,
+              tablet: 24,
+              desktop: 28,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
-              SizedBox(height: 40.h),
+              _buildHeader(context),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 40,
+                  tablet: 45,
+                  desktop: 32,
+                ),
+              ), // Reduced for desktop
               _buildSimplePriceInput(context, state),
-              SizedBox(height: 120.h), // Space for floating buttons
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 120,
+                  tablet: 140,
+                  desktop: 120,
+                ),
+              ), // Reduced for desktop
             ],
           ),
         );
@@ -49,7 +72,7 @@ class _PriceStepState extends State<PriceStep> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -57,16 +80,33 @@ class _PriceStepState extends State<PriceStep> {
           'Price',
           style: AppTextStyles.h3.copyWith(
             color: AppColors.primary,
-            fontSize: 24.sp,
+            fontSize: ResponsiveUtils.fontSize(
+              context,
+              mobile: 24,
+              tablet: 26,
+              desktop: 28,
+            ),
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 10,
+            desktop: 12,
+          ),
+        ),
         Text(
           'Price - Per Night',
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
-            fontSize: 16.sp,
+            fontSize: ResponsiveUtils.fontSize(
+              context,
+              mobile: 16,
+              tablet: 18,
+              desktop: 20,
+            ),
           ),
         ),
       ],
@@ -75,13 +115,20 @@ class _PriceStepState extends State<PriceStep> {
 
   Widget _buildSimplePriceInput(BuildContext context, RentCreateState state) {
     return Container(
-      height: 80.h,
+      height: ResponsiveUtils.size(
+        context,
+        mobile: 80,
+        tablet: 90,
+        desktop: 100,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16),
+        ),
         border: Border.all(
-          color: _priceController.text.isNotEmpty 
-              ? AppColors.primary 
+          color: _priceController.text.isNotEmpty
+              ? AppColors.primary
               : Colors.grey[300]!,
           width: 2,
         ),
@@ -97,13 +144,32 @@ class _PriceStepState extends State<PriceStep> {
       child: Row(
         children: [
           Container(
-            width: 60.w,
+            width: ResponsiveUtils.size(
+              context,
+              mobile: 60,
+              tablet: 65,
+              desktop: 70,
+            ),
             height: double.infinity,
             decoration: BoxDecoration(
               color: AppColors.primary,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(10.r),
-                bottomLeft: Radius.circular(10.r),
+                topLeft: Radius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 10,
+                    tablet: 11,
+                    desktop: 12,
+                  ),
+                ),
+                bottomLeft: Radius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 10,
+                    tablet: 11,
+                    desktop: 12,
+                  ),
+                ),
               ),
             ),
             child: Center(
@@ -111,7 +177,12 @@ class _PriceStepState extends State<PriceStep> {
                 '\$',
                 style: AppTextStyles.h3.copyWith(
                   color: Colors.white,
-                  fontSize: 24.sp,
+                  fontSize: ResponsiveUtils.fontSize(
+                    context,
+                    mobile: 24,
+                    tablet: 26,
+                    desktop: 28,
+                  ),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -121,30 +192,50 @@ class _PriceStepState extends State<PriceStep> {
             child: TextField(
               controller: _priceController,
               keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               style: AppTextStyles.h2.copyWith(
                 color: AppColors.textPrimary,
-                fontSize: 28.sp,
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 28,
+                  tablet: 30,
+                  desktop: 32,
+                ),
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
-                hintText: '130',
                 hintStyle: AppTextStyles.h2.copyWith(
                   color: Colors.grey[400],
-                  fontSize: 28.sp,
+                  fontSize: ResponsiveUtils.fontSize(
+                    context,
+                    mobile: 28,
+                    tablet: 30,
+                    desktop: 32,
+                  ),
                   fontWeight: FontWeight.bold,
                 ),
                 border: InputBorder.none,
                 contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 20.h,
+                  horizontal: ResponsiveUtils.spacing(
+                    context,
+                    mobile: 16,
+                    tablet: 17,
+                    desktop: 18,
+                  ),
+                  vertical: ResponsiveUtils.spacing(
+                    context,
+                    mobile: 20,
+                    tablet: 21,
+                    desktop: 22,
+                  ),
                 ),
               ),
               onChanged: (value) {
-                // Only update if the value is a valid complete number
-                if (value.isNotEmpty) {
+                if (value.isEmpty) {
+                  // Clear the price when field is empty
+                  context.read<RentCreateBloc>().add(UpdatePriceEvent(null));
+                } else {
+                  // Only update if the value is a valid complete number
                   final price = int.tryParse(value);
                   if (price != null) {
                     context.read<RentCreateBloc>().add(UpdatePriceEvent(price));

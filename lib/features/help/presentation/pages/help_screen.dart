@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../bloc/help_bloc.dart';
@@ -36,7 +36,7 @@ class _HelpScreenState extends State<HelpScreen> {
         centerTitle: true,
         titleTextStyle: AppTextStyles.h2.copyWith(
           color: AppColors.textPrimary,
-          fontSize: 18.sp,
+          fontSize: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
@@ -51,90 +51,100 @@ class _HelpScreenState extends State<HelpScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              children: [
-                SizedBox(height: 20.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: _buildHelpCard(
-                        context: context,
-                        icon: Icons.help_outline,
-                        iconColor: Colors.cyan,
-                        iconBackgroundColor: Colors.cyan.withValues(
-                          alpha: 0.15,
-                        ),
-                        subtitle: 'About Us',
-                        title: 'Who Are We ?',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<HelpBloc>(),
-                                child: const WhoAreWeScreen(),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      child: _buildHelpCard(
-                        context: context,
-                        icon: Icons.headset_mic_outlined,
-                        iconColor: Colors.orange,
-                        iconBackgroundColor: Colors.orange.withValues(
-                          alpha: 0.15,
-                        ),
-                        subtitle: 'Help me',
-                        title: 'Report a problem',
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => BlocProvider.value(
-                                value: context.read<HelpBloc>(),
-                                child: const ReportProblemScreen(),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16.h),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    width: (MediaQuery.of(context).size.width - 56.w) / 2,
-                    child: _buildHelpCard(
-                      context: context,
-                      icon: Icons.description_outlined,
-                      iconColor: Colors.blue,
-                      iconBackgroundColor: Colors.blue.withValues(alpha: 0.15),
-                      subtitle: 'Privacy',
-                      title: 'Terms Of Conditions',
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider.value(
-                              value: context.read<HelpBloc>(),
-                              child: const TermsScreen(),
-                            ),
+          return ResponsiveLayout(
+            maxWidth: 700,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+              child: Column(
+                children: [
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: _buildHelpCard(
+                          context: context,
+                          icon: Icons.help_outline,
+                          iconColor: Colors.cyan,
+                          iconBackgroundColor: Colors.cyan.withValues(
+                            alpha: 0.15,
                           ),
-                        );
-                      },
+                          subtitle: 'About Us',
+                          title: 'Who Are We ?',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: context.read<HelpBloc>(),
+                                  child: const WhoAreWeScreen(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(width: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
+                      Expanded(
+                        child: _buildHelpCard(
+                          context: context,
+                          icon: Icons.headset_mic_outlined,
+                          iconColor: Colors.orange,
+                          iconBackgroundColor: Colors.orange.withValues(
+                            alpha: 0.15,
+                          ),
+                          subtitle: 'Help me',
+                          title: 'Report a problem',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider.value(
+                                  value: context.read<HelpBloc>(),
+                                  child: const ReportProblemScreen(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: SizedBox(
+                      width: ResponsiveUtils.responsiveWidth(
+                        context,
+                        mobile: (MediaQuery.of(context).size.width - ResponsiveUtils.spacing(context, mobile: 56, tablet: 60, desktop: 64)) / 2,
+                        tablet: (MediaQuery.of(context).size.width - ResponsiveUtils.spacing(context, mobile: 56, tablet: 60, desktop: 64)) / 2,
+                        desktop: (MediaQuery.of(context).size.width - ResponsiveUtils.spacing(context, mobile: 56, tablet: 60, desktop: 64)) / 2,
+                      ),
+                      child: _buildHelpCard(
+                        context: context,
+                        icon: Icons.description_outlined,
+                        iconColor: Colors.blue,
+                        iconBackgroundColor: Colors.blue.withValues(
+                          alpha: 0.15,
+                        ),
+                        subtitle: 'Privacy',
+                        title: 'Terms Of Conditions',
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider.value(
+                                value: context.read<HelpBloc>(),
+                                child: const TermsScreen(),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -153,41 +163,45 @@ class _HelpScreenState extends State<HelpScreen> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18)),
       child: Container(
-        height: 180.h,
-        padding: EdgeInsets.all(16.w),
+        height: ResponsiveUtils.size(context, mobile: 180, tablet: 190, desktop: 200),
+        padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
         decoration: BoxDecoration(
           color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 60.w,
-              height: 60.w,
+              width: ResponsiveUtils.size(context, mobile: 60, tablet: 65, desktop: 70),
+              height: ResponsiveUtils.size(context, mobile: 60, tablet: 65, desktop: 70),
               decoration: BoxDecoration(
                 color: iconBackgroundColor,
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: iconColor, size: 32.sp),
+              child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: ResponsiveUtils.fontSize(context, mobile: 32, tablet: 34, desktop: 36)
+              ),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 12, tablet: 13, desktop: 14)),
             Text(
               subtitle,
               style: AppTextStyles.bodySmall.copyWith(
                 color: AppColors.textSecondary,
-                fontSize: 12.sp,
+                fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 13, desktop: 14),
               ),
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 4, tablet: 5, desktop: 6)),
             Text(
               title,
               textAlign: TextAlign.center,
               style: AppTextStyles.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 14.sp,
+                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
               ),
             ),
           ],

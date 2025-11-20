@@ -18,7 +18,6 @@ class HelpRemoteDataSourceImpl implements HelpRemoteDataSource {
   @override
   Future<SettingsResponse> getSettings() async {
     const endpoint = AppConstants.settingsGetEndpoint;
-    print('🛰️ [Help] Request → POST $endpoint');
     try {
       final response = await _dio.post(
         endpoint,
@@ -29,14 +28,9 @@ class HelpRemoteDataSourceImpl implements HelpRemoteDataSource {
           },
         ),
       );
-      print('✅ [Help] Response ← ${response.statusCode} $endpoint');
-      print('✅ [Help] Payload: ${response.data}');
       return SettingsResponse.fromJson(response.data as Map<String, dynamic>);
     } catch (error) {
-      print('🚨 [Help] Error ↩ $endpoint :: $error');
       if (error is DioException && error.response != null) {
-        print('🚨 [Help] Status: ${error.response?.statusCode}');
-        print('🚨 [Help] Body: ${error.response?.data}');
       }
       rethrow;
     }
@@ -45,8 +39,6 @@ class HelpRemoteDataSourceImpl implements HelpRemoteDataSource {
   @override
   Future<CreateTicketResponse> createTicket(CreateTicketRequest request) async {
     const endpoint = AppConstants.createTicketEndpoint;
-    print('🛰️ [Help] Request → POST $endpoint');
-    print('🛰️ [Help] Payload: ${request.toJson()}');
     try {
       final response = await _dio.post(
         endpoint,
@@ -59,16 +51,11 @@ class HelpRemoteDataSourceImpl implements HelpRemoteDataSource {
           },
         ),
       );
-      print('✅ [Help] Response ← ${response.statusCode} $endpoint');
-      print('✅ [Help] Payload: ${response.data}');
       return CreateTicketResponse.fromJson(
         response.data as Map<String, dynamic>,
       );
     } catch (error) {
-      print('🚨 [Help] Error ↩ $endpoint :: $error');
       if (error is DioException && error.response != null) {
-        print('🚨 [Help] Status: ${error.response?.statusCode}');
-        print('🚨 [Help] Body: ${error.response?.data}');
       }
       rethrow;
     }

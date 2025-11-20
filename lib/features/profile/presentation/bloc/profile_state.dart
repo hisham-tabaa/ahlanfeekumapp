@@ -70,9 +70,12 @@ class ProfileState extends Equatable {
     isLoading,
     isUpdating,
     isChangingPassword,
+    isLoadingReservations,
     errorMessage,
     updateSuccess,
     changePasswordSuccess,
+    myReservations,
+    userReservations,
   ];
 
   factory ProfileState.initial() {

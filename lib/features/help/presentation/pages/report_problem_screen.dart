@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../auth/presentation/widgets/custom_button.dart';
@@ -42,7 +42,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
         centerTitle: true,
         titleTextStyle: AppTextStyles.h2.copyWith(
           color: AppColors.textPrimary,
-          fontSize: 18.sp,
+          fontSize: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
@@ -58,100 +58,103 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              children: [
-                _buildHeader(),
-                SizedBox(height: 24.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'First Name',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
+          return ResponsiveLayout(
+            maxWidth: 700,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+              child: Column(
+                children: [
+                  _buildHeader(context),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'First Name',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 8.h),
-                          CustomTextField(
-                            controller: _firstNameController,
-                            hintText: '',
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(width: 16.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Last Name',
-                            style: AppTextStyles.bodyMedium.copyWith(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 14.sp,
+                            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                            CustomTextField(
+                              controller: _firstNameController,
+                              hintText: '',
                             ),
-                          ),
-                          SizedBox(height: 8.h),
-                          CustomTextField(
-                            controller: _lastNameController,
-                            hintText: '',
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 24.h),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Your Problem',
-                      style: AppTextStyles.bodyMedium.copyWith(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14.sp,
+                      SizedBox(width: ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Last Name',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                              ),
+                            ),
+                            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                            CustomTextField(
+                              controller: _lastNameController,
+                              hintText: '',
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 8.h),
-                    CustomTextField(
-                      controller: _descriptionController,
-                      hintText: '',
-                      maxLines: 8,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 32.h),
-                CustomButton(
-                  text: 'Submit',
-                  isLoading: state.isSubmitting,
-                  onPressed: () {
-                    if (_firstNameController.text.trim().isEmpty ||
-                        _lastNameController.text.trim().isEmpty ||
-                        _descriptionController.text.trim().isEmpty) {
-                      context.showSnackBar(
-                        'Please fill in all fields',
-                        isError: true,
+                    ],
+                  ),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Problem',
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontWeight: FontWeight.w500,
+                          fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                      CustomTextField(
+                        controller: _descriptionController,
+                        hintText: '',
+                        maxLines: 8,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 34, desktop: 36)),
+                  CustomButton(
+                    text: 'Submit',
+                    isLoading: state.isSubmitting,
+                    onPressed: () {
+                      if (_firstNameController.text.trim().isEmpty ||
+                          _lastNameController.text.trim().isEmpty ||
+                          _descriptionController.text.trim().isEmpty) {
+                        context.showSnackBar(
+                          'Please fill in all fields',
+                          isError: true,
+                        );
+                        return;
+                      }
+
+                      final request = CreateTicketRequest(
+                        firstName: _firstNameController.text.trim(),
+                        lastName: _lastNameController.text.trim(),
+                        description: _descriptionController.text.trim(),
                       );
-                      return;
-                    }
 
-                    final request = CreateTicketRequest(
-                      firstName: _firstNameController.text.trim(),
-                      lastName: _lastNameController.text.trim(),
-                      description: _descriptionController.text.trim(),
-                    );
-
-                    context.read<HelpBloc>().add(SubmitTicketEvent(request));
-                  },
-                  backgroundColor: AppColors.primary,
-                ),
-              ],
+                      context.read<HelpBloc>().add(SubmitTicketEvent(request));
+                    },
+                    backgroundColor: AppColors.primary,
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -159,12 +162,12 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -176,8 +179,8 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
       child: Row(
         children: [
           Container(
-            width: 50.w,
-            height: 50.w,
+            width: ResponsiveUtils.size(context, mobile: 50, tablet: 55, desktop: 60),
+            height: ResponsiveUtils.size(context, mobile: 50, tablet: 55, desktop: 60),
             decoration: BoxDecoration(
               color: Colors.orange.withValues(alpha: 0.15),
               shape: BoxShape.circle,
@@ -185,16 +188,16 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
             child: Icon(
               Icons.headset_mic_outlined,
               color: Colors.orange,
-              size: 28.sp,
+              size: ResponsiveUtils.fontSize(context, mobile: 28, tablet: 30, desktop: 32),
             ),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 13, desktop: 14)),
           Expanded(
             child: Text(
               'Report a problem',
               style: AppTextStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 16.sp,
+                fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 17, desktop: 18),
               ),
             ),
           ),

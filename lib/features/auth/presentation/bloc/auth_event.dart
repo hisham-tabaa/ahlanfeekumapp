@@ -36,10 +36,6 @@ class VerifyOtpEvent extends AuthEvent {
   List<Object> get props => [email, otp];
 }
 
-class GoogleSignInEvent extends AuthEvent {
-  const GoogleSignInEvent();
-}
-
 class LogoutEvent extends AuthEvent {
   const LogoutEvent();
 }
@@ -50,6 +46,10 @@ class LogoutConfirmationEvent extends AuthEvent {
 
 class CheckAuthStatusEvent extends AuthEvent {
   const CheckAuthStatusEvent();
+}
+
+class ContinueAsGuestEvent extends AuthEvent {
+  const ContinueAsGuestEvent();
 }
 
 class ChangePasswordEvent extends AuthEvent {

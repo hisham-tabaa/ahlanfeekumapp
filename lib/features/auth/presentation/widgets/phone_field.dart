@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 
 import '../../../../theming/text_styles.dart';
 import '../../../../theming/colors.dart';
+import '../../../../core/utils/responsive_utils.dart';
 import '../cubit/registration_cubit.dart';
 
 class PhoneField extends StatefulWidget {
@@ -65,12 +65,14 @@ class _PhoneFieldState extends State<PhoneField> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
             ],
             Container(
               decoration: BoxDecoration(
                 color: widget.readOnly ? Colors.grey[100] : Colors.grey[50],
-                borderRadius: BorderRadius.circular(10.r),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(context, mobile: 10, tablet: 12, desktop: 14),
+                ),
                 border: Border.all(color: Colors.grey.shade300, width: 1),
               ),
               child: Row(
@@ -98,21 +100,26 @@ class _PhoneFieldState extends State<PhoneField> {
                     searchStyle: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textPrimary,
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 0),
-                    flagWidth: 20.w,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12), 
+                      vertical: 0,
+                    ),
+                    flagWidth: ResponsiveUtils.size(context, mobile: 20, tablet: 22, desktop: 24),
                     enabled: !widget.readOnly,
                     backgroundColor: Colors.transparent,
                     barrierColor: Colors.black54,
                     boxDecoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(
+                        ResponsiveUtils.radius(context, mobile: 8, tablet: 10, desktop: 12),
+                      ),
                       border: Border.all(color: Colors.grey.shade300),
                     ),
                   ),
 
                   // Divider
                   Container(
-                    height: 30.h,
+                    height: ResponsiveUtils.size(context, mobile: 30, tablet: 34, desktop: 38),
                     width: 1,
                     color: Colors.grey.shade300,
                   ),
@@ -120,7 +127,9 @@ class _PhoneFieldState extends State<PhoneField> {
                   // Phone Number Input
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
+                      ),
                       child: TextField(
                         controller: _controller,
                         keyboardType: TextInputType.phone,
@@ -136,7 +145,9 @@ class _PhoneFieldState extends State<PhoneField> {
                           hintStyle: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.grey.shade500,
                           ),
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.h),
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20),
+                          ),
                         ),
                         onChanged: widget.readOnly
                             ? null

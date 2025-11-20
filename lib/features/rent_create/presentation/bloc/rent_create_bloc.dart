@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../domain/entities/rent_create_entities.dart';
 import '../../domain/usecases/create_property_usecase.dart';
 import 'rent_create_event.dart';
@@ -37,6 +38,7 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     on<UpdateFloorEvent>(_onUpdateFloor);
     on<UpdateMaxGuestsEvent>(_onUpdateMaxGuests);
     on<UpdateLivingRoomsEvent>(_onUpdateLivingRooms);
+    on<UpdateAreaEvent>(_onUpdateArea);
     on<UpdatePropertyDescriptionEvent>(_onUpdatePropertyDescription);
     on<UpdateHouseRulesEvent>(_onUpdateHouseRules);
     on<UpdateImportantInfoEvent>(_onUpdateImportantInfo);
@@ -71,6 +73,7 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     on<AddAvailabilityEvent>(_onAddAvailability);
     on<SubmitPropertyEvent>(_onSubmitProperty);
     on<ResetFormEvent>(_onResetForm);
+    on<ClearMessagesEvent>(_onClearMessages);
   }
 
   void _onNavigateToStep(
@@ -168,6 +171,11 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     emit(state.copyWith(formData: updatedFormData));
   }
 
+  void _onUpdateArea(UpdateAreaEvent event, Emitter<RentCreateState> emit) {
+    final updatedFormData = state.formData.copyWith(area: event.area);
+    emit(state.copyWith(formData: updatedFormData));
+  }
+
   void _onUpdatePropertyDescription(
     UpdatePropertyDescriptionEvent event,
     Emitter<RentCreateState> emit,
@@ -222,15 +230,24 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
 
   // Photos Event Handlers
   void _onAddPhotos(AddPhotosEvent event, Emitter<RentCreateState> emit) {
-    print(
-      '📱 BLoC: Received AddPhotosEvent with ${event.photos.length} photos',
-    );
     final updatedImages = List<File>.from(state.formData.selectedImages)
       ..addAll(event.photos);
+
+    // Also update XFiles for web compatibility
+    final updatedImageFiles = List<XFile>.from(
+      state.formData.selectedImageFiles,
+    )..addAll(event.photoFiles);
+
+    // Set the first image as primary if no primary image is set yet
+    final primaryIndex =
+        state.formData.primaryImageIndex ??
+        (updatedImages.isNotEmpty ? 0 : null);
+
     final updatedFormData = state.formData.copyWith(
       selectedImages: updatedImages,
+      selectedImageFiles: updatedImageFiles,
+      primaryImageIndex: primaryIndex,
     );
-    print('📱 BLoC: Total images now: ${updatedImages.length}');
 
     // Emit the updated state with photos
     emit(
@@ -244,7 +261,6 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     // Automatically start upload process after a short delay
     Future.delayed(const Duration(milliseconds: 1000), () {
       if (!isClosed && state.currentStep == PropertyCreationStep.photos) {
-        print('📱 Auto-starting image upload...');
         add(const UploadImagesEvent());
       }
     });
@@ -252,10 +268,36 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
 
   void _onRemovePhoto(RemovePhotoEvent event, Emitter<RentCreateState> emit) {
     final updatedImages = List<File>.from(state.formData.selectedImages);
+    final updatedImageFiles = List<XFile>.from(
+      state.formData.selectedImageFiles,
+    );
+
     if (event.index >= 0 && event.index < updatedImages.length) {
       updatedImages.removeAt(event.index);
+
+      // Also remove from XFiles list
+      if (event.index < updatedImageFiles.length) {
+        updatedImageFiles.removeAt(event.index);
+      }
+
+      // Handle primary image index after removal
+      int? newPrimaryIndex = state.formData.primaryImageIndex;
+
+      if (updatedImages.isEmpty) {
+        // No images left, clear primary index
+        newPrimaryIndex = null;
+      } else if (newPrimaryIndex == event.index) {
+        // Primary image was removed, set first image as primary
+        newPrimaryIndex = 0;
+      } else if (newPrimaryIndex != null && newPrimaryIndex > event.index) {
+        // Adjust primary index if it was after the removed image
+        newPrimaryIndex = newPrimaryIndex - 1;
+      }
+
       final updatedFormData = state.formData.copyWith(
         selectedImages: updatedImages,
+        selectedImageFiles: updatedImageFiles,
+        primaryImageIndex: newPrimaryIndex,
       );
       emit(state.copyWith(formData: updatedFormData));
     }
@@ -274,7 +316,13 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
   // Price Event Handlers
   void _onUpdatePrice(UpdatePriceEvent event, Emitter<RentCreateState> emit) {
     final updatedFormData = state.formData.copyWith(pricePerNight: event.price);
-    emit(state.copyWith(formData: updatedFormData));
+    // Reset status to prevent auto-navigation when editing
+    emit(
+      state.copyWith(
+        formData: updatedFormData,
+        status: RentCreateStatus.initial,
+      ),
+    );
   }
 
   // Location Event Handlers
@@ -426,19 +474,49 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     CreatePropertyStepTwoEvent event,
     Emitter<RentCreateState> emit,
   ) async {
-    // This is now handled in step one - just move to next step
-    emit(
-      state.copyWith(
-        status: RentCreateStatus.stepTwoCompleted,
-        successMessage: 'Location updated',
-      ),
-    );
+    emit(state.copyWith(isLoading: true, status: RentCreateStatus.loading));
+
+    try {
+      final result = await _createPropertyStepTwoUseCase(state.formData);
+
+      if (result.success) {
+        emit(
+          state
+              .copyWith(
+                isLoading: false,
+                status: RentCreateStatus.stepTwoCompleted,
+                successMessage: result.message,
+              )
+              .updateStepStatus(
+                1,
+                isCompleted: true,
+              ), // Location step (index 1)
+        );
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            status: RentCreateStatus.error,
+            errorMessage: result.message,
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          status: RentCreateStatus.error,
+          errorMessage: 'Failed to update location: $e',
+        ),
+      );
+    }
   }
 
   Future<void> _onUploadImages(
     UploadImagesEvent event,
     Emitter<RentCreateState> emit,
   ) async {
+
     emit(state.copyWith(isLoading: true, status: RentCreateStatus.loading));
 
     try {
@@ -451,9 +529,10 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
                 isLoading: false,
                 status: RentCreateStatus.imagesUploaded,
                 successMessage: result.message,
+                errorMessage: null, // Clear any previous error
               )
-              .updateStepStatus(2, isCompleted: true),
-        ); // Photos step
+              .updateStepStatus(3, isCompleted: true),
+        ); // Photos step (index 3 in PropertyCreationStep enum)
 
         // Navigation is handled by the BlocListener in the UI
       } else {
@@ -480,10 +559,12 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     SetPriceEvent event,
     Emitter<RentCreateState> emit,
   ) async {
+
     emit(state.copyWith(isLoading: true, status: RentCreateStatus.loading));
 
     try {
       final result = await _setPriceUseCase(state.formData);
+
 
       if (result.success) {
         emit(
@@ -492,9 +573,10 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
                 isLoading: false,
                 status: RentCreateStatus.priceSet,
                 successMessage: result.message,
+                errorMessage: null, // Clear any previous error
               )
-              .updateStepStatus(3, isCompleted: true),
-        ); // Price step
+              .updateStepStatus(4, isCompleted: true),
+        ); // Price step (index 4 in PropertyCreationStep enum)
       } else {
         emit(
           state.copyWith(
@@ -519,10 +601,12 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     AddAvailabilityEvent event,
     Emitter<RentCreateState> emit,
   ) async {
+
     emit(state.copyWith(isLoading: true, status: RentCreateStatus.loading));
 
     try {
       final result = await _addAvailabilityUseCase(state.formData);
+
 
       if (result.success) {
         emit(
@@ -531,9 +615,10 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
                 isLoading: false,
                 status: RentCreateStatus.availabilityAdded,
                 successMessage: result.message,
+                errorMessage: null, // Clear any previous error
               )
-              .updateStepStatus(4, isCompleted: true),
-        ); // Availability step
+              .updateStepStatus(2, isCompleted: true),
+        ); // Availability step (index 2 in PropertyCreationStep enum)
       } else {
         emit(
           state.copyWith(
@@ -615,12 +700,20 @@ class RentCreateBloc extends Bloc<RentCreateEvent, RentCreateState> {
     // Step 5: Add Availability
     if (state.formData.availableDates.isNotEmpty) {
       final availabilityResult = await _addAvailabilityUseCase(state.formData);
-      if (!availabilityResult.success)
+      if (!availabilityResult.success) {
         throw Exception(availabilityResult.message);
+      }
     }
   }
 
   void _onResetForm(ResetFormEvent event, Emitter<RentCreateState> emit) {
     emit(RentCreateState.initial());
+  }
+
+  void _onClearMessages(
+    ClearMessagesEvent event,
+    Emitter<RentCreateState> emit,
+  ) {
+    emit(state.clearMessages());
   }
 }

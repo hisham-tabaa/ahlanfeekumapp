@@ -33,6 +33,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ChangePasswordEvent>(_onChangePassword);
     on<LoadMyReservationsEvent>(_onLoadMyReservations);
     on<LoadUserReservationsEvent>(_onLoadUserReservations);
+    on<RemoveFavoriteEvent>(_onRemoveFavorite);
   }
 
   Future<void> _onLoadProfile(
@@ -74,7 +75,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final result = await _updateProfileUseCase(event.request);
     result.fold(
       (error) => emit(state.copyWith(isUpdating: false, errorMessage: error)),
-      (_) async {
+      (_) {
         emit(state.copyWith(isUpdating: false, updateSuccess: true));
         add(const RefreshProfileEvent());
       },
@@ -140,6 +141,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           userReservations: reservations,
         ),
       ),
+    );
+  }
+
+  Future<void> _onRemoveFavorite(
+    RemoveFavoriteEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    // Refresh profile to reflect updated favorites list
+    final result = await _getProfileDetailsUseCase();
+    result.fold(
+      (error) => emit(state.copyWith(errorMessage: error)),
+      (profile) => emit(state.copyWith(profile: profile)),
     );
   }
 }

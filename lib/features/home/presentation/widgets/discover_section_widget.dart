@@ -1,65 +1,80 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../domain/entities/home_entities.dart';
 import '../../../search/data/models/search_filter.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
+import '../../../../core/utils/responsive_utils.dart';
 
 class DiscoverSectionWidget extends StatelessWidget {
   final List<Governorate> governorates;
 
-  const DiscoverSectionWidget({
-    super.key,
-    required this.governorates,
-  });
+  const DiscoverSectionWidget({super.key, required this.governorates});
 
   @override
   Widget build(BuildContext context) {
     if (governorates.isEmpty) return const SizedBox.shrink();
 
+    final verticalMargin = ResponsiveUtils.spacing(context, mobile: 8, tablet: 12, desktop: 16);
+    final horizontalPadding = ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24);
+    final iconSize = ResponsiveUtils.size(context, mobile: 18, tablet: 20, desktop: 22);
+    final titleFontSize = ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22);
+    final chevronSize = ResponsiveUtils.size(context, mobile: 22, tablet: 24, desktop: 26);
+    final verticalSpacing = ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16);
+    final cardHeight = ResponsiveUtils.size(context, mobile: 145, tablet: 170, desktop: 200);
+    final listPadding = ResponsiveUtils.spacing(context, mobile: 12, tablet: 16, desktop: 20);
+    final cardSeparator = ResponsiveUtils.spacing(context, mobile: 10, tablet: 12, desktop: 14);
+
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.h),
+      margin: EdgeInsets.symmetric(vertical: verticalMargin),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: Row(
               children: [
-                Icon(Icons.sports_baseball_outlined, color: Colors.redAccent, size: 18.sp),
-                SizedBox(width: 8.w),
+                Icon(
+                  Icons.sports_baseball_outlined,
+                  color: Colors.redAccent,
+                  size: iconSize,
+                ),
+                SizedBox(width: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
                 Text(
                   'Discover Your Ideal Stay',
                   style: AppTextStyles.h4.copyWith(
                     color: AppColors.textPrimary,
-                    fontSize: 18.sp,
+                    fontSize: titleFontSize,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const Spacer(),
-                Icon(Icons.chevron_right, color: Colors.grey[500], size: 22.sp),
+                Icon(Icons.chevron_right, color: Colors.grey[500], size: chevronSize),
               ],
             ),
           ),
 
-          SizedBox(height: 12.h),
+          SizedBox(height: verticalSpacing),
 
           SizedBox(
-            height: 145.h,
+            height: cardHeight,
             child: ListView.separated(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              padding: EdgeInsets.symmetric(horizontal: listPadding),
               scrollDirection: Axis.horizontal,
               itemCount: governorates.length.clamp(0, 8),
-              separatorBuilder: (_, __) => SizedBox(width: 10.w),
+              separatorBuilder: (_, __) => SizedBox(width: cardSeparator),
               itemBuilder: (context, index) {
                 final governorate = governorates[index];
+                final cardWidth = ResponsiveUtils.size(context, mobile: 110, tablet: 130, desktop: 150);
+                final cardRadius = ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16);
+                
                 return GestureDetector(
                   onTap: () => _onGovernorateSelected(context, governorate),
                   child: Container(
-                    width: 110.w,
-                    height: 145.h,
+                    width: cardWidth,
+                    height: cardHeight,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(cardRadius),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
@@ -73,43 +88,56 @@ class DiscoverSectionWidget extends StatelessWidget {
                       children: [
                         // Full image background
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(cardRadius),
                           child: governorate.iconUrl != null
-                              ? Image.network(
-                                  governorate.iconUrl!,
-                                  width: 110.w,
-                                  height: 145.h,
+                              ? CachedNetworkImage(
+                                  imageUrl: governorate.iconUrl!,
+                                  width: cardWidth,
+                                  height: cardHeight,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
+                                  placeholder: (context, url) => Container(
+                                    width: cardWidth,
+                                    height: cardHeight,
+                                    color: Colors.grey[200],
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              AppColors.primary,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) {
                                     return Container(
-                                      width: 110.w,
-                                      height: 145.h,
+                                      width: cardWidth,
+                                      height: cardHeight,
                                       color: AppColors.primary.withOpacity(0.1),
                                       child: Icon(
                                         Icons.location_city,
                                         color: AppColors.primary,
-                                        size: 40.sp,
+                                        size: ResponsiveUtils.size(context, mobile: 40, tablet: 48, desktop: 56),
                                       ),
                                     );
                                   },
                                 )
                               : Container(
-                                  width: 110.w,
-                                  height: 145.h,
+                                  width: cardWidth,
+                                  height: cardHeight,
                                   color: AppColors.primary.withOpacity(0.1),
                                   child: Icon(
                                     Icons.location_city,
                                     color: AppColors.primary,
-                                    size: 40.sp,
+                                    size: ResponsiveUtils.size(context, mobile: 40, tablet: 48, desktop: 56),
                                   ),
                                 ),
                         ),
                         // Gradient overlay
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(cardRadius),
                           child: Container(
-                            width: 110.w,
-                            height: 145.h,
+                            width: cardWidth,
+                            height: cardHeight,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
@@ -124,14 +152,14 @@ class DiscoverSectionWidget extends StatelessWidget {
                         ),
                         // Title at bottom
                         Positioned(
-                          bottom: 12.h,
-                          left: 8.w,
-                          right: 8.w,
+                          bottom: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
+                          left: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12),
+                          right: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12),
                           child: Text(
                             governorate.title,
                             style: AppTextStyles.bodySmall.copyWith(
                               color: Colors.white,
-                              fontSize: 12.sp,
+                              fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 14, desktop: 16),
                               fontWeight: FontWeight.w600,
                             ),
                             maxLines: 2,
@@ -151,11 +179,11 @@ class DiscoverSectionWidget extends StatelessWidget {
     );
   }
 
-  void _onGovernorateSelected(BuildContext context, Governorate governorate) async {
-    print('🏠 ===== GOVERNORATE SELECTION =====');
-    print('🏠 Governorate selected: ${governorate.title}');
-    print('🏠 Governorate ID: ${governorate.id}');
-    
+  void _onGovernorateSelected(
+    BuildContext context,
+    Governorate governorate,
+  ) async {
+
     try {
       // Create a search filter with ONLY the governorate ID for focused filtering
       final searchFilter = SearchFilter(
@@ -165,26 +193,15 @@ class DiscoverSectionWidget extends StatelessWidget {
         maxResultCount: 20,
       );
 
-      print('🏠 Created search filter:');
-      print('🏠 - GovernorateId: ${searchFilter.governorateId}');
-      print('🏠 - FilterText: ${searchFilter.filterText}');
-      print('🏠 - SkipCount: ${searchFilter.skipCount}');
-      print('🏠 - MaxResultCount: ${searchFilter.maxResultCount}');
-      print('🏠 Full filter JSON: ${searchFilter.toJson()}');
 
-      print('🏠 Navigating to search results...');
 
       // Navigate to search results screen
-      await Navigator.of(context).pushNamed(
-        '/search-results',
-        arguments: {'filter': searchFilter},
-      );
-      
-      print('🏠 Navigation completed');
+      await Navigator.of(
+        context,
+      ).pushNamed('/search-results', arguments: {'filter': searchFilter});
+
     } catch (e) {
-      print('🚨 Error navigating from governorate selection: $e');
-      print('🚨 Stack trace: ${StackTrace.current}');
-      
+
       // Fallback navigation with minimal filter
       try {
         await Navigator.of(context).pushNamed(
@@ -194,12 +211,10 @@ class DiscoverSectionWidget extends StatelessWidget {
               governorateId: governorate.id,
               skipCount: 0,
               maxResultCount: 20,
-            )
+            ),
           },
         );
-        print('🏠 Fallback navigation completed');
       } catch (fallbackError) {
-        print('🚨 Fallback navigation also failed: $fallbackError');
       }
     }
   }

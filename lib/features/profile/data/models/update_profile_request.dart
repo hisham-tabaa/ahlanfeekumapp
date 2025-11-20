@@ -1,3 +1,5 @@
+import 'package:image_picker/image_picker.dart';
+
 class UpdateProfileRequest {
   final String name;
   final String email;
@@ -7,6 +9,7 @@ class UpdateProfileRequest {
   final String address;
   final bool isProfilePhotoChanged;
   final String? profilePhotoPath;
+  final XFile? profilePhotoFile; // Added for web compatibility
 
   const UpdateProfileRequest({
     required this.name,
@@ -17,6 +20,7 @@ class UpdateProfileRequest {
     required this.address,
     required this.isProfilePhotoChanged,
     this.profilePhotoPath,
+    this.profilePhotoFile,
   });
 
   Map<String, dynamic> toJson() {

@@ -8,6 +8,8 @@ class User extends Equatable {
   final String? profileImage;
   final bool isEmailVerified;
   final bool isPhoneVerified;
+  final int?
+  roleId; // 0 for admin, 1 for host, 2 for guest, 3 for visitor/guest (no auth)
 
   const User({
     required this.id,
@@ -17,6 +19,7 @@ class User extends Equatable {
     this.profileImage,
     required this.isEmailVerified,
     required this.isPhoneVerified,
+    this.roleId,
   });
 
   @override
@@ -28,5 +31,6 @@ class User extends Equatable {
     profileImage,
     isEmailVerified,
     isPhoneVerified,
+    roleId,
   ];
 }

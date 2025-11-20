@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../theming/colors.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
 
 class FeatureChipWidget extends StatelessWidget {
@@ -23,10 +23,10 @@ class FeatureChipWidget extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+        padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.spacing(context, mobile: 18, tablet: 20, desktop: 22), vertical: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18.r),
+          borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 18, tablet: 20, desktop: 22)),
           border: Border.all(
             color: isSelected
                 ? AppColors.primary
@@ -57,15 +57,15 @@ class FeatureChipWidget extends StatelessWidget {
                 key: ValueKey(
                   '${'$label'}-${isSelected ? 'selected' : 'default'}',
                 ),
-                size: 12.sp,
+                size: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 14, desktop: 16),
                 color: isSelected ? AppColors.primary : Colors.grey[400],
               ),
             ),
-            SizedBox(width: 10.w),
+            SizedBox(width: ResponsiveUtils.spacing(context, mobile: 10, tablet: 12, desktop: 14)),
             Text(
               label,
               style: AppTextStyles.bodyMedium.copyWith(
-                fontSize: 14.sp,
+                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 16, desktop: 18),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected ? AppColors.primary : AppColors.textPrimary,
               ),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -6,6 +7,10 @@ import '../di/injection.dart';
 
 class DioFactory {
   static Dio? _dio;
+  static final StreamController<bool> _authErrorController = StreamController<bool>.broadcast();
+  
+  // Stream to notify when authentication error occurs
+  static Stream<bool> get authErrorStream => _authErrorController.stream;
 
   static Dio getDio() {
     Duration timeOut = const Duration(seconds: 30);
@@ -16,6 +21,13 @@ class DioFactory {
       _dio!
         ..options.connectTimeout = timeOut
         ..options.receiveTimeout = timeOut;
+
+      // Web-specific configurations for CORS
+      if (kIsWeb) {
+        _dio!.options.headers['Accept'] = '*/*';
+        // Try to use credentials for CORS
+        _dio!.options.extra['withCredentials'] = false;
+      }
 
       if (kDebugMode) {
         _dio!.interceptors.add(
@@ -31,7 +43,10 @@ class DioFactory {
       _dio!.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
-            options.headers['Content-Type'] = 'application/json';
+            // Only set Content-Type if not already set (preserve multipart/form-data for uploads)
+            if (!options.headers.containsKey('Content-Type')) {
+              options.headers['Content-Type'] = 'application/json';
+            }
             options.headers['accept'] = 'text/plain';
 
             // Add Authorization header
@@ -48,9 +63,13 @@ class DioFactory {
                 print('🔍 Method: ${options.method}');
                 print('🔍 Data: ${options.data}');
                 if (token != null) {
-                  print('🔍 Token: ${_isPlaceholderToken(token) ? 'PLACEHOLDER' : 'JWT'}');
+                  print(
+                    '🔍 Token: ${_isPlaceholderToken(token) ? 'PLACEHOLDER' : 'JWT'}',
+                  );
                   print('🔍 Token length: ${token.length}');
-                  print('🔍 Token preview: ${token.length > 10 ? token.substring(0, 10) + '...' : token}');
+                  print(
+                    '🔍 Token preview: ${token.length > 10 ? '${token.substring(0, 10)}...' : token}',
+                  );
                 }
               }
 
@@ -62,47 +81,27 @@ class DioFactory {
                   print('🔑 Auth header added for: ${options.path}');
                 }
               } else {
-                print('⚠️ No valid auth token found for request: ${options.path}');
-                print('⚠️ Token value: $token');
-                print('⚠️ Token is null: ${token == null}');
-                print('⚠️ Token is empty: ${token?.isEmpty ?? true}');
-                print('⚠️ Token is placeholder: ${token != null ? _isPlaceholderToken(token) : 'N/A'}');
                 // For endpoints that require authentication, we should handle this
                 if (_requiresAuthentication(options.path)) {
-                  print('🚨 Request requires authentication but no valid token available');
                 }
               }
-              
+
               // Print final headers after all modifications
               if (kDebugMode) {
                 print('🔍 Final Headers: ${options.headers}');
               }
             } catch (e) {
-              print('🚨 Error adding auth header: $e');
             }
 
             handler.next(options);
           },
           onError: (error, handler) {
-            print('🚨 Dio error: ${error.message}');
             if (error.response != null) {
-              print('🚨 Response status: ${error.response?.statusCode}');
-              print('🚨 Response data: ${error.response?.data}');
 
               // Handle authentication and authorization errors
               if (error.response?.statusCode == 403) {
-                print(
-                  '🚨 403 Forbidden: User lacks permissions for ${error.requestOptions.path}',
-                );
-                print('🚨 This indicates a server-side permission issue');
-                print(
-                  '🚨 The user account may need additional roles or permissions',
-                );
                 _handleAuthenticationError();
               } else if (error.response?.statusCode == 401) {
-                print(
-                  '🚨 401 Unauthorized: Authentication required for ${error.requestOptions.path}',
-                );
                 _handleAuthenticationError();
               }
             }
@@ -138,6 +137,11 @@ class DioFactory {
       'properties/upload-one-media',
       'properties/upload-medias',
       'properties/set-price',
+      'reservations/my-reservations',
+      'reservations/user-reservations',
+      'user-profiles/user-profile-details',
+      'user-profiles/update-my-profile',
+      'user-profiles/password-change',
     ];
 
     return authenticatedEndpoints.any((endpoint) => path.contains(endpoint));
@@ -149,20 +153,17 @@ class DioFactory {
       final sharedPreferences = getIt<SharedPreferences>();
       final token = sharedPreferences.getString(AppConstants.accessTokenKey);
 
-      if (token != null && _isPlaceholderToken(token)) {
-        print('🧹 Clearing invalid placeholder token: $token');
+      if (token != null) {
+        // Check if it's an invalid token error (issuer not valid)
         sharedPreferences.remove(AppConstants.accessTokenKey);
         sharedPreferences.remove(AppConstants.refreshTokenKey);
         sharedPreferences.remove(AppConstants.userDataKey);
         sharedPreferences.remove(AppConstants.isLoggedInKey);
-      } else if (token != null) {
-        print(
-          '🔍 Valid JWT token found, not clearing. Permission issue is server-side.',
-        );
-        print('🔍 Token preview: ${token.substring(0, 20)}...');
+        
+        // Notify listeners about authentication error
+        _authErrorController.add(true);
       }
     } catch (e) {
-      print('🚨 Error handling authentication error: $e');
     }
   }
 }

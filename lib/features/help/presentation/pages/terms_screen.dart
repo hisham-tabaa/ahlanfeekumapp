@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_html/flutter_html.dart';
 
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../bloc/help_bloc.dart';
@@ -21,7 +21,7 @@ class TermsScreen extends StatelessWidget {
         centerTitle: true,
         titleTextStyle: AppTextStyles.h2.copyWith(
           color: AppColors.textPrimary,
-          fontSize: 18.sp,
+          fontSize: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
@@ -33,23 +33,28 @@ class TermsScreen extends StatelessWidget {
 
           final settings = state.settings;
 
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              children: [
-                _buildHeader(
-                  title: 'Terms Of Conditions',
-                  icon: Icons.description_outlined,
-                  iconColor: Colors.blue,
-                  iconBackgroundColor: Colors.blue.withValues(alpha: 0.15),
-                ),
-                SizedBox(height: 20.h),
-                _buildContentCard(
-                  title: settings?.termsTitle ?? 'Terms Of Conditions',
-                  annotation: settings?.termsAnnotation ?? '',
-                  description: settings?.termsDescription ?? '',
-                ),
-              ],
+          return ResponsiveLayout(
+            maxWidth: 800,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+              child: Column(
+                children: [
+                  _buildHeader(
+                    context,
+                    title: 'Terms Of Conditions',
+                    icon: Icons.description_outlined,
+                    iconColor: Colors.blue,
+                    iconBackgroundColor: Colors.blue.withValues(alpha: 0.15),
+                  ),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+                  _buildContentCard(
+                    context,
+                    title: settings?.termsTitle ?? 'Terms Of Conditions',
+                    annotation: settings?.termsAnnotation ?? '',
+                    description: settings?.termsDescription ?? '',
+                  ),
+                ],
+              ),
             ),
           );
         },
@@ -57,17 +62,18 @@ class TermsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader({
-    required String title,
-    required IconData icon,
-    required Color iconColor,
-    required Color iconBackgroundColor,
-  }) {
+  Widget _buildHeader(
+      BuildContext context, {
+        required String title,
+        required IconData icon,
+        required Color iconColor,
+        required Color iconBackgroundColor,
+      }) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -79,21 +85,25 @@ class TermsScreen extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 50.w,
-            height: 50.w,
+            width: ResponsiveUtils.size(context, mobile: 50, tablet: 56, desktop: 62),
+            height: ResponsiveUtils.size(context, mobile: 50, tablet: 56, desktop: 62),
             decoration: BoxDecoration(
               color: iconBackgroundColor,
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: iconColor, size: 28.sp),
+            child: Icon(
+                icon,
+                color: iconColor,
+                size: ResponsiveUtils.fontSize(context, mobile: 28, tablet: 32, desktop: 36)
+            ),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
           Expanded(
             child: Text(
               title,
               style: AppTextStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: 16.sp,
+                fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 17, desktop: 18),
               ),
             ),
           ),
@@ -102,16 +112,17 @@ class TermsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContentCard({
-    required String title,
-    required String annotation,
-    required String description,
-  }) {
+  Widget _buildContentCard(
+      BuildContext context, {
+        required String title,
+        required String annotation,
+        required String description,
+      }) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -127,32 +138,32 @@ class TermsScreen extends StatelessWidget {
             title,
             style: AppTextStyles.h3.copyWith(
               fontWeight: FontWeight.w600,
-              fontSize: 16.sp,
+              fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 17, desktop: 18),
             ),
           ),
           if (annotation.isNotEmpty) ...[
-            SizedBox(height: 8.h),
+            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 9, desktop: 10)),
             Text(
               annotation,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
-                fontSize: 14.sp,
+                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
               ),
             ),
           ],
-          SizedBox(height: 16.h),
+          SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
           Html(
             data: description,
             style: {
               "body": Style(
-                fontSize: FontSize(14.sp),
-                lineHeight: LineHeight(1.6),
+                fontSize: FontSize(ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16)),
+                lineHeight: const LineHeight(1.6),
                 margin: Margins.zero,
                 padding: HtmlPaddings.zero,
               ),
               "p": Style(
-                fontSize: FontSize(14.sp),
-                lineHeight: LineHeight(1.6),
+                fontSize: FontSize(ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16)),
+                lineHeight: const LineHeight(1.6),
                 margin: Margins.only(bottom: 10),
               ),
               "strong": Style(fontWeight: FontWeight.w600),

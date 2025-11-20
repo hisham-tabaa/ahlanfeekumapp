@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:latlong2/latlong.dart';
 import '../../../../../theming/colors.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
+
 import '../../bloc/rent_create_bloc.dart';
 import '../../bloc/rent_create_event.dart';
 import '../../bloc/rent_create_state.dart';
@@ -47,16 +48,50 @@ class _LocationStepState extends State<LocationStep> {
         }
 
         return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveUtils.spacing(
+              context,
+              mobile: 20,
+              tablet: 24,
+              desktop: 28,
+            ),
+            vertical: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 18,
+              desktop: 20,
+            ),
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
-              SizedBox(height: 20.h),
+              _buildHeader(context),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 28,
+                ),
+              ),
               _buildMapSection(context, state),
-              SizedBox(height: 24.h),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 28,
+                  desktop: 32,
+                ),
+              ),
               _buildLocationForm(context),
-              SizedBox(height: 80.h),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 80,
+                  tablet: 90,
+                  desktop: 100,
+                ),
+              ),
             ],
           ),
         );
@@ -64,30 +99,63 @@ class _LocationStepState extends State<LocationStep> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(Icons.location_on, color: AppColors.primary, size: 20.sp),
-            SizedBox(width: 8.w),
+            Icon(
+              Icons.location_on,
+              color: AppColors.primary,
+              size: ResponsiveUtils.fontSize(
+                context,
+                mobile: 20,
+                tablet: 22,
+                desktop: 24,
+              ),
+            ),
+            SizedBox(
+              width: ResponsiveUtils.spacing(
+                context,
+                mobile: 8,
+                tablet: 10,
+                desktop: 12,
+              ),
+            ),
             Text(
               'Location',
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.primary,
-                fontSize: 16.sp,
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 16,
+                  tablet: 18,
+                  desktop: 20,
+                ),
                 fontWeight: FontWeight.w600,
               ),
             ),
           ],
         ),
-        SizedBox(height: 12.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 14,
+            desktop: 16,
+          ),
+        ),
         Text(
           'Property Location',
           style: AppTextStyles.h3.copyWith(
             color: AppColors.textPrimary,
-            fontSize: 24.sp,
+            fontSize: ResponsiveUtils.fontSize(
+              context,
+              mobile: 24,
+              tablet: 26,
+              desktop: 28,
+            ),
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -97,9 +165,13 @@ class _LocationStepState extends State<LocationStep> {
 
   Widget _buildMapSection(BuildContext context, RentCreateState state) {
     return Container(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(
+        ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20),
+      ),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20),
+        ),
         border: Border.all(color: AppColors.divider),
         color: Colors.white,
         boxShadow: [
@@ -119,8 +191,18 @@ class _LocationStepState extends State<LocationStep> {
               Row(
                 children: [
                   Container(
-                    height: 32.w,
-                    width: 32.w,
+                    height: ResponsiveUtils.size(
+                      context,
+                      mobile: 32,
+                      tablet: 36,
+                      desktop: 40,
+                    ),
+                    width: ResponsiveUtils.size(
+                      context,
+                      mobile: 32,
+                      tablet: 36,
+                      desktop: 40,
+                    ),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
@@ -131,14 +213,31 @@ class _LocationStepState extends State<LocationStep> {
                     child: Icon(
                       Icons.location_on,
                       color: AppColors.primary,
-                      size: 18.sp,
+                      size: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 18,
+                        tablet: 20,
+                        desktop: 22,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 12.w),
+                  SizedBox(
+                    width: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 12,
+                      tablet: 13,
+                      desktop: 14,
+                    ),
+                  ),
                   Text(
                     'Property Location',
                     style: AppTextStyles.bodyMedium.copyWith(
-                      fontSize: 16.sp,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 20,
+                      ),
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
                     ),
@@ -164,7 +263,14 @@ class _LocationStepState extends State<LocationStep> {
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 17,
+              desktop: 18,
+            ),
+          ),
           GestureDetector(
             onTap: () async {
               final formState = context.read<RentCreateBloc>().state;
@@ -206,25 +312,64 @@ class _LocationStepState extends State<LocationStep> {
               }
             },
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(
+                ResponsiveUtils.radius(
+                  context,
+                  mobile: 16,
+                  tablet: 18,
+                  desktop: 20,
+                ),
+              ),
               child: Stack(
                 children: [
                   SizedBox(
-                    height: 160.h,
+                    height: ResponsiveUtils.size(
+                      context,
+                      mobile: 160,
+                      tablet: 170,
+                      desktop: 180,
+                    ),
                     width: double.infinity,
-                    child: _buildMiniMapPreview(state),
+                    child: _buildMiniMapPreview(context, state),
                   ),
                   Positioned(
-                    top: 16.h,
-                    right: 16.w,
+                    top: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
+                    right: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 6.h,
+                        horizontal: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 12,
+                          tablet: 13,
+                          desktop: 14,
+                        ),
+                        vertical: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 6,
+                          tablet: 7,
+                          desktop: 8,
+                        ),
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveUtils.radius(
+                            context,
+                            mobile: 20,
+                            tablet: 21,
+                            desktop: 22,
+                          ),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.08),
@@ -237,13 +382,30 @@ class _LocationStepState extends State<LocationStep> {
                           Icon(
                             Icons.edit_location_alt,
                             color: AppColors.primary,
-                            size: 16.sp,
+                            size: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 16,
+                              tablet: 17,
+                              desktop: 18,
+                            ),
                           ),
-                          SizedBox(width: 6.w),
+                          SizedBox(
+                            width: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 6,
+                              tablet: 7,
+                              desktop: 8,
+                            ),
+                          ),
                           Text(
                             'Edit',
                             style: AppTextStyles.bodySmall.copyWith(
-                              fontSize: 12.sp,
+                              fontSize: ResponsiveUtils.fontSize(
+                                context,
+                                mobile: 12,
+                                tablet: 13,
+                                desktop: 14,
+                              ),
                               fontWeight: FontWeight.w600,
                               color: AppColors.primary,
                             ),
@@ -258,7 +420,14 @@ class _LocationStepState extends State<LocationStep> {
                         border: Border.all(
                           color: AppColors.divider.withValues(alpha: 0.4),
                         ),
-                        borderRadius: BorderRadius.circular(16.r),
+                        borderRadius: BorderRadius.circular(
+                          ResponsiveUtils.radius(
+                            context,
+                            mobile: 16,
+                            tablet: 18,
+                            desktop: 20,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -266,7 +435,14 @@ class _LocationStepState extends State<LocationStep> {
               ),
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 17,
+              desktop: 18,
+            ),
+          ),
           BlocBuilder<RentCreateBloc, RentCreateState>(
             builder: (context, blocState) {
               final address = blocState.formData.address;
@@ -280,18 +456,35 @@ class _LocationStepState extends State<LocationStep> {
                     Text(
                       address,
                       style: AppTextStyles.bodyMedium.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: ResponsiveUtils.fontSize(
+                          context,
+                          mobile: 14,
+                          tablet: 15,
+                          desktop: 16,
+                        ),
                         fontWeight: FontWeight.w600,
                         color: AppColors.textPrimary,
                       ),
                     ),
-                  SizedBox(height: 4.h),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 4,
+                      tablet: 5,
+                      desktop: 6,
+                    ),
+                  ),
                   Text(
                     [street, landMark]
-                        .where((value) => value != null && value!.isNotEmpty)
+                        .where((value) => value != null && value.isNotEmpty)
                         .join(' • '),
                     style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: 12.sp,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 12,
+                        tablet: 13,
+                        desktop: 14,
+                      ),
                       color: AppColors.textSecondary,
                     ),
                   ),
@@ -304,12 +497,108 @@ class _LocationStepState extends State<LocationStep> {
     );
   }
 
-  Widget _buildMiniMapPreview(RentCreateState state) {
+  Widget _buildMiniMapPreview(BuildContext context, RentCreateState state) {
     final latitude = state.formData.latitude;
     final longitude = state.formData.longitude;
 
     if (latitude == null || longitude == null) {
-      return Image.asset('assets/images/Background1.png', fit: BoxFit.cover);
+      return Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primary.withValues(alpha: 0.1),
+              AppColors.primary.withValues(alpha: 0.05),
+            ],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Map-like grid pattern
+            Positioned.fill(child: CustomPaint(painter: _MapGridPainter())),
+            // Center content
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(
+                      ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 20,
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.location_on,
+                      color: AppColors.primary,
+                      size: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 40,
+                        tablet: 44,
+                        desktop: 48,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 16,
+                      tablet: 18,
+                      desktop: 20,
+                    ),
+                  ),
+                  Text(
+                    'Location Required *',
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.textPrimary,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 16,
+                        tablet: 17,
+                        desktop: 18,
+                      ),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 6,
+                      tablet: 7,
+                      desktop: 8,
+                    ),
+                  ),
+                  Text(
+                    'Tap to select location on map',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 13,
+                        tablet: 14,
+                        desktop: 15,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return IgnorePointer(
@@ -330,11 +619,26 @@ class _LocationStepState extends State<LocationStep> {
             markers: [
               Marker(
                 point: LatLng(latitude, longitude),
-                width: 48.w,
-                height: 48.h,
+                width: ResponsiveUtils.size(
+                  context,
+                  mobile: 48,
+                  tablet: 52,
+                  desktop: 56,
+                ),
+                height: ResponsiveUtils.size(
+                  context,
+                  mobile: 48,
+                  tablet: 52,
+                  desktop: 56,
+                ),
                 child: Icon(
                   Icons.location_on,
-                  size: 36.sp,
+                  size: ResponsiveUtils.fontSize(
+                    context,
+                    mobile: 36,
+                    tablet: 38,
+                    desktop: 40,
+                  ),
                   color: AppColors.primary,
                 ),
               ),
@@ -346,10 +650,72 @@ class _LocationStepState extends State<LocationStep> {
   }
 
   Widget _buildLocationForm(BuildContext context) {
+    // Use responsive layout - 2 columns on desktop for compact view
+    if (ResponsiveUtils.isDesktop(context)) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Address takes full width
+          _buildTextField(
+            context,
+            controller: _addressController,
+            label: 'Address',
+            hintText: 'Damascus, Al Qusor',
+            onChanged: (value) {
+              context.read<RentCreateBloc>().add(UpdateAddressEvent(value));
+            },
+          ),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 17,
+              desktop: 18,
+            ),
+          ),
+          // Street and Landmark in 2 columns
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _buildTextField(
+                  context,
+                  controller: _streetController,
+                  label: 'Street, Building Number',
+                  hintText: 'Street 123',
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateStreetEvent(value),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildTextField(
+                  context,
+                  controller: _landMarkController,
+                  label: 'Land Mark',
+                  hintText: 'Away From \'place\' 2 Km',
+                  onChanged: (value) {
+                    context.read<RentCreateBloc>().add(
+                      UpdateLandMarkEvent(value),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    }
+
+    // Mobile/Tablet: Traditional single column
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildTextField(
+          context,
           controller: _addressController,
           label: 'Address',
           hintText: 'Damascus, Al Qusor',
@@ -357,8 +723,16 @@ class _LocationStepState extends State<LocationStep> {
             context.read<RentCreateBloc>().add(UpdateAddressEvent(value));
           },
         ),
-        SizedBox(height: 16.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 17,
+            desktop: 18,
+          ),
+        ),
         _buildTextField(
+          context,
           controller: _streetController,
           label: 'Street, Building Number',
           hintText: 'Street 123',
@@ -366,8 +740,16 @@ class _LocationStepState extends State<LocationStep> {
             context.read<RentCreateBloc>().add(UpdateStreetEvent(value));
           },
         ),
-        SizedBox(height: 16.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 17,
+            desktop: 18,
+          ),
+        ),
         _buildTextField(
+          context,
           controller: _landMarkController,
           label: 'Land Mark',
           hintText: 'Away From \'place\' 2 Km',
@@ -379,24 +761,57 @@ class _LocationStepState extends State<LocationStep> {
     );
   }
 
-  Widget _buildTextField({
+  Widget _buildTextField(
+    BuildContext context, {
     required TextEditingController controller,
     required String label,
     required String hintText,
     required Function(String) onChanged,
+    bool isRequired = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: AppColors.textPrimary,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
+        RichText(
+          text: TextSpan(
+            text: label,
+            style: AppTextStyles.bodyMedium.copyWith(
+              color: AppColors.textPrimary,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 16,
+                tablet: 18,
+                desktop: 20,
+              ),
+              fontWeight: FontWeight.w500,
+            ),
+            children: isRequired
+                ? [
+                    TextSpan(
+                      text: ' *',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: ResponsiveUtils.fontSize(
+                          context,
+                          mobile: 16,
+                          tablet: 18,
+                          desktop: 20,
+                        ),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ]
+                : null,
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 8,
+            tablet: 9,
+            desktop: 10,
+          ),
+        ),
         TextField(
           controller: controller,
           onChanged: onChanged,
@@ -404,109 +819,108 @@ class _LocationStepState extends State<LocationStep> {
             hintText: hintText,
             hintStyle: AppTextStyles.bodyMedium.copyWith(
               color: Colors.grey[400],
-              fontSize: 14.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 14,
+                tablet: 15,
+                desktop: 16,
+              ),
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(
+                ResponsiveUtils.radius(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
               borderSide: BorderSide(color: Colors.grey[300]!),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(
+                ResponsiveUtils.radius(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
               borderSide: BorderSide(color: Colors.grey[300]!),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(
+                ResponsiveUtils.radius(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
               borderSide: BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding: EdgeInsets.symmetric(
-              horizontal: 16.w,
-              vertical: 12.h,
+              horizontal: ResponsiveUtils.spacing(
+                context,
+                mobile: 16,
+                tablet: 17,
+                desktop: 18,
+              ),
+              vertical: ResponsiveUtils.spacing(
+                context,
+                mobile: 12,
+                tablet: 13,
+                desktop: 14,
+              ),
             ),
           ),
         ),
       ],
     );
   }
+}
 
-  Widget _buildMapPicker(BuildContext context) {
-    return GestureDetector(
-      onTap: () async {
-        final state = context.read<RentCreateBloc>().state;
-        final initLat = state.formData.latitude ?? 33.5138;
-        final initLng = state.formData.longitude ?? 36.2765;
-        final result = await Navigator.push<Map<String, dynamic>>(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                MapPickerPage(initialLat: initLat, initialLng: initLng),
-          ),
-        );
-        if (result != null) {
-          // Update coordinates
-          context.read<RentCreateBloc>().add(
-            UpdateLocationEvent(result['lat']!, result['lng']!),
-          );
+// Custom painter for map-like grid pattern
+class _MapGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.primary.withValues(alpha: 0.08)
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
 
-          // Update address if available
-          final address = result['address'] as String?;
-          if (address != null && address.isNotEmpty) {
-            // Only show user feedback for actual address names, not coordinates
-            final isRealAddress =
-                !address.startsWith('Lat:') &&
-                !address.contains('Getting address');
+    // Draw vertical lines
+    const gridSpacing = 40.0;
+    for (double x = 0; x < size.width; x += gridSpacing) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), paint);
+    }
 
-            context.read<RentCreateBloc>().add(UpdateAddressEvent(address));
+    // Draw horizontal lines
+    for (double y = 0; y < size.height; y += gridSpacing) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
+    }
 
-            if (isRealAddress) {
-              // Show feedback to user that address was updated
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Address updated from selected location'),
-                  backgroundColor: Colors.green,
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
-          }
-        }
-      },
-      child: Container(
-        height: 200.h,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.grey[100],
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: Colors.grey[300]!),
-        ),
-        child: BlocBuilder<RentCreateBloc, RentCreateState>(
-          builder: (context, state) {
-            final lat = state.formData.latitude;
-            final lng = state.formData.longitude;
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.location_on,
-                    color: AppColors.primary,
-                    size: 28.sp,
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    (lat != null && lng != null)
-                        ? 'Lat: ${lat.toStringAsFixed(5)}, Lng: ${lng.toStringAsFixed(5)}'
-                        : 'Tap to pick coordinates',
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+    // Draw some decorative "roads" (thicker lines)
+    final roadPaint = Paint()
+      ..color = AppColors.primary.withValues(alpha: 0.12)
+      ..strokeWidth = 2.5
+      ..style = PaintingStyle.stroke;
+
+    // Diagonal road 1
+    canvas.drawLine(
+      Offset(0, size.height * 0.3),
+      Offset(size.width, size.height * 0.3),
+      roadPaint,
+    );
+
+    // Diagonal road 2
+    canvas.drawLine(
+      Offset(size.width * 0.6, 0),
+      Offset(size.width * 0.6, size.height),
+      roadPaint,
     );
   }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -5,8 +5,9 @@ part 'firebase_auth_request.g.dart';
 @JsonSerializable()
 class FirebaseAuthRequest {
   final String idToken;
+  final String? fcmToken;
 
-  const FirebaseAuthRequest({required this.idToken});
+  const FirebaseAuthRequest({required this.idToken, this.fcmToken});
 
   factory FirebaseAuthRequest.fromJson(Map<String, dynamic> json) =>
       _$FirebaseAuthRequestFromJson(json);

@@ -7,8 +7,13 @@ class LoginRequest {
   @JsonKey(name: 'phoneoremail')
   final String phoneOrEmail;
   final String password;
+  final String? fcmToken;
 
-  const LoginRequest({required this.phoneOrEmail, required this.password});
+  const LoginRequest({
+    required this.phoneOrEmail, 
+    required this.password,
+    this.fcmToken,
+  });
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>
       _$LoginRequestFromJson(json);

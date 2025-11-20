@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/send_otp_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
-import '../../domain/usecases/google_sign_in_usecase.dart';
 import '../../domain/usecases/confirm_password_reset_usecase.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -11,20 +10,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUseCase loginUseCase;
   final SendOtpUseCase sendOtpUseCase;
   final VerifyOtpUseCase verifyOtpUseCase;
-  final GoogleSignInUseCase googleSignInUseCase;
   final ConfirmPasswordResetUseCase confirmPasswordResetUseCase;
 
   AuthBloc({
     required this.loginUseCase,
     required this.sendOtpUseCase,
     required this.verifyOtpUseCase,
-    required this.googleSignInUseCase,
     required this.confirmPasswordResetUseCase,
   }) : super(const AuthInitial()) {
     on<LoginEvent>(_onLogin);
     on<SendOtpEvent>(_onSendOtp);
     on<VerifyOtpEvent>(_onVerifyOtp);
-    on<GoogleSignInEvent>(_onGoogleSignIn);
     on<LogoutEvent>(_onLogout);
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
     on<ChangePasswordEvent>(_onChangePassword);
@@ -69,25 +65,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
 
     final result = await verifyOtpUseCase(email: event.email, otp: event.otp);
-
-    result.fold(
-      (failure) => emit(AuthError(message: failure.message)),
-      (authResult) => emit(
-        AuthAuthenticated(
-          user: authResult.user,
-          accessToken: authResult.accessToken,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _onGoogleSignIn(
-    GoogleSignInEvent event,
-    Emitter<AuthState> emit,
-  ) async {
-    emit(const AuthLoading());
-
-    final result = await googleSignInUseCase();
 
     result.fold(
       (failure) => emit(AuthError(message: failure.message)),

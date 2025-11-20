@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/utils/error_handler.dart';
 import '../../domain/entities/profile.dart';
 import '../../domain/entities/reservation.dart';
 import '../../domain/repositories/profile_repository.dart';
@@ -23,7 +24,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       final profile = _mapResponseToEntity(response);
       return Right(profile);
     } catch (e) {
-      return Left('Failed to load profile details');
+      return Left(ErrorHandler.getErrorMessage(e));
     }
   }
 
@@ -35,7 +36,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       await _remoteDataSource.updateProfile(request);
       return const Right(unit);
     } catch (e) {
-      return Left('Failed to update profile');
+      return Left(ErrorHandler.getErrorMessage(e));
     }
   }
 
@@ -47,7 +48,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       await _remoteDataSource.changePassword(request);
       return const Right(unit);
     } catch (e) {
-      return Left('Failed to change password');
+      return Left(ErrorHandler.getErrorMessage(e));
     }
   }
 
@@ -58,7 +59,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       final reservations = response.toEntities();
       return Right(reservations);
     } catch (e) {
-      return Left('Failed to load reservations');
+      return Left(ErrorHandler.getErrorMessage(e));
     }
   }
 
@@ -71,7 +72,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       final reservations = response.toEntities();
       return Right(reservations);
     } catch (e) {
-      return Left('Failed to load user reservations');
+      return Left(ErrorHandler.getErrorMessage(e));
     }
   }
 
@@ -86,10 +87,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
       }
 
       final baseUrl = AppConstants.baseUrl.replaceAll('/api/mobile/', '');
-      if (path.startsWith('/')) {
-        return '$baseUrl$path';
-      }
-      return '$baseUrl/$path';
+      final fullUrl = path.startsWith('/') ? '$baseUrl$path' : '$baseUrl/$path';
+      return fullUrl;
     }
 
     final favoriteProperties = response.favoriteProperties

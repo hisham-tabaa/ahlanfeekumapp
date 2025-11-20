@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import '../../../../../theming/colors.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
+import '../../../../../core/widgets/map_viewer_page.dart';
 import '../../bloc/rent_create_bloc.dart';
 import '../../bloc/rent_create_state.dart';
 
@@ -32,31 +36,51 @@ class _ReviewStepState extends State<ReviewStep> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildImageSlider(state),
+              _buildImageSlider(context, state),
               Padding(
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.all(
+                  ResponsiveUtils.spacing(
+                    context,
+                    mobile: 20,
+                    tablet: 24,
+                    desktop: 28,
+                  ),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 16.h),
-                    _buildPropertyTitle(state),
-                    SizedBox(height: 20.h),
-                    _buildMainDetailsSection(state),
-                    SizedBox(height: 20.h),
-                    _buildRoomDetailsSection(state),
-                    SizedBox(height: 20.h),
-                    _buildDetailsSection(state),
-                    SizedBox(height: 20.h),
-                    _buildPropertyFeaturesSection(state),
-                    SizedBox(height: 20.h),
-                    _buildLocationSection(state),
-                    SizedBox(height: 20.h),
-                    _buildHouseRulesSection(state),
-                    SizedBox(height: 20.h),
-                    _buildCancellationPolicySection(),
-                    SizedBox(height: 20.h),
-                    _buildImportantToReadSection(state),
-                    SizedBox(height: 120.h), // Space for floating buttons
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 16, // Reduced for desktop
+                      ),
+                    ),
+                    _buildPropertyTitle(context, state),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 20,
+                        tablet: 24,
+                        desktop: 20, // Reduced for desktop
+                      ),
+                    ),
+
+                    // Use responsive layout for desktop
+                    if (ResponsiveUtils.isDesktop(context))
+                      _buildDesktopLayout(context, state)
+                    else
+                      _buildMobileLayout(context, state),
+
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 120,
+                        tablet: 140,
+                        desktop: 160,
+                      ),
+                    ), // Space for floating buttons
                   ],
                 ),
               ),
@@ -67,12 +91,18 @@ class _ReviewStepState extends State<ReviewStep> {
     );
   }
 
-
-  Widget _buildImageSlider(RentCreateState state) {
+  Widget _buildImageSlider(BuildContext context, RentCreateState state) {
     final images = state.formData.selectedImages;
-    
+    final imageFiles = state.formData.selectedImageFiles;
+    final sliderHeight = ResponsiveUtils.responsive(
+      context,
+      mobile: 300.0,
+      tablet: 400.0,
+      desktop: 400.0, // Reduced from 500 to minimize scrolling
+    );
+
     return Container(
-      height: 300.h,
+      height: sliderHeight,
       width: double.infinity,
       child: Stack(
         children: [
@@ -87,11 +117,28 @@ class _ReviewStepState extends State<ReviewStep> {
               },
               itemCount: images.length,
               itemBuilder: (context, index) {
-                return Image.file(
-                  images[index],
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                );
+                // Use web-compatible image loading
+                if (kIsWeb && index < imageFiles.length) {
+                  return Image.network(
+                    imageFiles[index].path,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (context, error, stackTrace) {
+                      // Fallback to file if network fails
+                      return Image.file(
+                        images[index],
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                      );
+                    },
+                  );
+                } else {
+                  return Image.file(
+                    images[index],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  );
+                }
               },
             )
           else
@@ -100,16 +147,26 @@ class _ReviewStepState extends State<ReviewStep> {
               child: Center(
                 child: Icon(
                   Icons.image,
-                  size: 60.sp,
+                  size: ResponsiveUtils.fontSize(
+                    context,
+                    mobile: 60,
+                    tablet: 66,
+                    desktop: 72,
+                  ),
                   color: Colors.grey[400],
                 ),
               ),
             ),
-          
+
           // Dots indicator
           if (images.length > 1)
             Positioned(
-              bottom: 16.h,
+              bottom: ResponsiveUtils.spacing(
+                context,
+                mobile: 16,
+                tablet: 18,
+                desktop: 20,
+              ),
               left: 0,
               right: 0,
               child: Row(
@@ -117,34 +174,88 @@ class _ReviewStepState extends State<ReviewStep> {
                 children: List.generate(
                   images.length,
                   (index) => Container(
-                    margin: EdgeInsets.symmetric(horizontal: 2.w),
-                    width: 6.w,
-                    height: 6.h,
+                    margin: EdgeInsets.symmetric(
+                      horizontal: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 2,
+                        tablet: 3,
+                        desktop: 4,
+                      ),
+                    ),
+                    width: ResponsiveUtils.size(
+                      context,
+                      mobile: 6,
+                      tablet: 7,
+                      desktop: 8,
+                    ),
+                    height: ResponsiveUtils.size(
+                      context,
+                      mobile: 6,
+                      tablet: 7,
+                      desktop: 8,
+                    ),
                     decoration: BoxDecoration(
-                      color: index == _currentImageIndex ? Colors.white : Colors.white.withOpacity(0.5),
+                      color: index == _currentImageIndex
+                          ? Colors.white
+                          : Colors.white.withOpacity(0.5),
                       shape: BoxShape.circle,
                     ),
                   ),
                 ),
               ),
             ),
-          
+
           // Image counter
           if (images.length > 1)
             Positioned(
-              bottom: 16.h,
-              right: 16.w,
+              bottom: ResponsiveUtils.spacing(
+                context,
+                mobile: 16,
+                tablet: 18,
+                desktop: 20,
+              ),
+              right: ResponsiveUtils.spacing(
+                context,
+                mobile: 16,
+                tablet: 17,
+                desktop: 18,
+              ),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: ResponsiveUtils.spacing(
+                    context,
+                    mobile: 8,
+                    tablet: 9,
+                    desktop: 10,
+                  ),
+                  vertical: ResponsiveUtils.spacing(
+                    context,
+                    mobile: 4,
+                    tablet: 5,
+                    desktop: 6,
+                  ),
+                ),
                 decoration: BoxDecoration(
                   color: Colors.black.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(
+                    ResponsiveUtils.radius(
+                      context,
+                      mobile: 12,
+                      tablet: 13,
+                      desktop: 14,
+                    ),
+                  ),
                 ),
                 child: Text(
                   'View ${_currentImageIndex + 1} Image',
                   style: AppTextStyles.bodySmall.copyWith(
                     color: Colors.white,
-                    fontSize: 12.sp,
+                    fontSize: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 12,
+                      tablet: 13,
+                      desktop: 14,
+                    ),
                   ),
                 ),
               ),
@@ -154,251 +265,708 @@ class _ReviewStepState extends State<ReviewStep> {
     );
   }
 
-  Widget _buildPropertyTitle(RentCreateState state) {
+  Widget _buildMobileLayout(BuildContext context, RentCreateState state) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildMainDetailsSection(context, state),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 20, // Reduced for desktop
+          ),
+        ),
+        _buildDetailsSection(context, state),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 20, // Reduced for desktop
+          ),
+        ),
+        _buildPropertyFeaturesSection(context, state),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 20, // Reduced for desktop
+          ),
+        ),
+        _buildLocationSection(context, state),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 20, // Reduced for desktop
+          ),
+        ),
+        _buildHouseRulesSection(context, state),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 20, // Reduced for desktop
+          ),
+        ),
+        _buildCancellationPolicySection(context),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 20, // Reduced for desktop
+          ),
+        ),
+        _buildImportantToReadSection(context, state),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout(BuildContext context, RentCreateState state) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left Column
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildMainDetailsSection(context, state),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 20, // Reduced for desktop
+                ),
+              ),
+              _buildPropertyFeaturesSection(context, state),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 20, // Reduced for desktop
+                ),
+              ),
+              _buildHouseRulesSection(context, state),
+            ],
+          ),
+        ),
+        SizedBox(width: 20), // Reduced from 24 for desktop
+        // Right Column
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailsSection(context, state),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 20, // Reduced for desktop
+                ),
+              ),
+              _buildLocationSection(context, state),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 20, // Reduced for desktop
+                ),
+              ),
+              _buildCancellationPolicySection(context),
+              SizedBox(
+                height: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 20, // Reduced for desktop
+                ),
+              ),
+              _buildImportantToReadSection(context, state),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPropertyTitle(BuildContext context, RentCreateState state) {
     return Text(
       state.formData.propertyTitle ?? 'Property Title Not Set',
       style: AppTextStyles.h4.copyWith(
         color: AppColors.textPrimary,
-        fontSize: 20.sp,
+        fontSize: ResponsiveUtils.fontSize(
+          context,
+          mobile: 20,
+          tablet: 22,
+          desktop: 24,
+        ),
         fontWeight: FontWeight.w700,
         height: 1.2,
       ),
     );
   }
 
-  Widget _buildMainDetailsSection(RentCreateState state) {
-    return _buildWhiteSection(
-      title: 'Main Details',
+  Widget _buildMainDetailsSection(BuildContext context, RentCreateState state) {
+    return Container(
+      padding: EdgeInsets.all(
+        ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildDetailRow('Price', '${state.formData.pricePerNight ?? 0} \$ - Night'),
-          _buildDetailRow('Property Type', state.formData.propertyTypeName ?? 'Not Set'),
-          _buildDetailRow('Maximum Guests', '${state.formData.maximumNumberOfGuests} Guests'),
+          Text(
+            'Main Details',
+            style: AppTextStyles.h4.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 18,
+              desktop: 20,
+            ),
+          ),
+          _buildDetailRow(
+            context,
+            'Price',
+            '${state.formData.pricePerNight ?? 0} \$ / Night',
+          ),
+          _buildDetailRow(
+            context,
+            'Property Type',
+            state.formData.propertyTypeName ?? 'Not Set',
+          ),
+          _buildDetailRow(
+            context,
+            'Bedrooms',
+            '${state.formData.bedrooms} Bedrooms',
+          ),
+          _buildDetailRow(
+            context,
+            'Living Rooms',
+            '${state.formData.livingRooms} Rooms',
+          ),
+          _buildDetailRow(
+            context,
+            'Bathrooms',
+            '${state.formData.bathrooms} Bathrooms',
+          ),
+          _buildDetailRow(
+            context,
+            'Number Of Beds',
+            '${state.formData.numberOfBeds} Beds',
+          ),
+          _buildDetailRow(
+            context,
+            'Maximum Guests',
+            '${state.formData.maximumNumberOfGuests} Guests',
+          ),
+          _buildDetailRow(
+            context,
+            'Floor',
+            '${state.formData.floor}${_getFloorSuffix(state.formData.floor)} Floor',
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildRoomDetailsSection(RentCreateState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildDetailRow('Bedrooms', '${state.formData.bedrooms} Bedrooms'),
-        _buildDetailRow('Bathrooms', '${state.formData.bathrooms} Bathrooms'),
-        _buildDetailRow('Number Of Beds', '${state.formData.numberOfBeds} Beds'),
-        _buildDetailRow('Floor', '${state.formData.floor}${_getFloorSuffix(state.formData.floor)} Floor'),
-        SizedBox(height: 8.h),
-        _buildDetailRow('Living Rooms', '${state.formData.livingRooms} Rooms'),
-      ],
-    );
-  }
-
-  Widget _buildDetailsSection(RentCreateState state) {
-    return _buildWhiteSection(
-      title: 'Details',
-      child: Text(
-        state.formData.propertyDescription?.isNotEmpty == true 
-            ? state.formData.propertyDescription!
-            : 'No description provided',
-        style: AppTextStyles.bodyMedium.copyWith(
-          color: AppColors.textSecondary,
-          fontSize: 14.sp,
-          height: 1.5,
-        ),
+  Widget _buildDetailsSection(BuildContext context, RentCreateState state) {
+    return Container(
+      padding: EdgeInsets.all(
+        ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18),
       ),
-    );
-  }
-
-  Widget _buildPropertyFeaturesSection(RentCreateState state) {
-    // Get actual user-selected features or show defaults
-    final userFeatures = state.formData.selectedFeatures;
-    final features = userFeatures.isNotEmpty 
-        ? userFeatures.take(4).toList()
-        : ['AC', 'Parking', 'Gym', 'Solar Panel'];
-
-    return _buildWhiteSection(
-      title: 'Property Features',
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: features.map((feature) {
-          return Column(
-            children: [
-              Container(
-                width: 60.w,
-                height: 60.h,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Icon(
-                  _getFeatureIcon(feature),
-                  color: AppColors.primary,
-                  size: 28.sp,
-                ),
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                feature,
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: AppColors.textPrimary,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          );
-        }).toList(),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildLocationSection(RentCreateState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.location_on,
-              color: AppColors.primary,
-              size: 20.sp,
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              'Property Location',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textPrimary,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            Spacer(),
-            TextButton(
-              onPressed: () {
-                // Handle show map with actual coordinates
-                print('Show map at: ${state.formData.latitude}, ${state.formData.longitude}');
-              },
-              child: Text(
-                'Show',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.primary,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 12.h),
-        Container(
-          height: 150.h,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(color: Colors.grey[300]!),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.map,
-                  size: 40.sp,
-                  color: Colors.grey[600],
-                ),
-                SizedBox(height: 8.h),
-                Text(
-                  'Map Preview',
-                  style: AppTextStyles.bodyMedium.copyWith(
-                    color: Colors.grey[600],
-                    fontSize: 14.sp,
-                  ),
-                ),
-                if (state.formData.address?.isNotEmpty == true)
-                  Padding(
-                    padding: EdgeInsets.only(top: 4.h),
-                    child: Text(
-                      state.formData.address!,
-                      style: AppTextStyles.bodySmall.copyWith(
-                        color: Colors.grey[500],
-                        fontSize: 12.sp,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHouseRulesSection(RentCreateState state) {
-    return _buildWhiteSection(
-      title: 'House Rules',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Check In After 3:00 PM',
-            style: AppTextStyles.bodyMedium.copyWith(
+            'Property Description',
+            style: AppTextStyles.h4.copyWith(
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
-              fontSize: 14.sp,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 18,
+              desktop: 20,
+            ),
+          ),
           Text(
-            'Check Out Before 12:00 AM',
+            state.formData.propertyDescription?.isNotEmpty == true
+                ? state.formData.propertyDescription!
+                : 'No description provided',
             style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
-              fontSize: 14.sp,
+              color: AppColors.textSecondary,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 14,
+                tablet: 15,
+                desktop: 16,
+              ),
+              height: 1.5,
             ),
           ),
-          SizedBox(height: 8.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPropertyFeaturesSection(
+    BuildContext context,
+    RentCreateState state,
+  ) {
+    // Get actual user-selected features or show defaults
+    final userFeatures = state.formData.selectedFeatures;
+    final features = userFeatures.isNotEmpty
+        ? userFeatures
+        : ['AC', 'Parking', 'Gym', 'Solar Panel'];
+
+    if (features.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Property Features',
+          style: AppTextStyles.h4.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 13,
+            desktop: 14,
+          ),
+        ),
+        Wrap(
+          spacing: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 13,
+            desktop: 14,
+          ),
+          runSpacing: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 13,
+            desktop: 14,
+          ),
+          children: features.map((feature) {
+            return Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 12,
+                  tablet: 13,
+                  desktop: 14,
+                ),
+                vertical: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 9,
+                  desktop: 10,
+                ),
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(
+                  ResponsiveUtils.radius(
+                    context,
+                    mobile: 12,
+                    tablet: 13,
+                    desktop: 14,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.check_circle,
+                    size: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 16,
+                      tablet: 17,
+                      desktop: 18,
+                    ),
+                    color: AppColors.primary,
+                  ),
+                  SizedBox(
+                    width: ResponsiveUtils.size(
+                      context,
+                      mobile: 6,
+                      tablet: 7,
+                      desktop: 8,
+                    ),
+                  ),
+                  Text(
+                    feature,
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLocationSection(BuildContext context, RentCreateState state) {
+    final hasValidLocation =
+        state.formData.latitude != null &&
+        state.formData.longitude != null &&
+        state.formData.latitude != 0.0 &&
+        state.formData.longitude != 0.0;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Property Location',
+          style: AppTextStyles.h4.copyWith(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 13,
+            desktop: 14,
+          ),
+        ),
+        GestureDetector(
+          onTap: hasValidLocation
+              ? () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => MapViewerPage(
+                        latitude: state.formData.latitude!,
+                        longitude: state.formData.longitude!,
+                        address: state.formData.address,
+                        title: 'Property Location',
+                      ),
+                    ),
+                  );
+                }
+              : null,
+          child: Container(
+            height: ResponsiveUtils.size(
+              context,
+              mobile: 180,
+              tablet: 190,
+              desktop: 200,
+            ),
+            decoration: BoxDecoration(
+              color: hasValidLocation
+                  ? Colors.white
+                  : AppColors.primary.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(
+                ResponsiveUtils.radius(
+                  context,
+                  mobile: 16,
+                  tablet: 17,
+                  desktop: 18,
+                ),
+              ),
+              border: Border.all(
+                color: AppColors.primary.withOpacity(
+                  hasValidLocation ? 0.3 : 0.2,
+                ),
+                width: hasValidLocation ? 2 : 1,
+              ),
+            ),
+            child: hasValidLocation
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveUtils.radius(
+                        context,
+                        mobile: 16,
+                        tablet: 17,
+                        desktop: 18,
+                      ),
+                    ),
+                    child: Stack(
+                      children: [
+                        // Mini Map Preview
+                        AbsorbPointer(
+                          child: FlutterMap(
+                            options: MapOptions(
+                              initialCenter: LatLng(
+                                state.formData.latitude!,
+                                state.formData.longitude!,
+                              ),
+                              initialZoom: 14.0,
+                              interactionOptions: const InteractionOptions(
+                                flags: InteractiveFlag.none,
+                              ),
+                            ),
+                            children: [
+                              TileLayer(
+                                urlTemplate:
+                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                userAgentPackageName: 'com.ahlanfeekum.app',
+                              ),
+                              MarkerLayer(
+                                markers: [
+                                  Marker(
+                                    point: LatLng(
+                                      state.formData.latitude!,
+                                      state.formData.longitude!,
+                                    ),
+                                    width: 40,
+                                    height: 40,
+                                    child: const Icon(
+                                      Icons.location_on,
+                                      color: Colors.red,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Bottom Overlay with Address
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
+                                ],
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  state.formData.address?.isNotEmpty == true
+                                      ? state.formData.address!
+                                      : 'Property Location',
+                                  style: AppTextStyles.bodySmall.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.touch_app,
+                                      size: 14,
+                                      color: Colors.white70,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Tap to view full map',
+                                      style: AppTextStyles.bodySmall.copyWith(
+                                        color: Colors.white70,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.location_off,
+                          color: AppColors.textSecondary,
+                          size: ResponsiveUtils.size(
+                            context,
+                            mobile: 40,
+                            tablet: 44,
+                            desktop: 48,
+                          ),
+                        ),
+                        SizedBox(
+                          height: ResponsiveUtils.spacing(
+                            context,
+                            mobile: 8,
+                            tablet: 9,
+                            desktop: 10,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 16,
+                              tablet: 18,
+                              desktop: 20,
+                            ),
+                          ),
+                          child: Text(
+                            'Location not available',
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHouseRulesSection(BuildContext context, RentCreateState state) {
+    return Container(
+      padding: EdgeInsets.all(
+        ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            'Minimum Age To Rent : 18',
-            style: AppTextStyles.bodyMedium.copyWith(
+            'House Rules',
+            style: AppTextStyles.h4.copyWith(
+              fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
-              fontSize: 14.sp,
             ),
           ),
-          SizedBox(height: 8.h),
-          Text(
-            'No Pets Allowed',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
-              fontSize: 14.sp,
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 18,
+              desktop: 20,
             ),
           ),
-          SizedBox(height: 8.h),
-          Text(
-            'Smoking Is Not Permitted',
-            style: AppTextStyles.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
-              fontSize: 14.sp,
-            ),
-          ),
+          _buildRuleItem(context, 'Check In After 3:00 PM'),
+          _buildRuleItem(context, 'Check Out Before 12:00 AM'),
+          _buildRuleItem(context, 'Minimum Age To Rent : 18'),
+          _buildRuleItem(context, 'No Pets Allowed'),
+          _buildRuleItem(context, 'Smoking Is Not Permitted'),
           // Add user's custom house rules if provided
           if (state.formData.houseRules?.isNotEmpty == true) ...[
-            SizedBox(height: 12.h),
+            SizedBox(
+              height: ResponsiveUtils.spacing(
+                context,
+                mobile: 12,
+                tablet: 13,
+                desktop: 14,
+              ),
+            ),
             Text(
               'Additional Rules:',
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textPrimary,
-                fontSize: 14.sp,
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 14,
+                  tablet: 15,
+                  desktop: 16,
+                ),
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(
+              height: ResponsiveUtils.spacing(
+                context,
+                mobile: 8,
+                tablet: 9,
+                desktop: 10,
+              ),
+            ),
             Text(
               state.formData.houseRules!,
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
-                fontSize: 14.sp,
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 14,
+                  tablet: 15,
+                  desktop: 16,
+                ),
                 height: 1.4,
               ),
             ),
@@ -408,8 +976,58 @@ class _ReviewStepState extends State<ReviewStep> {
     );
   }
 
-  Widget _buildCancellationPolicySection() {
+  Widget _buildRuleItem(BuildContext context, String rule) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: ResponsiveUtils.spacing(
+          context,
+          mobile: 4,
+          tablet: 5,
+          desktop: 6,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.check_circle_outline,
+            size: ResponsiveUtils.fontSize(
+              context,
+              mobile: 16,
+              tablet: 17,
+              desktop: 18,
+            ),
+            color: AppColors.primary,
+          ),
+          SizedBox(
+            width: ResponsiveUtils.spacing(
+              context,
+              mobile: 8,
+              tablet: 9,
+              desktop: 10,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              rule,
+              style: AppTextStyles.bodyMedium.copyWith(
+                color: AppColors.textPrimary,
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 14,
+                  tablet: 15,
+                  desktop: 16,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCancellationPolicySection(BuildContext context) {
     return _buildWhiteSection(
+      context,
       title: 'Cancellation Policy',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,16 +1036,33 @@ class _ReviewStepState extends State<ReviewStep> {
             'No Refund',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
-              fontSize: 14.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 14,
+                tablet: 15,
+                desktop: 16,
+              ),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 8,
+              tablet: 9,
+              desktop: 10,
+            ),
+          ),
           Text(
             'A Policy Of No Refund And Cancel Your Booking You Will Not Get A Refund Or Credit For Future Stay.',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
-              fontSize: 14.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 14,
+                tablet: 15,
+                desktop: 16,
+              ),
               height: 1.4,
             ),
           ),
@@ -436,8 +1071,12 @@ class _ReviewStepState extends State<ReviewStep> {
     );
   }
 
-  Widget _buildImportantToReadSection(RentCreateState state) {
+  Widget _buildImportantToReadSection(
+    BuildContext context,
+    RentCreateState state,
+  ) {
     return _buildWhiteSection(
+      context,
       title: 'Important To Read',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -446,18 +1085,35 @@ class _ReviewStepState extends State<ReviewStep> {
             'You Need To Know',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
-              fontSize: 14.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 14,
+                tablet: 15,
+                desktop: 16,
+              ),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 8,
+              tablet: 9,
+              desktop: 10,
+            ),
+          ),
           Text(
             state.formData.importantInformation?.isNotEmpty == true
                 ? state.formData.importantInformation!
                 : 'No additional information provided.',
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
-              fontSize: 14.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 14,
+                tablet: 15,
+                desktop: 16,
+              ),
               height: 1.4,
             ),
           ),
@@ -466,13 +1122,21 @@ class _ReviewStepState extends State<ReviewStep> {
     );
   }
 
-  Widget _buildWhiteSection({required String title, required Widget child}) {
+  Widget _buildWhiteSection(
+    BuildContext context, {
+    required String title,
+    required Widget child,
+  }) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(
+        ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18),
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(8.r),
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 8, tablet: 9, desktop: 10),
+        ),
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
@@ -490,20 +1154,39 @@ class _ReviewStepState extends State<ReviewStep> {
             title,
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
-              fontSize: 16.sp,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 16,
+                tablet: 17,
+                desktop: 18,
+              ),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(
+            height: ResponsiveUtils.spacing(
+              context,
+              mobile: 12,
+              tablet: 13,
+              desktop: 14,
+            ),
+          ),
           child,
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(BuildContext context, String label, String value) {
     return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.symmetric(
+        vertical: ResponsiveUtils.spacing(
+          context,
+          mobile: 6,
+          tablet: 7,
+          desktop: 8,
+        ),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -511,14 +1194,13 @@ class _ReviewStepState extends State<ReviewStep> {
             label,
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
-              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
             ),
           ),
           Text(
             value,
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
-              fontSize: 14.sp,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -532,32 +1214,5 @@ class _ReviewStepState extends State<ReviewStep> {
     if (floor == 2) return 'nd';
     if (floor == 3) return 'rd';
     return 'th';
-  }
-
-  IconData _getFeatureIcon(String feature) {
-    switch (feature.toLowerCase()) {
-      case 'wifi':
-        return Icons.wifi;
-      case 'parking':
-        return Icons.local_parking;
-      case 'kitchen':
-        return Icons.kitchen;
-      case 'gym':
-        return Icons.fitness_center;
-      case 'pool':
-        return Icons.pool;
-      case 'garden':
-        return Icons.local_florist;
-      case 'balcony':
-        return Icons.balcony;
-      case 'ac':
-      case 'air conditioning':
-        return Icons.ac_unit;
-      case 'solar panel':
-      case 'solar':
-        return Icons.solar_power;
-      default:
-        return Icons.check_circle;
-    }
   }
 }

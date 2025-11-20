@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../theming/text_styles.dart';
 
@@ -28,16 +28,16 @@ class CounterWidget extends StatelessWidget {
           title,
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textPrimary,
-            fontSize: 14.sp,
+            fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 16, desktop: 18),
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+          padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.spacing(context, mobile: 18, tablet: 20, desktop: 22), vertical: ResponsiveUtils.spacing(context, mobile: 14, tablet: 16, desktop: 18)),
           decoration: BoxDecoration(
             color: const Color(0xFFF9F9F9),
-            borderRadius: BorderRadius.circular(16.r),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 18, desktop: 20)),
             border: Border.all(color: Colors.grey.withValues(alpha: 0.18)),
           ),
           child: Row(
@@ -47,7 +47,7 @@ class CounterWidget extends StatelessWidget {
                   value.toString(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.textPrimary,
-                    fontSize: 16.sp,
+                    fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -56,11 +56,13 @@ class CounterWidget extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildArrowButton(
+                    context,
                     icon: Icons.expand_more,
                     onTap: value > minValue ? () => onChanged(value - 1) : null,
                   ),
-                  SizedBox(width: 12.w),
+                  SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
                   _buildArrowButton(
+                    context,
                     icon: Icons.expand_less,
                     onTap: value < maxValue ? () => onChanged(value + 1) : null,
                   ),
@@ -73,7 +75,7 @@ class CounterWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildArrowButton({
+  Widget _buildArrowButton(BuildContext context, {
     required IconData icon,
     required VoidCallback? onTap,
   }) {
@@ -82,16 +84,16 @@ class CounterWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 32.w,
-        height: 32.h,
+        width: ResponsiveUtils.size(context, mobile: 32, tablet: 36, desktop: 40),
+        height: ResponsiveUtils.size(context, mobile: 32, tablet: 36, desktop: 40),
         decoration: BoxDecoration(
           color: AppColors.primary.withValues(alpha: isEnabled ? 0.12 : 0.06),
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 10, tablet: 12, desktop: 14)),
         ),
         child: Icon(
           icon,
           color: isEnabled ? AppColors.primary : Colors.grey[400],
-          size: 18.sp,
+          size: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
         ),
       ),
     );

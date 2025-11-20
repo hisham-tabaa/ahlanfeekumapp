@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../auth/presentation/widgets/custom_button.dart';
@@ -50,7 +50,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         ),
         titleTextStyle: AppTextStyles.h2.copyWith(
           color: AppColors.textPrimary,
-          fontSize: 18.sp,
+          fontSize: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
         ),
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
@@ -65,159 +65,162 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           }
         },
         builder: (context, state) {
-          return SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20.h),
+          return ResponsiveLayout(
+            maxWidth: 600,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 22, desktop: 24)),
 
-                // Old Password Field
-                Text(
-                  'Old Password',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontSize: 14.sp,
-                  ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: _oldPasswordController,
-                  hintText: 'Enter old password',
-                  obscureText: !_showOldPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showOldPassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                  // Old Password Field
+                  Text(
+                    'Old Password',
+                    style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
+                      fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _showOldPassword = !_showOldPassword;
-                      });
-                    },
                   ),
-                ),
-
-                SizedBox(height: 24.h),
-
-                // New Password Field
-                Text(
-                  'New Password',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontSize: 14.sp,
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                  CustomTextField(
+                    controller: _oldPasswordController,
+                    hintText: 'Enter old password',
+                    obscureText: !_showOldPassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showOldPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.textSecondary,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showOldPassword = !_showOldPassword;
+                        });
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: _newPasswordController,
-                  hintText: 'Enter new password',
-                  obscureText: !_showNewPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showNewPassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+
+                  // New Password Field
+                  Text(
+                    'New Password',
+                    style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
+                      fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _showNewPassword = !_showNewPassword;
-                      });
-                    },
                   ),
-                ),
-
-                SizedBox(height: 24.h),
-
-                // Confirm Password Field
-                Text(
-                  'Repeat New Password',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.textSecondary,
-                    fontSize: 14.sp,
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                  CustomTextField(
+                    controller: _newPasswordController,
+                    hintText: 'Enter new password',
+                    obscureText: !_showNewPassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showNewPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.textSecondary,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showNewPassword = !_showNewPassword;
+                        });
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(height: 8.h),
-                CustomTextField(
-                  controller: _confirmPasswordController,
-                  hintText: 'Repeat new password',
-                  obscureText: !_showConfirmPassword,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _showConfirmPassword
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+
+                  // Confirm Password Field
+                  Text(
+                    'Repeat New Password',
+                    style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
+                      fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _showConfirmPassword = !_showConfirmPassword;
-                      });
-                    },
                   ),
-                ),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                  CustomTextField(
+                    controller: _confirmPasswordController,
+                    hintText: 'Repeat new password',
+                    obscureText: !_showConfirmPassword,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                        color: AppColors.textSecondary,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _showConfirmPassword = !_showConfirmPassword;
+                        });
+                      },
+                    ),
+                  ),
 
-                SizedBox(height: 40.h),
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 44, desktop: 48)),
 
-                // Change Button
-                CustomButton(
-                  text: 'Change',
-                  isLoading: state.isChangingPassword,
-                  onPressed: () {
-                    if (_oldPasswordController.text.isEmpty) {
-                      context.showSnackBar(
-                        'Please enter old password',
-                        isError: true,
+                  // Change Button
+                  CustomButton(
+                    text: 'Change',
+                    isLoading: state.isChangingPassword,
+                    onPressed: () {
+                      if (_oldPasswordController.text.isEmpty) {
+                        context.showSnackBar(
+                          'Please enter old password',
+                          isError: true,
+                        );
+                        return;
+                      }
+
+                      if (_newPasswordController.text.isEmpty) {
+                        context.showSnackBar(
+                          'Please enter new password',
+                          isError: true,
+                        );
+                        return;
+                      }
+
+                      if (_newPasswordController.text !=
+                          _confirmPasswordController.text) {
+                        context.showSnackBar(
+                          'New passwords do not match',
+                          isError: true,
+                        );
+                        return;
+                      }
+
+                      if (_newPasswordController.text.length < 6) {
+                        context.showSnackBar(
+                          'Password must be at least 6 characters',
+                          isError: true,
+                        );
+                        return;
+                      }
+
+                      final request = ChangePasswordRequest(
+                        emailOrPhone:
+                            state.profile?.email ??
+                            state.profile?.phoneNumber ??
+                            '',
+                        oldPassword: _oldPasswordController.text,
+                        newPassword: _newPasswordController.text,
                       );
-                      return;
-                    }
 
-                    if (_newPasswordController.text.isEmpty) {
-                      context.showSnackBar(
-                        'Please enter new password',
-                        isError: true,
+                      context.read<ProfileBloc>().add(
+                        ChangePasswordEvent(request),
                       );
-                      return;
-                    }
+                    },
+                    backgroundColor: AppColors.primary,
+                  ),
 
-                    if (_newPasswordController.text !=
-                        _confirmPasswordController.text) {
-                      context.showSnackBar(
-                        'New passwords do not match',
-                        isError: true,
-                      );
-                      return;
-                    }
-
-                    if (_newPasswordController.text.length < 6) {
-                      context.showSnackBar(
-                        'Password must be at least 6 characters',
-                        isError: true,
-                      );
-                      return;
-                    }
-
-                    final request = ChangePasswordRequest(
-                      emailOrPhone:
-                          state.profile?.email ??
-                          state.profile?.phoneNumber ??
-                          '',
-                      oldPassword: _oldPasswordController.text,
-                      newPassword: _newPasswordController.text,
-                    );
-
-                    context.read<ProfileBloc>().add(
-                      ChangePasswordEvent(request),
-                    );
-                  },
-                  backgroundColor: AppColors.primary,
-                ),
-
-                SizedBox(height: 40.h),
-              ],
+                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 44, desktop: 48)),
+                ],
+              ),
             ),
           );
         },

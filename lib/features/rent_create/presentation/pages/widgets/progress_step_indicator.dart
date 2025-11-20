@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../../domain/entities/rent_create_entities.dart';
@@ -23,12 +23,12 @@ class ProgressStepIndicator extends StatelessWidget {
 
     final int activeIndex = _activeIndex;
     const double baseCircle = 28; // logical px before scaling
-    final double circleDiameter = baseCircle.w;
-    final double trackHeight = 3.h;
+    final double circleDiameter = ResponsiveUtils.size(context, mobile: baseCircle, tablet: baseCircle + 4, desktop: baseCircle + 8);
+    final double trackHeight = ResponsiveUtils.size(context, mobile: 3, tablet: 4, desktop: 5);
     final int count = steps.length;
 
     return SizedBox(
-      height: 96.h,
+      height: ResponsiveUtils.size(context, mobile: 96, tablet: 110, desktop: 124),
       child: Center(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -72,16 +72,16 @@ class ProgressStepIndicator extends StatelessWidget {
                 Positioned(
                   top: 0,
                   left:
-                      circleCenterX - segmentWidth.clamp(60.w, totalWidth) / 2,
+                      circleCenterX - segmentWidth.clamp(ResponsiveUtils.size(context, mobile: 60, tablet: 70, desktop: 80), totalWidth) / 2,
                   child: SizedBox(
-                    width: segmentWidth.clamp(80.w, totalWidth),
+                    width: segmentWidth.clamp(ResponsiveUtils.size(context, mobile: 80, tablet: 90, desktop: 100), totalWidth),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                         activeStep.step.title,
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.success,
-                          fontSize: 12.sp,
+                          fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 14, desktop: 16),
                           fontWeight: FontWeight.w600,
                         ),
                         textAlign: TextAlign.center,
@@ -94,7 +94,7 @@ class ProgressStepIndicator extends StatelessWidget {
 
                 // Base track
                 Positioned(
-                  top: 36.h,
+                  top: ResponsiveUtils.spacing(context, mobile: 36, tablet: 42, desktop: 48),
                   left: leftPad,
                   right: rightPad,
                   child: Container(
@@ -108,7 +108,7 @@ class ProgressStepIndicator extends StatelessWidget {
 
                 // Filled progress up to active center
                 Positioned(
-                  top: 36.h,
+                  top: ResponsiveUtils.spacing(context, mobile: 36, tablet: 42, desktop: 48),
                   left: fillLeft,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 250),
@@ -126,7 +126,7 @@ class ProgressStepIndicator extends StatelessWidget {
 
                 // Active circle (number or check)
                 Positioned(
-                  top: 36.h - circleDiameter / 2,
+                  top: ResponsiveUtils.spacing(context, mobile: 36, tablet: 42, desktop: 48) - circleDiameter / 2,
                   left: circleCenterX - circleDiameter / 2,
                   child: _ActiveStepCircle(
                     isCompleted: activeStep.isCompleted,
@@ -181,7 +181,7 @@ class _ActiveStepCircle extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor,
         shape: BoxShape.circle,
-        border: Border.all(color: borderColor, width: 2.w),
+        border: Border.all(color: borderColor, width: ResponsiveUtils.size(context, mobile: 2, tablet: 2.5, desktop: 3)),
         boxShadow: [
           BoxShadow(
             color: borderColor.withValues(alpha: 0.15),
@@ -192,13 +192,13 @@ class _ActiveStepCircle extends StatelessWidget {
       ),
       child: Center(
         child: isCompleted
-            ? Icon(Icons.check, color: Colors.white, size: 18.sp)
+            ? Icon(Icons.check, color: Colors.white, size: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22))
             : Text(
                 '$number',
                 style: AppTextStyles.bodySmall.copyWith(
                   color: textColor,
                   fontWeight: FontWeight.w700,
-                  fontSize: 14.sp,
+                  fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 16, desktop: 18),
                 ),
               ),
       ),

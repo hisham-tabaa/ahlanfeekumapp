@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../../../../theming/text_styles.dart';
+import '../../../../core/utils/responsive_utils.dart';
 
 // Import separated widgets
 import '../widgets/home_header_widget.dart';
@@ -44,21 +44,51 @@ class HomeScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline, size: 64.sp, color: Colors.grey[400]),
-                    SizedBox(height: 16.h),
+                    Icon(
+                      Icons.error_outline,
+                      size: ResponsiveUtils.size(context,
+                        mobile: 64,
+                        tablet: 72,
+                        desktop: 80,
+                      ),
+                      color: Colors.grey[400],
+                    ),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(context,
+                        mobile: 16,
+                        tablet: 20,
+                        desktop: 24,
+                      ),
+                    ),
                     Text(
                       'Something went wrong',
                       style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
                     ),
-                    SizedBox(height: 8.h),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(context,
+                        mobile: 8,
+                        tablet: 12,
+                        desktop: 16,
+                      ),
+                    ),
                     Text(
                       state.message,
-                      style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey[500]),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: Colors.grey[500],
+                      ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(context,
+                        mobile: 16,
+                        tablet: 20,
+                        desktop: 24,
+                      ),
+                    ),
                     ElevatedButton(
-                      onPressed: () => context.read<HomeBloc>().add(const LoadHomeDataEvent()),
+                      onPressed: () => context.read<HomeBloc>().add(
+                        const LoadHomeDataEvent(),
+                      ),
                       child: const Text('Retry'),
                     ),
                   ],
@@ -73,35 +103,69 @@ class HomeScreen extends StatelessWidget {
                 },
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  child: Column(
-                    children: [
-                      // Header with profile and search
-                      const HomeHeaderWidget(),
+                  child: ResponsiveLayout(
+                    child: Column(
+                      children: [
+                        // Header with profile and search
+                        HomeHeaderWidget(
+                          userProfile: state.homeData.userProfile,
+                        ),
 
-                      // Special Advertisement Banner
-                      AdvertisementBannerWidget(ads: state.homeData.specialAdvertisements),
+                        // Special Advertisement Banner
+                        AdvertisementBannerWidget(
+                          ads: state.homeData.specialAdvertisements,
+                        ),
 
-                      SizedBox(height: 15.h),
+                        SizedBox(
+                          height: ResponsiveUtils.spacing(context,
+                            mobile: 15,
+                            tablet: 20,
+                            desktop: 24,
+                          ),
+                        ),
 
-                      // Special Stays Section
-                      SpecialStaysWidget(properties: state.homeData.siteProperties),
-                      
-                      // Highly Rated Properties
-                      HighlyRatedPropertiesWidget(properties: state.homeData.highlyRatedProperties),
+                        // Special Stays Section
+                        SpecialStaysWidget(
+                          properties: state.homeData.siteProperties,
+                        ),
 
-                      SizedBox(height: 8.h),
+                        // Highly Rated Properties
+                        HighlyRatedPropertiesWidget(
+                          properties: state.homeData.highlyRatedProperties,
+                        ),
 
-                      // Discover Section
-                      DiscoverSectionWidget(governorates: state.homeData.governorates),
+                        SizedBox(
+                          height: ResponsiveUtils.spacing(context,
+                            mobile: 8,
+                            tablet: 12,
+                            desktop: 16,
+                          ),
+                        ),
 
-                      // Hotels of the Week
-                      HotelsOfWeekWidget(hotels: state.homeData.hotelsOfTheWeek ?? const []),
+                        // Discover Section
+                        DiscoverSectionWidget(
+                          governorates: state.homeData.governorates,
+                        ),
 
-                      // Only For You Section
-                      OnlyForYouWidget(onlyForYouSection: state.homeData.onlyForYouSection),
-                      
-                      SizedBox(height: 100.h), // Bottom padding for navigation
-                    ],
+                        // Hotels of the Week
+                        HotelsOfWeekWidget(
+                          hotels: state.homeData.hotelsOfTheWeek ?? const [],
+                        ),
+
+                        // Only For You Section
+                        OnlyForYouWidget(
+                          onlyForYouSection: state.homeData.onlyForYouSection,
+                        ),
+
+                        SizedBox(
+                          height: ResponsiveUtils.spacing(context,
+                            mobile: 100,
+                            tablet: 120,
+                            desktop: 140,
+                          ),
+                        ), // Bottom padding for navigation
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -131,9 +195,7 @@ class HomeScreen extends StatelessWidget {
                   // Exit the app
                   SystemNavigator.pop();
                 },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.red,
-                ),
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
                 child: const Text('Exit'),
               ),
             ],

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:image_picker/image_picker.dart';
 
 abstract class RentCreateEvent extends Equatable {
   const RentCreateEvent();
@@ -100,6 +101,15 @@ class UpdateLivingRoomsEvent extends RentCreateEvent {
   List<Object?> get props => [livingRooms];
 }
 
+class UpdateAreaEvent extends RentCreateEvent {
+  final int? area;
+
+  const UpdateAreaEvent(this.area);
+
+  @override
+  List<Object?> get props => [area];
+}
+
 class UpdatePropertyDescriptionEvent extends RentCreateEvent {
   final String description;
 
@@ -150,11 +160,12 @@ class UpdateGovernorateEvent extends RentCreateEvent {
 // Photos Events
 class AddPhotosEvent extends RentCreateEvent {
   final List<File> photos;
+  final List<XFile> photoFiles; // Added for web compatibility
 
-  const AddPhotosEvent(this.photos);
+  const AddPhotosEvent(this.photos, {this.photoFiles = const []});
 
   @override
-  List<Object?> get props => [photos];
+  List<Object?> get props => [photos, photoFiles];
 }
 
 class RemovePhotoEvent extends RentCreateEvent {
@@ -177,7 +188,7 @@ class SetPrimaryPhotoEvent extends RentCreateEvent {
 
 // Price Events
 class UpdatePriceEvent extends RentCreateEvent {
-  final int price;
+  final int? price;
 
   const UpdatePriceEvent(this.price);
 
@@ -283,4 +294,8 @@ class SubmitPropertyEvent extends RentCreateEvent {
 
 class ResetFormEvent extends RentCreateEvent {
   const ResetFormEvent();
+}
+
+class ClearMessagesEvent extends RentCreateEvent {
+  const ClearMessagesEvent();
 }
