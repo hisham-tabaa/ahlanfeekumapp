@@ -22,6 +22,9 @@ import '../bloc/property_detail_event.dart';
 import '../bloc/property_detail_state.dart';
 import '../widgets/booking_bottom_sheet_with_availability.dart';
 import '../widgets/property_rating_dialog.dart';
+import '../widgets/property_header_widget.dart';
+import '../widgets/property_main_details_widget.dart';
+import '../widgets/property_features_widget.dart';
 import '../../../payment/presentation/pages/payment_screen.dart';
 import 'host_profile_screen.dart';
 
@@ -84,7 +87,10 @@ class _PropertyDetailView extends StatelessWidget {
                                     desktop: 20,
                                   ),
                                 ),
-                                _buildHeaderSection(property, context),
+                                PropertyHeaderWidget(
+                                  property: property,
+                                  onSignInPrompt: () => _showSignInPrompt(context, 'Save to Favorites'),
+                                ),
                                 SizedBox(
                                   height: ResponsiveUtils.spacing(
                                     context,
@@ -93,7 +99,7 @@ class _PropertyDetailView extends StatelessWidget {
                                     desktop: 32,
                                   ),
                                 ),
-                                _buildMainDetailsSection(property, context),
+                                PropertyMainDetailsWidget(property: property),
                                 SizedBox(
                                   height: ResponsiveUtils.spacing(
                                     context,
@@ -102,9 +108,8 @@ class _PropertyDetailView extends StatelessWidget {
                                     desktop: 32,
                                   ),
                                 ),
-                                _buildFeaturesSection(
-                                  property.features,
-                                  context,
+                                PropertyFeaturesWidget(
+                                  features: property.features,
                                 ),
                                 SizedBox(
                                   height: ResponsiveUtils.spacing(

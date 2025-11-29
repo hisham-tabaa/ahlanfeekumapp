@@ -186,7 +186,7 @@ Edit `lib/features/payment/presentation/pages/payment_screen.dart` to customize 
 
 In `lib/features/property_detail/presentation/pages/property_detail_screen.dart`, add more fields to the metadata map:
 ```dart
-metadata: {
+metadata: {<!-- Add custom fields here -->
   'propertyId': property.id,
   'checkIn': checkIn.toIso8601String().split('T')[0],
   'checkOut': checkOut.toIso8601String().split('T')[0],

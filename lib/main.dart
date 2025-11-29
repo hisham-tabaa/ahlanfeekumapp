@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -192,7 +192,7 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: const ResponsiveWrapper(child: InitialSplashScreen()),
+      initialRoute: '/',
       navigatorKey:
           ErrorHandler.navigatorKey, // Global navigator key for 401 handling
       onGenerateRoute: AppRouter.onGenerateRoute,
@@ -460,8 +460,10 @@ class RoleProtectedRentCreateScreen extends StatelessWidget {
 
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
-    debugPrint('🔧 Navigating to: ${settings.name}');
-    debugPrint('🔧 Route arguments: ${settings.arguments}');
+    if (kDebugMode) {
+      debugPrint('🔧 Navigating to: ${settings.name}');
+      debugPrint('🔧 Route arguments: ${settings.arguments}');
+    }
 
     switch (settings.name) {
       case '/search':
@@ -555,8 +557,21 @@ class AppRouter {
           ),
         );
 
+      case '/':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: getIt<AuthBloc>(),
+            child: const InitialSplashScreen(),
+          ),
+        );
+
       default:
-        return MaterialPageRoute(builder: (_) => const InitialSplashScreen());
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider.value(
+            value: getIt<AuthBloc>(),
+            child: const InitialSplashScreen(),
+          ),
+        );
     }
   }
 }

@@ -37,15 +37,16 @@ class PaymentScreen extends StatefulWidget {
 
 class _PaymentScreenState extends State<PaymentScreen> {
   final _cardController = CardFormEditController();
-  late final CardFormStyle _cardFormStyle = CardFormStyle(
+  CardFormStyle get _cardFormStyle => CardFormStyle(
     backgroundColor: Colors.white,
     textColor: const Color(0xFF1F2937),
     fontSize: 16,
     placeholderColor: const Color(0xFF9CA3AF),
     textErrorColor: const Color(0xFFEF4444),
-    borderColor: AppColors.primary,
-    borderWidth: 2,
-    borderRadius: 14,
+    borderColor: _cardFormHasFocus ? AppColors.primary : const Color(0xFFE5E7EB),
+    borderWidth: _cardFormHasFocus ? 2 : 1,
+    borderRadius: 12,
+    cursorColor: AppColors.primary,
   );
   bool _cardFormHasFocus = false;
   CardFieldInputDetails? _cardDetails;
@@ -137,20 +138,34 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  void _processPayment(BuildContext blocContext) {
+  Future<void> _processPayment(BuildContext blocContext) async {
+    // Validate card form completeness
     if (!(_cardDetails?.complete ?? false)) {
       setState(() {
         _cardValidationError =
-            'Please fill card number, expiry, CVC, and country.';
+            'Please complete all card fields: number, expiry, CVC, and postal code.';
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Complete all card fields before paying.'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white),
+              SizedBox(width: 8),
+              Expanded(child: Text('Please complete all card fields')),
+            ],
+          ),
+          backgroundColor: Colors.red[600],
         ),
       );
       return;
     }
+
+    // Clear any existing validation errors
+    setState(() {
+      _cardValidationError = null;
+    });
+
+    // Process the payment
     blocContext.read<PaymentBloc>().add(
       ProcessPaymentEvent(
         amount: widget.amount,
@@ -177,18 +192,71 @@ class _PaymentScreenState extends State<PaymentScreen> {
           listener: (context, state) {
             if (state is PaymentSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Payment successful!'),
-                  backgroundColor: Colors.green,
+                SnackBar(
+                  content: const Row(
+                    children: [
+                      Icon(Icons.check_circle_outline, color: Colors.white),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Payment Successful!', 
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text('Your transaction has been completed',
+                              style: TextStyle(fontSize: 12, color: Colors.white70)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Colors.green[600],
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  duration: const Duration(seconds: 4),
                 ),
               );
-              widget.onSuccess?.call();
-              Navigator.pop(context, true);
+              
+              // Delay navigation to show success message
+              Future.delayed(const Duration(milliseconds: 1500), () {
+                widget.onSuccess?.call();
+                if (mounted) Navigator.pop(context, true);
+              });
             } else if (state is PaymentFailure) {
+              final errorMessage = state.error.toLowerCase().contains('card') 
+                ? 'Card declined. Please check your card details and try again.'
+                : 'Payment failed: ${state.error}';
+                
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Payment failed: ${state.error}'),
-                  backgroundColor: Colors.red,
+                  content: Row(
+                    children: [
+                      const Icon(Icons.error_outline, color: Colors.white),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Payment Failed', 
+                              style: TextStyle(fontWeight: FontWeight.w600)),
+                            Text(errorMessage,
+                              style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: Colors.red[600],
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  duration: const Duration(seconds: 6),
+                  action: SnackBarAction(
+                    label: 'Retry',
+                    textColor: Colors.white,
+                    onPressed: () => _processPayment(context),
+                  ),
                 ),
               );
               widget.onFailure?.call();
@@ -387,10 +455,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         countryCode: 'SA',
                         onCardChanged: (details) {
                           setState(() {
-                            final isComplete = details?.complete ?? false;
                             _cardDetails = details;
-                            if (isComplete) {
+                            // Clear validation error if card becomes complete
+                            if (details?.complete == true) {
                               _cardValidationError = null;
+                            }
+                            // Show specific validation errors
+                            else if (details != null) {
+                              final validationIssues = <String>[];
+                              if (details.validNumber != CardValidationState.Valid) {
+                                validationIssues.add('card number');
+                              }
+                              if (details.validExpiryDate != CardValidationState.Valid) {
+                                validationIssues.add('expiry date');
+                              }
+                              if (details.validCVC != CardValidationState.Valid) {
+                                validationIssues.add('CVC');
+                              }
+                              
+                              if (validationIssues.isNotEmpty) {
+                                _cardValidationError = 'Please check: ${validationIssues.join(', ')}';
+                              }
                             }
                           });
                         },
@@ -424,51 +509,83 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: state is PaymentLoading
-                          ? null
-                          : () => _processPayment(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: EdgeInsets.symmetric(
-                          vertical: ResponsiveUtils.spacing(
-                            context,
-                            mobile: 16,
-                            tablet: 18,
-                            desktop: 20,
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveUtils.radius(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      child: ElevatedButton(
+                        onPressed: state is PaymentLoading
+                            ? null
+                            : () => _processPayment(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: state is PaymentLoading 
+                              ? AppColors.primary.withOpacity(0.8)
+                              : AppColors.primary,
+                          padding: EdgeInsets.symmetric(
+                            vertical: ResponsiveUtils.spacing(
                               context,
-                              mobile: 12,
-                              tablet: 14,
-                              desktop: 16,
+                              mobile: 18,
+                              tablet: 20,
+                              desktop: 22,
                             ),
                           ),
-                        ),
-                        disabledBackgroundColor: Colors.grey[300],
-                      ),
-                      child: state is PaymentLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : const Text(
-                              'Pay Now',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveUtils.radius(
+                                context,
+                                mobile: 14,
+                                tablet: 16,
+                                desktop: 18,
                               ),
                             ),
+                          ),
+                          disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
+                          elevation: state is PaymentLoading ? 0 : 3,
+                          shadowColor: AppColors.primary.withOpacity(0.3),
+                        ),
+                        child: state is PaymentLoading
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: const AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Text(
+                                    'Processing...',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.lock_outline,
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Pay \$${(widget.amount / 100).toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
                     ),
                   ),
                   SizedBox(

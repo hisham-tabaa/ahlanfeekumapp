@@ -46,6 +46,7 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
     String? name,
   }) async {
     try {
+      // Create payment method from the card form field
       final paymentMethod = await Stripe.instance.createPaymentMethod(
         params: PaymentMethodParams.card(
           paymentMethodData: PaymentMethodData(
