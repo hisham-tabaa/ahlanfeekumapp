@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
           right: 0,
           child: Center(
             child: Image.asset(
-              'assets/icons/logo.png',
+              'assets/images/home_icon.png',
               width: ResponsiveUtils.size(context, mobile: 150, tablet: 180, desktop: 200),
               height: ResponsiveUtils.size(context, mobile: 82, tablet: 98, desktop: 110),
             ),
@@ -204,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/icons/logo.png',
+                        'assets/images/home_icon.png',
                         width: ResponsiveUtils.size(context,
                           mobile: 150,
                           tablet: 200,

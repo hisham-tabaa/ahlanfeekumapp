@@ -59,7 +59,7 @@ class _InitialSplashScreenState extends State<InitialSplashScreen> {
             children: [
               // Logo from assets
               Image.asset(
-                'assets/icons/logo.png', 
+                'assets/images/home_icon.png', 
                 width: ResponsiveUtils.size(context, mobile: 198, tablet: 230, desktop: 260), 
                 height: ResponsiveUtils.size(context, mobile: 108, tablet: 125, desktop: 142),
               ),

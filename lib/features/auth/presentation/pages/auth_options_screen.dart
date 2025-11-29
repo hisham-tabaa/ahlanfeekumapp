@@ -79,7 +79,7 @@ class AuthOptionsScreen extends StatelessWidget {
           Align(
             alignment: Alignment(0, -0.4), // طلّع اللوجو شوي لفوق
             child: Image.asset(
-              'assets/icons/logo.png',
+              'assets/images/home_icon.png',
               width: ResponsiveUtils.size(
                 context,
                 mobile: 180,
@@ -165,7 +165,7 @@ class AuthOptionsScreen extends StatelessWidget {
                           ),
                         ),
                         child: Image.asset(
-                          'assets/icons/logo.png',
+                          'assets/images/home_icon.png',
                           width: ResponsiveUtils.size(
                             context,
                             mobile: 120,

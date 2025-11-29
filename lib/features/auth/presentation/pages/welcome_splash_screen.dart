@@ -43,7 +43,7 @@ class WelcomeSplashScreen extends StatelessWidget {
               // Logo
               Center(
                 child: Image.asset(
-                  'assets/icons/logo.png',
+                  'assets/images/home_icon.png',
                   width: ResponsiveUtils.size(context, mobile: 198, tablet: 220, desktop: 250),
                   height: ResponsiveUtils.size(context, mobile: 108, tablet: 120, desktop: 135),
                 ),
@@ -114,7 +114,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/icons/logo.png',
+                        'assets/images/home_icon.png',
                         width: ResponsiveUtils.responsive(context,
                           mobile: 150,
                           tablet: 200,

@@ -67,7 +67,7 @@ class CreateAccountScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
-                        'assets/icons/logo.png',
+                        'assets/images/home_icon.png',
                         width: ResponsiveUtils.size(context,
                           mobile: 150,
                           tablet: 200,

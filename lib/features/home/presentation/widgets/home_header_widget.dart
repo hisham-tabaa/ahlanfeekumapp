@@ -63,7 +63,7 @@ class HomeHeaderWidget extends StatelessWidget {
                         desktop: 90,
                       ),
                       child: Image.asset(
-                        'assets/icons/logo.png',
+                        'assets/images/home_icon.png',
                         fit: BoxFit.contain,
                       ),
                     ),
