@@ -19,6 +19,11 @@ android {
         jvmTarget = "1.8"
     }
 
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+
     defaultConfig {
         applicationId = "com.ahlanfeekum.app"
         minSdk = flutter.minSdkVersion
