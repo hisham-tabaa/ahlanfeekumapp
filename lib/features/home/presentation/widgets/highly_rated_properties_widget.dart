@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/home_entities.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -92,7 +93,7 @@ class HighlyRatedPropertiesWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Highly Rated Properties',
+                  'highly_rated_properties'.tr(),
                   style: AppTextStyles.h4.copyWith(
                     color: AppColors.textPrimary,
                     fontSize: titleFontSize,
@@ -123,6 +124,9 @@ class HighlyRatedPropertiesWidget extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: listPadding),
               scrollDirection: Axis.horizontal,
               itemCount: properties.length,
+              cacheExtent: 500, // Preload items for smoother scrolling
+              addAutomaticKeepAlives: true,
+              physics: const BouncingScrollPhysics(),
               separatorBuilder: (_, __) => SizedBox(width: cardSeparator),
               itemBuilder: (context, index) {
                 final property = properties[index];

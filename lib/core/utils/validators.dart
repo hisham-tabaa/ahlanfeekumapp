@@ -50,15 +50,8 @@ class Validators {
       return 'password_too_short';
     }
 
-    // Enforce: at least one uppercase, one lowercase, and one non-alphanumeric
-    final hasUpper = RegExp(r'[A-Z]').hasMatch(value);
-    final hasLower = RegExp(r'[a-z]').hasMatch(value);
-    final hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(value);
-
-    if (!hasUpper || !hasLower || !hasSpecial) {
-      return "Password must include at least one uppercase (A-Z), one lowercase (a-z), and one special character.";
-    }
-
+    // Simplified password validation - just minimum length requirement
+    // Allows simple passwords like "12345678"
     return null;
   }
 

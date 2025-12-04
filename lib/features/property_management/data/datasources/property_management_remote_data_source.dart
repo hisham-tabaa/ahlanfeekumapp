@@ -43,21 +43,21 @@ class PropertyManagementRemoteDataSourceImpl
           ownerId = user.id;
         }
       } catch (e) {
-        print('⚠️ Error getting user ID: $e');
+        // Silently handle error getting user ID
       }
-      
+
       final queryParams = <String, dynamic>{};
-      
+
       // Add OwnerId if available
       if (ownerId != null && ownerId.isNotEmpty) {
         queryParams['OwnerId'] = ownerId;
       }
-      
+
       final response = await dio.get(
         '/properties/search-property',
         queryParameters: queryParams,
       );
-      
+
       if (response.statusCode == 200) {
         final List<dynamic> items = response.data['items'] ?? [];
         return items
@@ -89,15 +89,11 @@ class PropertyManagementRemoteDataSourceImpl
     try {
       final response = await dio.get(
         '/properties/property-calendar-statuses',
-        queryParameters: {
-          'SitePropertyId': propertyId,
-          'MaxResultCount': 60,
-        },
+        queryParameters: {'SitePropertyId': propertyId, 'MaxResultCount': 60},
       );
 
       if (response.statusCode == 200) {
         final List<dynamic> items = response.data['items'] ?? [];
-        print('📅 Calendar API returned ${items.length} items');
         return items
             .map((json) => PropertyCalendarStatusModel.fromJson(json))
             .toList();
@@ -150,10 +146,7 @@ class PropertyManagementRemoteDataSourceImpl
     try {
       final response = await dio.post(
         '/properties/activate-deactivate',
-        data: {
-          'propertyId': propertyId,
-          'isActive': isActive,
-        },
+        data: {'propertyId': propertyId, 'isActive': isActive},
       );
 
       if (response.statusCode != 200 && response.statusCode != 201) {

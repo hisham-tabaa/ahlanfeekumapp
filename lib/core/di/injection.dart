@@ -63,6 +63,7 @@ import '../../features/reservations/data/repositories/reservation_repository_imp
 import '../../features/reservations/domain/repositories/reservation_repository.dart';
 import '../../features/reservations/presentation/bloc/reservation_bloc.dart';
 import '../../features/payment/data/datasources/payment_remote_data_source.dart';
+import '../../features/payment/data/datasources/payment_methods_data_source.dart';
 import '../../features/payment/data/repositories/payment_repository_impl.dart';
 import '../../features/payment/domain/repositories/payment_repository.dart';
 import '../../features/payment/domain/usecases/process_payment_usecase.dart';
@@ -72,6 +73,12 @@ import '../../features/payment/domain/usecases/get_payment_status_usecase.dart';
 import '../../features/payment/presentation/bloc/payment_bloc.dart';
 import '../services/image_loader_service.dart';
 import '../../features/auth/domain/usecases/verify_phone_usecase.dart';
+import '../../features/auth/domain/usecases/check_user_exists_usecase.dart';
+import '../../features/payments_summary/data/datasources/payment_summary_remote_data_source.dart';
+import '../../features/payments_summary/data/repositories/payment_summary_repository_impl.dart';
+import '../../features/payments_summary/domain/repositories/payment_summary_repository.dart';
+import '../../features/payments_summary/domain/usecases/get_payment_summary_usecase.dart';
+import '../../features/payments_summary/presentation/bloc/payment_summary_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -142,6 +149,14 @@ Future<void> initializeDependencies() async {
     () => PaymentRemoteDataSourceImpl(getIt()),
   );
 
+  getIt.registerLazySingleton<PaymentMethodsDataSource>(
+    () => PaymentMethodsDataSourceImpl(getIt()),
+  );
+
+  getIt.registerLazySingleton<PaymentSummaryRemoteDataSource>(
+    () => PaymentSummaryRemoteDataSourceImpl(dio: getIt()),
+  );
+
   // Repository
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
@@ -187,6 +202,10 @@ Future<void> initializeDependencies() async {
     () => PaymentRepositoryImpl(remoteDataSource: getIt()),
   );
 
+  getIt.registerLazySingleton<PaymentSummaryRepository>(
+    () => PaymentSummaryRepositoryImpl(remoteDataSource: getIt()),
+  );
+
   // Use cases
   getIt.registerLazySingleton(() => LoginUseCase(getIt()));
   getIt.registerLazySingleton(() => SendOtpUseCase(getIt()));
@@ -196,6 +215,7 @@ Future<void> initializeDependencies() async {
   getIt.registerLazySingleton(() => ConfirmPasswordResetUseCase(getIt()));
   getIt.registerLazySingleton(() => RegisterUserUseCase(getIt()));
   getIt.registerLazySingleton(() => SendOtpPhoneUseCase(getIt()));
+  getIt.registerLazySingleton(() => CheckUserExistsUseCase(getIt()));
 
   // Rent Create Use Cases
   getIt.registerLazySingleton(() => CreatePropertyStepOneUseCase(getIt()));
@@ -219,6 +239,8 @@ Future<void> initializeDependencies() async {
   getIt.registerLazySingleton(() => CreatePaymentIntentUseCase(getIt()));
   getIt.registerLazySingleton(() => ConfirmPaymentUseCase(getIt()));
   getIt.registerLazySingleton(() => GetPaymentStatusUseCase(getIt()));
+
+  getIt.registerLazySingleton(() => GetPaymentSummaryUseCase(getIt()));
 
   // BLoC
   // AuthBloc must be singleton to maintain authentication state across the app
@@ -282,6 +304,12 @@ Future<void> initializeDependencies() async {
       createPaymentIntentUseCase: getIt(),
       confirmPaymentUseCase: getIt(),
       getPaymentStatusUseCase: getIt(),
+    ),
+  );
+
+  getIt.registerFactory(
+    () => PaymentSummaryBloc(
+      getPaymentSummaryUseCase: getIt(),
     ),
   );
 

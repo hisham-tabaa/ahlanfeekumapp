@@ -141,19 +141,8 @@ class RegistrationCubit extends Cubit<RegistrationState> {
       emit(state.copyWith(error: 'Password must be at least 6 characters'));
       return;
     }
-    // Enforce complexity as per policy
-    final hasUpper = RegExp(r'[A-Z]').hasMatch(state.password);
-    final hasLower = RegExp(r'[a-z]').hasMatch(state.password);
-    final hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(state.password);
-    if (!hasUpper || !hasLower || !hasSpecial) {
-      emit(
-        state.copyWith(
-          error:
-              "Passwords must have at least one non alphanumeric character., Passwords must have at least one lowercase ('a'-'z')., Passwords must have at least one uppercase ('A'-'Z').",
-        ),
-      );
-      return;
-    }
+    // Simplified password validation - removed complexity requirements
+    // Now accepts simple passwords like "12345678"
     if (state.password != state.confirmPassword) {
       emit(state.copyWith(error: 'Passwords do not match'));
       return;

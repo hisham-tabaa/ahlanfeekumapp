@@ -8,14 +8,20 @@ import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/language_switcher_button.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_state.dart';
 import 'login_screen.dart';
 import 'choose_account_screen.dart';
 
-class AuthOptionsScreen extends StatelessWidget {
+class AuthOptionsScreen extends StatefulWidget {
   const AuthOptionsScreen({super.key});
 
+  @override
+  State<AuthOptionsScreen> createState() => _AuthOptionsScreenState();
+}
+
+class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +106,20 @@ class AuthOptionsScreen extends StatelessWidget {
             ),
           ),
 
+          // Language Switcher at top right
+          Positioned(
+            top: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56),
+            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            child: LanguageSwitcherButton(
+              isDark: true,
+              onLanguageChanged: () {
+                setState(() {
+                  // Force rebuild when language changes
+                });
+              },
+            ),
+          ),
+
           // Modal dialog
           Align(
             alignment: Alignment(0, 0.8),
@@ -112,7 +132,9 @@ class AuthOptionsScreen extends StatelessWidget {
 
   Widget _buildDesktopLayout(BuildContext context) {
     return ResponsiveLayout(
-      child: Row(
+      child: Stack(
+        children: [
+          Row(
         children: [
           // Left side - Background image with logo (similar to login)
           Expanded(
@@ -191,7 +213,7 @@ class AuthOptionsScreen extends StatelessWidget {
                       ),
 
                       Text(
-                        'Welcome to Ahlan Feekum',
+                        'welcome'.tr(),
                         style: AppTextStyles.h2.copyWith(
                           fontSize: ResponsiveUtils.responsive(
                             context,
@@ -291,6 +313,21 @@ class AuthOptionsScreen extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          ),
+            ],
+          ),
+          
+          // Language Switcher at top right
+          Positioned(
+            top: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            child: LanguageSwitcherButton(
+              onLanguageChanged: () {
+                setState(() {
+                  // Force rebuild when language changes
+                });
+              },
             ),
           ),
         ],
@@ -551,7 +588,7 @@ class AuthOptionsScreen extends StatelessWidget {
 
                 // Subtitle
                 Text(
-                  'Begin your journey with Syria\'s most trusted rental platform. Join thousands of satisfied users.',
+                  'begin_your_journey'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: ResponsiveUtils.responsive(
                       context,
@@ -773,7 +810,7 @@ class AuthOptionsScreen extends StatelessWidget {
                           tablet: 52,
                           desktop: 56,
                         ),
-                        text: 'Login',
+                        text: 'login_title'.tr(),
                         textStyle: TextStyle(
                           fontSize: ResponsiveUtils.fontSize(
                             context,
@@ -840,11 +877,11 @@ class AuthOptionsScreen extends StatelessWidget {
                         height: 1.4,
                       ),
                       children: [
-                        const TextSpan(
-                          text: 'By continuing, you agree to Ahlan Feekum\'s ',
+                        TextSpan(
+                          text: 'by_continuing_agree'.tr(),
                         ),
                         TextSpan(
-                          text: 'Terms of Service',
+                          text: 'terms_of_service'.tr(),
                           style: TextStyle(
                             color: const Color(0xFFED1C24),
                             fontWeight: FontWeight.w600,
@@ -856,9 +893,9 @@ class AuthOptionsScreen extends StatelessWidget {
                               Navigator.pushNamed(context, '/terms');
                             },
                         ),
-                        const TextSpan(text: ' and '),
+                        TextSpan(text: ' ${'and'.tr()} '),
                         TextSpan(
-                          text: 'Privacy Policy',
+                          text: 'privacy_policy'.tr(),
                           style: TextStyle(
                             color: const Color(0xFFED1C24),
                             fontWeight: FontWeight.w600,
@@ -1015,7 +1052,7 @@ class AuthOptionsScreen extends StatelessWidget {
               children: [
                 // Title
                 Text(
-                  'Get Started',
+                  'get_started'.tr(),
                   style: AppTextStyles.h3.copyWith(
                     fontSize: ResponsiveUtils.fontSize(
                       context,
@@ -1040,7 +1077,7 @@ class AuthOptionsScreen extends StatelessWidget {
 
                 // Subtitle
                 Text(
-                  'Get Started And Begin Your Journey In Our Fabulous Renting App',
+                  'begin_your_journey'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: ResponsiveUtils.fontSize(
                       context,
@@ -1065,7 +1102,7 @@ class AuthOptionsScreen extends StatelessWidget {
 
                 // Register Button
                 CustomButton(
-                  text: 'Register',
+                  text: 'register'.tr(),
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -1093,7 +1130,7 @@ class AuthOptionsScreen extends StatelessWidget {
                     tablet: 52,
                     desktop: 56,
                   ),
-                  text: 'Login',
+                  text: 'login_title'.tr(),
                   textStyle: TextStyle(
                     fontSize: ResponsiveUtils.fontSize(
                       context,
@@ -1139,19 +1176,19 @@ class AuthOptionsScreen extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                       children: [
-                        const TextSpan(
-                          text: 'By Continuing, You Agree To Ahlan Feekm ',
+                        TextSpan(
+                          text: 'by_continuing_agree'.tr(),
                         ),
                         TextSpan(
-                          text: 'Terms Of Use',
+                          text: 'terms_of_use'.tr(),
                           style: TextStyle(
                             color: Colors.red,
                             fontWeight: FontWeight.w500,
                           ),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              // Navigate to Terms screen
-                              Navigator.pushNamed(context, '/terms');
+                              // Navigate to Help screen (anonymous Terms/Privacy section)
+                              Navigator.pushNamed(context, '/help');
                             },
                         ),
                       ],

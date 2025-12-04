@@ -138,6 +138,7 @@ class PropertyDetailRemoteDataSourceImpl
         'NumberOfGuest': request.numberOfGuests,
         'Notes': request.notes,
         'SitePropertyId': request.sitePropertyId,
+        'PaymentMethod': request.paymentMethod,
       });
 
       final response = await _dio.post(

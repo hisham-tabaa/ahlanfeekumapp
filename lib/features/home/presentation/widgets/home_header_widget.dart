@@ -12,7 +12,6 @@ class HomeHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(color: Colors.white),
@@ -69,43 +68,34 @@ class HomeHeaderWidget extends StatelessWidget {
                     ),
 
                     // Profile Picture
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: CircleAvatar(
-                        radius: ResponsiveUtils.size(
-                          context,
-                          mobile: 18,
-                          tablet: 22,
-                          desktop: 26,
+                    GestureDetector(
+                      onTap: () {
+                        // Navigate to profile settings
+                        Navigator.pushNamed(context, '/main-navigation');
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        backgroundColor: Colors.white,
-                        child: userProfile?.profilePhotoUrl != null
-                            ? ClipOval(
-                                child: WebCompatibleNetworkImage(
-                                  imageUrl: userProfile!.profilePhotoUrl!,
-                                  width: ResponsiveUtils.size(
-                                    context,
-                                    mobile: 36,
-                                    tablet: 44,
-                                    desktop: 52,
-                                  ),
-                                  height: ResponsiveUtils.size(
-                                    context,
-                                    mobile: 36,
-                                    tablet: 44,
-                                    desktop: 52,
-                                  ),
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => SizedBox(
+                        child: CircleAvatar(
+                          radius: ResponsiveUtils.size(
+                            context,
+                            mobile: 18,
+                            tablet: 22,
+                            desktop: 26,
+                          ),
+                          backgroundColor: Colors.white,
+                          child: userProfile?.profilePhotoUrl != null
+                              ? ClipOval(
+                                  child: WebCompatibleNetworkImage(
+                                    imageUrl: userProfile!.profilePhotoUrl!,
                                     width: ResponsiveUtils.size(
                                       context,
                                       mobile: 36,
@@ -118,39 +108,55 @@ class HomeHeaderWidget extends StatelessWidget {
                                       tablet: 44,
                                       desktop: 52,
                                     ),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation<Color>(
-                                          AppColors.primary,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) => SizedBox(
+                                      width: ResponsiveUtils.size(
+                                        context,
+                                        mobile: 36,
+                                        tablet: 44,
+                                        desktop: 52,
+                                      ),
+                                      height: ResponsiveUtils.size(
+                                        context,
+                                        mobile: 36,
+                                        tablet: 44,
+                                        desktop: 52,
+                                      ),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                AppColors.primary,
+                                              ),
                                         ),
                                       ),
                                     ),
+                                    errorWidget: (context, url, error) {
+                                      return Icon(
+                                        Icons.person,
+                                        color: AppColors.primary,
+                                        size: ResponsiveUtils.size(
+                                          context,
+                                          mobile: 20,
+                                          tablet: 24,
+                                          desktop: 28,
+                                        ),
+                                      );
+                                    },
                                   ),
-                                  errorWidget: (context, url, error) {
-                                    return Icon(
-                                      Icons.person,
-                                      color: AppColors.primary,
-                                      size: ResponsiveUtils.size(
-                                        context,
-                                        mobile: 20,
-                                        tablet: 24,
-                                        desktop: 28,
-                                      ),
-                                    );
-                                  },
+                                )
+                              : Icon(
+                                  Icons.person,
+                                  color: AppColors.primary,
+                                  size: ResponsiveUtils.size(
+                                    context,
+                                    mobile: 20,
+                                    tablet: 24,
+                                    desktop: 28,
+                                  ),
                                 ),
-                              )
-                            : Icon(
-                                Icons.person,
-                                color: AppColors.primary,
-                                size: ResponsiveUtils.size(
-                                  context,
-                                  mobile: 20,
-                                  tablet: 24,
-                                  desktop: 28,
-                                ),
-                              ),
+                        ),
                       ),
                     ),
                   ],

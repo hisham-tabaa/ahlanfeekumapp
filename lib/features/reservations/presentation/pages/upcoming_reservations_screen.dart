@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../bloc/reservation_bloc.dart';
 import '../bloc/reservation_event.dart';
 import '../bloc/reservation_state.dart';
@@ -32,7 +33,7 @@ class _UpcomingReservationsScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Upcoming Reservations',
+          'upcoming_reservations'.tr(),
           style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
         ),
         backgroundColor: Colors.white,
@@ -71,7 +72,7 @@ class _UpcomingReservationsScreenState
                   ),
                   SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
                   Text(
-                    'Error Loading Reservations',
+                    'error_loading_reservations'.tr(),
                     style: AppTextStyles.h4.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -81,7 +82,7 @@ class _UpcomingReservationsScreenState
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.spacing(context, mobile: 32, tablet: 36, desktop: 40)),
                     child: Text(
-                      state.message,
+                      state.message.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -102,7 +103,7 @@ class _UpcomingReservationsScreenState
                       ),
                     ),
                     child: Text(
-                      'Try Again',
+                      'retry'.tr(),
                       style: AppTextStyles.buttonText.copyWith(
                         color: Colors.white,
                       ),
@@ -126,7 +127,7 @@ class _UpcomingReservationsScreenState
                     ),
                     SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
                     Text(
-                      'No Upcoming Reservations',
+                      'no_upcoming_reservations'.tr(),
                       style: AppTextStyles.h4.copyWith(
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w600,
@@ -134,7 +135,7 @@ class _UpcomingReservationsScreenState
                     ),
                     SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
                     Text(
-                      'You don\'t have any upcoming reservations yet.',
+                      'no_upcoming_reservations_message'.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
@@ -28,7 +29,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Properties'),
+        title: Text('my_properties'.tr()),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -79,10 +80,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                       desktop: 24,
                     ),
                   ),
-                  Text(
-                    state.error!,
-                    style: AppTextStyles.bodyMedium,
-                  ),
+                  Text(state.error!, style: AppTextStyles.bodyMedium),
                   SizedBox(
                     height: ResponsiveUtils.spacing(
                       context,
@@ -93,11 +91,11 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      context
-                          .read<PropertyManagementBloc>()
-                          .add(const LoadHostPropertiesEvent());
+                      context.read<PropertyManagementBloc>().add(
+                        const LoadHostPropertiesEvent(),
+                      );
                     },
-                    child: const Text('Retry'),
+                    child: Text('retry'.tr()),
                   ),
                 ],
               ),
@@ -187,11 +185,16 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
 
           return RefreshIndicator(
             onRefresh: () async {
-              context
-                  .read<PropertyManagementBloc>()
-                  .add(const LoadHostPropertiesEvent());
+              context.read<PropertyManagementBloc>().add(
+                const LoadHostPropertiesEvent(),
+              );
             },
             child: ListView.builder(
+              cacheExtent: 500, // Preload items for smoother scrolling
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              addAutomaticKeepAlives: true,
               padding: EdgeInsets.all(
                 ResponsiveUtils.spacing(
                   context,
@@ -231,19 +234,14 @@ class _PropertyCard extends StatelessWidget {
       ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(
-          ResponsiveUtils.radius(
-            context,
-            mobile: 12,
-            tablet: 14,
-            desktop: 16,
-          ),
+          ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16),
         ),
       ),
       child: InkWell(
         onTap: () {
           context.read<PropertyManagementBloc>().add(
-                SelectPropertyEvent(propertyId: property.id),
-              );
+            SelectPropertyEvent(propertyId: property.id),
+          );
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -255,12 +253,7 @@ class _PropertyCard extends StatelessWidget {
           );
         },
         borderRadius: BorderRadius.circular(
-          ResponsiveUtils.radius(
-            context,
-            mobile: 12,
-            tablet: 14,
-            desktop: 16,
-          ),
+          ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,11 +338,11 @@ class _PropertyCard extends StatelessWidget {
                         value: property.isActive,
                         onChanged: (value) {
                           context.read<PropertyManagementBloc>().add(
-                                TogglePropertyStatusEvent(
-                                  propertyId: property.id,
-                                  isActive: value,
-                                ),
-                              );
+                            TogglePropertyStatusEvent(
+                              propertyId: property.id,
+                              isActive: value,
+                            ),
+                          );
                         },
                         activeColor: AppColors.primary,
                       ),

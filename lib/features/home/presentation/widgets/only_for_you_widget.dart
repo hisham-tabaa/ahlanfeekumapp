@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/home_entities.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -83,7 +84,7 @@ class OnlyForYouWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Only  For You !',
+                  'only_for_you'.tr(),
                   style: AppTextStyles.h4.copyWith(
                     color: AppColors.textPrimary,
                     fontSize: titleFontSize,

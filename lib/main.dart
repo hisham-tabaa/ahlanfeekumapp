@@ -37,6 +37,9 @@ import 'features/home/presentation/bloc/home_event.dart';
 import 'features/property_detail/presentation/pages/property_detail_screen.dart';
 import 'features/property_detail/presentation/bloc/property_detail_bloc.dart';
 import 'features/property_detail/presentation/bloc/property_detail_event.dart';
+import 'features/payments_summary/presentation/pages/payment_summary_screen.dart';
+import 'features/payments_summary/presentation/bloc/payment_summary_bloc.dart';
+import 'core/services/performance_service.dart';
 
 void main() async {
   try {
@@ -83,6 +86,9 @@ void main() async {
 
     // Initialize dependencies
     await initializeDependencies();
+
+    // Initialize performance optimizations
+    await PerformanceService.initialize();
 
     // Clear any invalid authentication tokens
     await _clearInvalidTokens();
@@ -543,6 +549,14 @@ class AppRouter {
           builder: (context) => BlocProvider(
             create: (_) => getIt<HomeBloc>()..add(const LoadHomeDataEvent()),
             child: const HomeScreen(),
+          ),
+        );
+
+      case '/payment-summary':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (_) => getIt<PaymentSummaryBloc>(),
+            child: const PaymentSummaryScreen(),
           ),
         );
 

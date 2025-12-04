@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:io';
 
 import '../../../../core/utils/extensions.dart';
@@ -343,12 +344,12 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Camera'),
+              title: Text('camera'.tr()),
               onTap: () => Navigator.pop(context, ImageSource.camera),
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Gallery'),
+              title: Text('gallery'.tr()),
               onTap: () => Navigator.pop(context, ImageSource.gallery),
             ),
           ],
@@ -374,7 +375,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text('my_profile'.tr()),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -395,12 +396,14 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state.updateSuccess) {
-            context.showSnackBar('Profile updated successfully');
+            context.showSnackBar('profile_updated_successfully'.tr());
             // Repopulate fields with updated data
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              _populateFieldsFromState(state);
+              if (mounted) {
+                _populateFieldsFromState(state);
+              }
             });
-            Navigator.pop(context);
+            // Don't pop - let user stay on profile screen after update
           }
 
           if (state.errorMessage != null) {
@@ -529,7 +532,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         desktop: 20,
                       ),
                     ),
-                    label: const Text('Change Photo'),
+                    label: Text('change_photo'.tr()),
                   ),
 
                   SizedBox(
@@ -546,7 +549,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Full Name',
+                        'full_name'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -567,7 +570,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
                       CustomTextField(
                         controller: _nameController,
-                        hintText: 'Enter your full name',
+                        hintText: 'enter_full_name'.tr(),
                       ),
 
                       SizedBox(
@@ -580,7 +583,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
 
                       Text(
-                        'Your Phone',
+                        'phone_number'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -694,7 +697,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                   color: AppColors.textPrimary,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'Phone number',
+                                  hintText: 'enter_phone_number'.tr(),
                                   hintStyle: AppTextStyles.bodyMedium.copyWith(
                                     color: AppColors.textSecondary,
                                   ),
@@ -730,7 +733,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
 
                       Text(
-                        'Email Address',
+                        'email_address'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -751,7 +754,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
                       CustomTextField(
                         controller: _emailController,
-                        hintText: 'Enter your email',
+                        hintText: 'enter_your_email'.tr(),
                         keyboardType: TextInputType.emailAddress,
                       ),
 
@@ -765,7 +768,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
 
                       Text(
-                        'Location',
+                        'location'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -786,7 +789,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       ),
                       CustomTextField(
                         controller: _addressController,
-                        hintText: 'Enter your location',
+                        hintText: 'enter_location'.tr(),
                         suffixIcon: Icon(
                           Icons.location_on_outlined,
                           color: AppColors.textSecondary,
@@ -804,7 +807,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
                       // Password Section
                       Text(
-                        'Password',
+                        'password'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -878,7 +881,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                                 );
                               },
                               child: Text(
-                                'Change',
+                                'change'.tr(),
                                 style: TextStyle(
                                   color: AppColors.primary,
                                   fontSize: ResponsiveUtils.fontSize(
@@ -908,7 +911,7 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
 
                   // Save Button
                   CustomButton(
-                    text: 'Save Changes',
+                    text: 'save_changes'.tr(),
                     isLoading: state.isUpdating,
                     onPressed: () {
                       // Combine country code with phone number
@@ -916,7 +919,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                       final fullPhoneNumber = phone.isNotEmpty
                           ? '$_countryCode$phone'
                           : '';
-
 
                       final request = UpdateProfileRequest(
                         name: _nameController.text.trim(),
@@ -929,7 +931,6 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         profilePhotoPath: _profilePhotoPath,
                         profilePhotoFile: _profilePhotoFile,
                       );
-
 
                       context.read<ProfileBloc>().add(
                         UpdateProfileEvent(request),

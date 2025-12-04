@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -754,9 +755,7 @@ class _BookingBottomSheetState extends State<BookingBottomSheet> {
                     },
                     activeColor: AppColors.primary,
                   ),
-                  const Expanded(
-                    child: Text('I have read all the information and I agree'),
-                  ),
+                  Expanded(child: Text('i_agree_terms'.tr())),
                 ],
               ),
             ],

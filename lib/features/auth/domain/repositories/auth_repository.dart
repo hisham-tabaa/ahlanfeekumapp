@@ -40,4 +40,6 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, String>> registerUser(RegisterUserRequest request);
+  
+  Future<Either<Failure, bool>> checkUserExists({required String phoneOrEmail});
 }

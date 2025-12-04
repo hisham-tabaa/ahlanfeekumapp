@@ -14,20 +14,33 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
   @override
   Future<HomeResponse> getHomeData() async {
-    const endpoint = AppConstants.homeEndpoint;
     try {
-      final response = await _dio.get(endpoint);
+      final response = await _dio.get(AppConstants.homeEndpoint);
+
       return HomeResponse.fromJson(response.data);
     } on DioException catch (e) {
-      // Check for 401 Unauthorized status code
-      if (e.response?.statusCode == 401) {
-        throw const UnauthorizedException(
-          'Your session has expired. Please login again.',
+      // Handle 500 errors gracefully
+      if (e.response?.statusCode == 500) {
+        // Server error - throw exception
+        throw const ServerException(
+          'Backend server error - please try again later',
         );
       }
-      rethrow;
+
+      if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+        throw const UnauthorizedException();
+      } else if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const ServerException('Connection timeout');
+      } else if (e.type == DioExceptionType.unknown) {
+        throw const ServerException('No internet connection');
+      } else {
+        throw ServerException(
+          e.response?.data['message'] ?? 'Server error occurred',
+        );
+      }
     } catch (e) {
-      rethrow;
+      throw ServerException(e.toString());
     }
   }
 }

@@ -1,9 +1,12 @@
+// ignore_for_file: unused_element
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -25,7 +28,8 @@ import '../widgets/property_rating_dialog.dart';
 import '../widgets/property_header_widget.dart';
 import '../widgets/property_main_details_widget.dart';
 import '../widgets/property_features_widget.dart';
-import '../../../payment/presentation/pages/payment_screen.dart';
+import '../../../payment/presentation/pages/payment_method_selection_screen.dart';
+import '../../../payment/presentation/pages/card_payment_screen.dart';
 import 'host_profile_screen.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
@@ -89,7 +93,10 @@ class _PropertyDetailView extends StatelessWidget {
                                 ),
                                 PropertyHeaderWidget(
                                   property: property,
-                                  onSignInPrompt: () => _showSignInPrompt(context, 'Save to Favorites'),
+                                  onSignInPrompt: () => _showSignInPrompt(
+                                    context,
+                                    'Save to Favorites',
+                                  ),
                                 ),
                                 SizedBox(
                                   height: ResponsiveUtils.spacing(
@@ -1711,7 +1718,8 @@ class _PropertyDetailView extends StatelessWidget {
   ) async {
     try {
       final totalNights = checkOut.difference(checkIn).inDays;
-      final totalAmount = (property.pricePerNight * totalNights * 100).toInt();
+      final totalAmount = property.pricePerNight * totalNights;
+      final totalAmountCents = (totalAmount * 100).toInt();
 
       String? userEmail;
       String? userName;
@@ -1721,35 +1729,57 @@ class _PropertyDetailView extends StatelessWidget {
         userName = authState.user.name;
       }
 
-      if (userEmail == null || userEmail.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Unable to process payment. User email not found.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
-
-      final paymentSuccess = await Navigator.push<bool>(
+      // Step 1: Show payment method selection screen
+      final selectedPaymentMethod = await Navigator.push<int>(
         context,
         MaterialPageRoute(
-          builder: (context) => PaymentScreen(
-            amount: totalAmount,
-            email: userEmail!,
-            name: userName,
-            description: 'Booking for ${property.title}',
-            metadata: {
-              'propertyId': property.id,
-              'checkIn': checkIn.toIso8601String().split('T')[0],
-              'checkOut': checkOut.toIso8601String().split('T')[0],
-              'guests': guests.toString(),
-            },
+          builder: (context) => PaymentMethodSelectionScreen(
+            totalAmount: totalAmount,
+            currency: 'USD',
+            nights: totalNights,
+            propertyTitle: property.title,
           ),
         ),
       );
 
-      if (paymentSuccess != true) {
+      if (selectedPaymentMethod == null) {
+        return; // User cancelled
+      }
+
+      if (!context.mounted) return;
+
+      // Step 2: Handle payment based on selected method
+      bool paymentSuccess = false;
+
+      if (selectedPaymentMethod == 1) {
+        // Card payment via Stripe
+        if (userEmail == null || userEmail.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Unable to process payment. User email not found.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
+
+        final result = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CardPaymentScreen(
+              amount: totalAmountCents,
+              email: userEmail!,
+              name: userName,
+            ),
+          ),
+        );
+        paymentSuccess = result == true;
+      } else if (selectedPaymentMethod == 2) {
+        // Cash payment - no payment processing needed
+        paymentSuccess = true;
+      }
+
+      if (!paymentSuccess) {
         return;
       }
 
@@ -1768,9 +1798,10 @@ class _PropertyDetailView extends StatelessWidget {
         numberOfGuests: guests,
         notes: notes,
         sitePropertyId: property.id,
+        paymentMethod: selectedPaymentMethod, // 1 = Card, 2 = Cash
       );
 
-      final response = await dataSource.createReservation(request);
+      await dataSource.createReservation(request);
 
       // Close loading dialog
       if (context.mounted) {
@@ -1813,7 +1844,7 @@ class _PropertyDetailView extends StatelessWidget {
 
                   // Success Title
                   Text(
-                    '🎉 Booking Confirmed!',
+                    'booking_confirmed'.tr(),
                     style: AppTextStyles.h3.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.textPrimary,
@@ -1822,10 +1853,11 @@ class _PropertyDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Success Message
+                  // Success Message based on payment method
                   Text(
-                    response.message ??
-                        'Your reservation has been created successfully! Get ready for an amazing stay.',
+                    selectedPaymentMethod == 1
+                        ? 'booking_confirmed_card'.tr()
+                        : 'booking_confirmed_cash'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                       height: 1.5,
@@ -1920,7 +1952,7 @@ class _PropertyDetailView extends StatelessWidget {
                         side: BorderSide(color: AppColors.primary),
                       ),
                       child: Text(
-                        'Done',
+                        'view_reservations'.tr(),
                         style: TextStyle(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
@@ -1943,12 +1975,12 @@ class _PropertyDetailView extends StatelessWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Booking Failed'),
-            content: Text('Failed to create reservation: $e'),
+            title: Text('booking_failed'.tr()),
+            content: Text('${'failed_create_reservation'.tr()}: $e'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child: Text('ok'.tr()),
               ),
             ],
           ),

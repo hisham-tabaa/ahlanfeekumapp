@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -60,7 +61,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         if (widget.securityCode != null) {
           if (securityCode == null || securityCode.isEmpty) {
             context.showSnackBar(
-              'Please enter the security code',
+              'enter_security_code'.tr(),
               isError: true,
             );
             return;
@@ -82,7 +83,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           );
         }
       } else {
-        context.showSnackBar('Passwords do not match', isError: true);
+        context.showSnackBar('passwords_dont_match'.tr(), isError: true);
       }
     } else {}
   }
@@ -93,7 +94,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is PasswordChanged) {
-            context.showSnackBar('Password changed successfully');
+            context.showSnackBar('password_changed'.tr());
             // Navigate to login screen
             context.pop();
             context.pop(); // Pop twice to go back to login
@@ -156,7 +157,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     // Title
                     Center(
                       child: Text(
-                        'Change Password',
+                        'change_password'.tr(),
                         style: AppTextStyles.h2.copyWith(
                           fontSize: ResponsiveUtils.fontSize(context, mobile: 24, tablet: 28, desktop: 32),
                           color: AppColors.textPrimary,
@@ -171,7 +172,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     // Subtitle
                     Center(
                       child: Text(
-                        'Put A Strong Password To Secure Your Account',
+                        'change_password_subtitle'.tr(),
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 16, desktop: 18),
                           color: AppColors.textSecondary,
@@ -184,7 +185,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                     if (widget.securityCode != null) ...[
                       Text(
-                        'Security Code',
+                        'security_code'.tr(),
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
                           color: AppColors.textPrimary,
@@ -194,15 +195,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
                       CustomTextField(
                         controller: _securityCodeController,
-                        hintText: 'Enter the 4-digit code',
+                        hintText: 'enter_4_digit_code'.tr(),
                         keyboardType: TextInputType.number,
                         validator: (value) {
                           if (widget.securityCode != null) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Please enter the security code';
+                              return 'enter_security_code'.tr();
                             }
                             if (value.trim().length != 4) {
-                              return 'Security code must be 4 digits';
+                              return 'security_code_must_4_digits'.tr();
                             }
                           }
                           return null;
@@ -214,7 +215,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                     // New Password Label
                     Text(
-                      'New Password',
+                      'new_password'.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
                         fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
                         color: AppColors.textPrimary,
@@ -227,7 +228,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     // New Password Field
                     CustomTextField(
                       controller: _newPasswordController,
-                      hintText: 'Password',
+                      hintText: 'password_hint'.tr(),
                       obscureText: _obscureNewPassword,
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -244,10 +245,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter new password';
+                          return 'field_required'.tr();
                         }
                         if (value.length < 6) {
-                          return 'Password must be at least 6 characters';
+                          return 'password_too_short'.tr();
                         }
                         return null;
                       },
@@ -257,7 +258,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
                     // Repeat Password Label
                     Text(
-                      'Repeat New Password',
+                      'repeat_new_password'.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
                         fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
                         color: AppColors.textPrimary,
@@ -270,7 +271,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     // Confirm Password Field
                     CustomTextField(
                       controller: _confirmPasswordController,
-                      hintText: 'Repeat Password',
+                      hintText: 'repeat_password'.tr(),
                       obscureText: _obscureConfirmPassword,
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -287,10 +288,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please confirm your password';
+                          return 'confirm_password_required'.tr();
                         }
                         if (value != _newPasswordController.text) {
-                          return 'Passwords do not match';
+                          return 'passwords_dont_match'.tr();
                         }
                         return null;
                       },
@@ -302,7 +303,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         return CustomButton(
-                          text: 'Change',
+                          text: 'change'.tr(),
                           onPressed: _handleChangePassword,
                           isLoading: state is AuthLoading,
                           width: double.infinity,

@@ -9,6 +9,7 @@ import '../models/otp_verification_response.dart';
 import '../models/register_user_request.dart';
 import '../models/register_user_response.dart';
 import '../models/firebase_auth_request.dart';
+import '../models/check_user_exist_response.dart';
 
 abstract class AuthRemoteDataSource {
   Future<LoginResponse> login(LoginRequest request);
@@ -30,6 +31,7 @@ abstract class AuthRemoteDataSource {
     String newPassword,
   );
   Future<RegisterUserResponse> registerUser(RegisterUserRequest request);
+  Future<CheckUserExistResponse> checkUserExists(String phoneOrEmail);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -187,7 +189,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Call backend to generate OTP and send via WhatsApp (backend handles WhatsApp automatically)
       // Using 'email' parameter as specified in the API curl
       final url =
-          '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?email=$cleanPhone';
+          '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?input=$cleanPhone';
 
 
       final response = await dio.post(
@@ -494,6 +496,49 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (e is ServerException) {
         rethrow;
       }
+      throw ServerException('Unexpected error: $e');
+    }
+  }
+
+  @override
+  Future<CheckUserExistResponse> checkUserExists(String phoneOrEmail) async {
+    try {
+      final url =
+          '${AppConstants.baseUrl}${AppConstants.checkUserExistEndpoint}?PhoneOrEmail=$phoneOrEmail';
+
+      final response = await dio.post(
+        url,
+        data: '',
+        options: Options(
+          headers: {
+            'accept': 'text/plain',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return CheckUserExistResponse.fromJson(response.data);
+      } else {
+        throw ServerException(
+          'Check user exist failed with status code: ${response.statusCode}',
+          response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        throw const NetworkException('Network connection error');
+      } else if (e.response != null) {
+        final errorMessage =
+            e.response?.data?['message'] ?? 'Check user exist failed';
+        throw ServerException(errorMessage, e.response?.statusCode);
+      } else {
+        throw const NetworkException('Unknown network error');
+      }
+    } catch (e) {
       throw ServerException('Unexpected error: $e');
     }
   }

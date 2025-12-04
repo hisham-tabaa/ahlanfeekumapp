@@ -17,6 +17,7 @@ class AppConstants {
   static const String confirmPasswordResetEndpoint =
       'user-profiles/confirm-password-reset';
   static const String registerUserEndpoint = 'user-profiles/register-user';
+  static const String checkUserExistEndpoint = 'user-profiles/check-user-exist';
 
   // User Profile Endpoints
   static const String homeEndpoint = 'user-profiles/home';
@@ -31,6 +32,7 @@ class AppConstants {
   static const String propertyFeaturesEndpoint = 'lookups/property-features';
   static const String governatesEndpoint = 'lookups/governates';
   static const String statusesEndpoint = 'lookups/statuses';
+  static const String paymentMethodsEndpoint = 'lookups/payment-methods';
 
   // Property Endpoints
   static const String searchPropertyEndpoint = 'properties/search-property';
@@ -70,6 +72,7 @@ class AppConstants {
   static const String getPaymentStatusEndpoint =
       'payments'; // + /{paymentIntentId}
   static const String paymentWebhookEndpoint = 'payments/webhook';
+  static const String paymentSummaryEndpoint = 'payments/summary';
 
   // Host Profile Endpoint
   static const String userProfileDetailsById =

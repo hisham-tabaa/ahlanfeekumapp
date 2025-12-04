@@ -372,4 +372,27 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Left(NetworkFailure('No internet connection'));
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> checkUserExists({
+    required String phoneOrEmail,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final response = await remoteDataSource.checkUserExists(phoneOrEmail);
+        if (response.code == 200) {
+          return Right(response.data); // Returns true if exists, false if not
+        }
+        return Left(ServerFailure(response.message));
+      } on ServerException catch (e) {
+        return Left(ServerFailure(e.message));
+      } on NetworkException catch (e) {
+        return Left(NetworkFailure(e.message));
+      } catch (e) {
+        return Left(UnknownFailure('Check user exist failed: $e'));
+      }
+    } else {
+      return const Left(NetworkFailure('No internet connection'));
+    }
+  }
 }

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -57,7 +58,7 @@ class _SavedPropertiesScreenState extends State<SavedPropertiesScreen>
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text('Saved'),
+        title: Text('saved'.tr()),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -232,15 +233,6 @@ class _PropertyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Debug: Log image URL
-    if (property.mainImageUrl != null) {
-      print(
-        '🖼️ Property "${property.title}" image URL: ${property.mainImageUrl}',
-      );
-    } else {
-      print('⚠️ Property "${property.title}" has no image URL');
-    }
-
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(
@@ -302,10 +294,6 @@ class _PropertyCard extends StatelessWidget {
                               ),
                             ),
                             errorWidget: (context, url, error) {
-                              print(
-                                '❌ Image load error for "${property.title}": $error',
-                              );
-                              print('   Failed URL: $url');
                               return _buildPlaceholder(context);
                             },
                           )

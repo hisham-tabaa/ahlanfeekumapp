@@ -19,12 +19,16 @@ class CreateReservationRequest {
   @JsonKey(name: 'SitePropertyId')
   final String sitePropertyId;
 
+  @JsonKey(name: 'PaymentMethod')
+  final int paymentMethod; // 1 = Card (Stripe), 2 = Cash
+
   const CreateReservationRequest({
     required this.fromDate,
     required this.toDate,
     required this.numberOfGuests,
     required this.notes,
     required this.sitePropertyId,
+    this.paymentMethod = 1, // Default to Card payment
   });
 
   factory CreateReservationRequest.fromJson(Map<String, dynamic> json) =>

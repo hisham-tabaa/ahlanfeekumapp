@@ -14,6 +14,7 @@ CreateReservationRequest _$CreateReservationRequestFromJson(
       numberOfGuests: (json['NumberOfGuest'] as num).toInt(),
       notes: json['Notes'] as String,
       sitePropertyId: json['SitePropertyId'] as String,
+      paymentMethod: (json['PaymentMethod'] as num?)?.toInt() ?? 1,
     );
 
 Map<String, dynamic> _$CreateReservationRequestToJson(
@@ -24,6 +25,7 @@ Map<String, dynamic> _$CreateReservationRequestToJson(
       'NumberOfGuest': instance.numberOfGuests,
       'Notes': instance.notes,
       'SitePropertyId': instance.sitePropertyId,
+      'PaymentMethod': instance.paymentMethod,
     };
 
 ReservationResponse _$ReservationResponseFromJson(Map<String, dynamic> json) =>

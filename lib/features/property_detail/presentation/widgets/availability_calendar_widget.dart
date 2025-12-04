@@ -96,13 +96,30 @@ class _AvailabilityCalendarWidgetState
         _selectedCheckOut = null;
       } else if (_selectedCheckIn != null && _selectedCheckOut == null) {
         // Select check-out date
-        if (selectedDay.isAfter(_selectedCheckIn!)) {
-          // Validate all dates in range are available
-          if (_areAllDatesAvailableInRange(_selectedCheckIn!, selectedDay)) {
-            _selectedCheckOut = selectedDay;
+        // Allow same day selection for one-night booking (checkout next day is implicit)
+        if (selectedDay.isAfter(_selectedCheckIn!) ||
+            selectedDay.isAtSameMomentAs(_selectedCheckIn!)) {
+          // For same day: checkout is next day (1 night stay)
+          if (selectedDay.isAtSameMomentAs(_selectedCheckIn!)) {
+            // Same day selected - set checkout to next day
+            final nextDay = selectedDay.add(const Duration(days: 1));
+            if (_isDateAvailable(nextDay) ||
+                !_availabilityMap.containsKey(
+                  DateFormat('yyyy-MM-dd').format(nextDay),
+                )) {
+              _selectedCheckOut = nextDay;
+            } else {
+              _showUnavailableDialog(nextDay);
+              return;
+            }
           } else {
-            _showRangeUnavailableDialog();
-            return;
+            // Validate all dates in range are available
+            if (_areAllDatesAvailableInRange(_selectedCheckIn!, selectedDay)) {
+              _selectedCheckOut = selectedDay;
+            } else {
+              _showRangeUnavailableDialog();
+              return;
+            }
           }
         } else {
           // If selected date is before check-in, make it the new check-in
@@ -137,9 +154,9 @@ class _AvailabilityCalendarWidgetState
             const Text('Date Unavailable'),
           ],
         ),
-        content: Text(
-          'Sorry, ${DateFormat('MMMM d, yyyy').format(date)} is not available for booking.',
-          style: AppTextStyles.bodyMedium,
+        content: const Text(
+          'Sorry, the selected date is not available for booking.',
+          style: TextStyle(fontSize: 16),
         ),
         actions: [
           TextButton(
@@ -162,9 +179,9 @@ class _AvailabilityCalendarWidgetState
             const Text('Range Unavailable'),
           ],
         ),
-        content: Text(
+        content: const Text(
           'Some dates in the selected range are not available. Please choose different dates.',
-          style: AppTextStyles.bodyMedium,
+          style: TextStyle(fontSize: 16),
         ),
         actions: [
           TextButton(

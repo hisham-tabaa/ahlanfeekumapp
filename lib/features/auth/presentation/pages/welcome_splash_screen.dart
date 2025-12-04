@@ -5,11 +5,17 @@ import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/language_switcher_button.dart';
 import 'auth_options_screen.dart';
 
-class WelcomeSplashScreen extends StatelessWidget {
+class WelcomeSplashScreen extends StatefulWidget {
   const WelcomeSplashScreen({super.key});
 
+  @override
+  State<WelcomeSplashScreen> createState() => _WelcomeSplashScreenState();
+}
+
+class _WelcomeSplashScreenState extends State<WelcomeSplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +44,25 @@ class WelcomeSplashScreen extends StatelessWidget {
         SafeArea(
           child: Column(
             children: [
-              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 184, tablet: 200, desktop: 220)),
+              // Language Switcher at top right
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+                    right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+                  ),
+                  child: LanguageSwitcherButton(
+                    isDark: true,
+                    onLanguageChanged: () {
+                      setState(() {
+                        // Force rebuild when language changes
+                      });
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: ResponsiveUtils.spacing(context, mobile: 84, tablet: 100, desktop: 120)),
 
               // Logo
               Center(
@@ -86,7 +110,9 @@ class WelcomeSplashScreen extends StatelessWidget {
 
   Widget _buildDesktopLayout(BuildContext context) {
     return ResponsiveLayout(
-      child: Row(
+      child: Stack(
+        children: [
+          Row(
         children: [
           // Left side - Background image with logo (similar to login)
           Expanded(
@@ -128,7 +154,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                       ),
                       SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 36, desktop: 40)),
                       Text(
-                        'Welcome to Syria\'s Premier Rental Platform',
+                        'welcome_to_syria'.tr(),
                         style: AppTextStyles.h2.copyWith(
                           fontSize: ResponsiveUtils.responsive(context,
                             mobile: 24,
@@ -142,7 +168,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                       ),
                       SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
                       Text(
-                        'Find your perfect stay in the heart of Syria',
+                        'find_perfect_stay'.tr(),
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontSize: ResponsiveUtils.responsive(context,
                             mobile: 14,
@@ -188,6 +214,21 @@ class WelcomeSplashScreen extends StatelessWidget {
               ),
             ),
           ),
+            ],
+          ),
+          
+          // Language Switcher at top right
+          Positioned(
+            top: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            child: LanguageSwitcherButton(
+              onLanguageChanged: () {
+                setState(() {
+                  // Force rebuild when language changes
+                });
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -202,7 +243,7 @@ class WelcomeSplashScreen extends StatelessWidget {
       children: [
         // Welcome title
         Text(
-          'Ahlan Feekum',
+          'ahlan_feekum'.tr(),
           style: AppTextStyles.h6.copyWith(
             fontSize: ResponsiveUtils.responsive(context,
               mobile: 16,
@@ -227,7 +268,7 @@ class WelcomeSplashScreen extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Discover A Unique ',
+                text: 'discover_unique_part1'.tr(),
                 style: AppTextStyles.h2.copyWith(
                   fontSize: ResponsiveUtils.responsive(context,
                     mobile: 24,
@@ -239,7 +280,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: 'Stay\nExperience',
+                text: 'discover_unique_part2'.tr(),
                 style: AppTextStyles.h2.copyWith(
                   fontSize: ResponsiveUtils.responsive(context,
                     mobile: 24,
@@ -251,7 +292,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: ' In Syria',
+                text: 'discover_unique_part3'.tr(),
                 style: AppTextStyles.h2.copyWith(
                   fontSize: ResponsiveUtils.responsive(context,
                     mobile: 24,
@@ -274,7 +315,7 @@ class WelcomeSplashScreen extends StatelessWidget {
         
         // Subtitle description
         Text(
-          'Join thousands of travelers who have found their perfect accommodation through our platform. Experience authentic Syrian hospitality.',
+          'join_travelers'.tr(),
           style: AppTextStyles.bodyMedium.copyWith(
             fontSize: ResponsiveUtils.responsive(context,
               mobile: 14,
@@ -340,7 +381,7 @@ class WelcomeSplashScreen extends StatelessWidget {
               SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
               Expanded(
                 child: Text(
-                  'Verified Properties & Hosts',
+                  'verified_properties'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: ResponsiveUtils.responsive(context,
                       mobile: 14,
@@ -371,7 +412,7 @@ class WelcomeSplashScreen extends StatelessWidget {
               SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
               Expanded(
                 child: Text(
-                  '24/7 Customer Support',
+                  'customer_support_24_7'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: ResponsiveUtils.responsive(context,
                       mobile: 14,
@@ -402,7 +443,7 @@ class WelcomeSplashScreen extends StatelessWidget {
               SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16)),
               Expanded(
                 child: Text(
-                  'Secure Booking & Payments',
+                  'secure_booking'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     fontSize: ResponsiveUtils.responsive(context,
                       mobile: 14,
@@ -426,7 +467,7 @@ class WelcomeSplashScreen extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Ahlan Feekum',
+          'ahlan_feekum'.tr(),
           style: AppTextStyles.h6.copyWith(
             fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
             color: AppColors.textSecondary,
@@ -439,7 +480,7 @@ class WelcomeSplashScreen extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: 'Discover A Unique ',
+                text: 'discover_unique_part1'.tr(),
                 style: AppTextStyles.h2.copyWith(
                   fontSize: ResponsiveUtils.fontSize(context, mobile: 24, tablet: 26, desktop: 28),
                   color: AppColors.textPrimary,
@@ -447,7 +488,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: 'Stay\nExperience',
+                text: 'discover_unique_part2'.tr(),
                 style: AppTextStyles.h2.copyWith(
                   fontSize: ResponsiveUtils.fontSize(context, mobile: 24, tablet: 26, desktop: 28),
                   color: const Color(0xFF4CAF50),
@@ -455,7 +496,7 @@ class WelcomeSplashScreen extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: ' In Syria',
+                text: 'discover_unique_part3'.tr(),
                 style: AppTextStyles.h2.copyWith(
                   fontSize: ResponsiveUtils.fontSize(context, mobile: 24, tablet: 26, desktop: 28),
                   color: AppColors.textPrimary,

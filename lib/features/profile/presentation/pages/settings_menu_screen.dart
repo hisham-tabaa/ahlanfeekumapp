@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/utils/extensions.dart';
@@ -24,14 +25,19 @@ import 'my_reservations_screen.dart';
 import '../../../property_management/presentation/pages/my_properties_screen.dart';
 import '../../../property_management/presentation/bloc/property_management_bloc.dart';
 
-class SettingsMenuScreen extends StatelessWidget {
+class SettingsMenuScreen extends StatefulWidget {
   const SettingsMenuScreen({super.key});
 
+  @override
+  State<SettingsMenuScreen> createState() => _SettingsMenuScreenState();
+}
+
+class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text('settings'.tr()),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
@@ -48,7 +54,8 @@ class SettingsMenuScreen extends StatelessWidget {
       ),
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, authState) {
-          final isHost = authState is AuthAuthenticated && authState.user.roleId == 1;
+          final isHost =
+              authState is AuthAuthenticated && authState.user.roleId == 1;
           
           return BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
@@ -192,8 +199,8 @@ class SettingsMenuScreen extends StatelessWidget {
                       children: [
                         _MenuTile(
                           icon: Icons.person_outline,
-                          title: 'My Profile',
-                          subtitle: 'My Information and details',
+                              title: 'my_profile'.tr(),
+                              subtitle: 'my_info_details'.tr(),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -209,8 +216,8 @@ class SettingsMenuScreen extends StatelessWidget {
                         _buildDivider(context),
                         _MenuTile(
                           icon: Icons.favorite_border,
-                          title: 'Saved',
-                          subtitle: 'Saved Advertisements',
+                              title: 'saved'.tr(),
+                              subtitle: 'saved_advertisements'.tr(),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -226,8 +233,8 @@ class SettingsMenuScreen extends StatelessWidget {
                         _buildDivider(context),
                         _MenuTile(
                           icon: Icons.calendar_today_outlined,
-                          title: 'My Reservations',
-                          subtitle: 'Reservations, Orders',
+                              title: 'my_reservations'.tr(),
+                              subtitle: 'reservations_orders'.tr(),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -267,7 +274,7 @@ class SettingsMenuScreen extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Host Management',
+                              'host_management'.tr(),
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                             fontSize: ResponsiveUtils.fontSize(
@@ -295,15 +302,28 @@ class SettingsMenuScreen extends StatelessWidget {
                       child: Column(
                         children: [
                           _MenuTile(
+                            icon: Icons.analytics_outlined,
+                                title: 'my_performance'.tr(),
+                                subtitle: 'view_payment_summary'.tr(),
+                            onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/payment-summary',
+                                  );
+                            },
+                          ),
+                          _buildDivider(context),
+                          _MenuTile(
                             icon: Icons.home_work_outlined,
-                            title: 'My Properties',
-                            subtitle: 'Manage your listed properties',
+                                title: 'my_properties'.tr(),
+                                subtitle: 'manage_properties'.tr(),
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => BlocProvider(
-                                    create: (_) => getIt<PropertyManagementBloc>(),
+                                        create: (_) =>
+                                            getIt<PropertyManagementBloc>(),
                                     child: const MyPropertiesScreen(),
                                   ),
                                 ),
@@ -313,37 +333,10 @@ class SettingsMenuScreen extends StatelessWidget {
                           _buildDivider(context),
                           _MenuTile(
                             icon: Icons.add_home_outlined,
-                            title: 'Add New Property',
-                            subtitle: 'List a new property',
+                                title: 'add_new_property'.tr(),
+                                subtitle: 'list_new_property'.tr(),
                             onTap: () {
                               Navigator.pushNamed(context, '/rent-create');
-                            },
-                          ),
-                          _buildDivider(context),
-                          _MenuTile(
-                            icon: Icons.analytics_outlined,
-                            title: 'Analytics',
-                            subtitle: 'View performance and earnings',
-                            onTap: () {
-                              // TODO: Navigate to analytics screen
-                            },
-                          ),
-                          _buildDivider(context),
-                          _MenuTile(
-                            icon: Icons.payment_outlined,
-                            title: 'Payment Methods',
-                            subtitle: 'Manage your payment information',
-                            onTap: () {
-                              // TODO: Navigate to payment methods screen
-                            },
-                          ),
-                          _buildDivider(context),
-                          _MenuTile(
-                            icon: Icons.reviews_outlined,
-                            title: 'Reviews',
-                            subtitle: 'View and respond to guest reviews',
-                            onTap: () {
-                              // TODO: Navigate to reviews screen
                             },
                           ),
                         ],
@@ -373,7 +366,7 @@ class SettingsMenuScreen extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        'Options',
+                            'options'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -400,10 +393,20 @@ class SettingsMenuScreen extends StatelessWidget {
                     color: Colors.white,
                     child: Column(
                       children: [
+                            // Language Switcher
+                            _LanguageTile(
+                              context: context,
+                              onLanguageChanged: () {
+                                setState(() {
+                                  // Force rebuild when language changes
+                                });
+                              },
+                            ),
+                            _buildDivider(context),
                         _MenuTile(
                           icon: Icons.help_outline,
-                          title: 'Help',
-                          subtitle: 'About us, Terms of conditions, Support',
+                              title: 'help'.tr(),
+                              subtitle: 'help_subtitle'.tr(),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -419,8 +422,8 @@ class SettingsMenuScreen extends StatelessWidget {
                         _buildDivider(context),
                         _MenuTile(
                           icon: Icons.star_outline,
-                          title: 'Rate App',
-                          subtitle: 'Go To Google Play',
+                              title: 'rate_app'.tr(),
+                              subtitle: 'go_to_google_play'.tr(),
                           onTap: () {
                             // TODO: Open app store
                           },
@@ -428,8 +431,8 @@ class SettingsMenuScreen extends StatelessWidget {
                         _buildDivider(context),
                         _MenuTile(
                           icon: Icons.share_outlined,
-                          title: 'Share App',
-                          subtitle: 'Share Our App To People',
+                              title: 'share_app'.tr(),
+                              subtitle: 'share_app_subtitle'.tr(),
                           onTap: () {
                             _shareApp(context);
                           },
@@ -437,8 +440,8 @@ class SettingsMenuScreen extends StatelessWidget {
                         _buildDivider(context),
                         _MenuTile(
                           icon: Icons.logout,
-                          title: 'Log Out',
-                          subtitle: 'Account',
+                              title: 'log_out'.tr(),
+                              subtitle: 'account'.tr(),
                           iconColor: Colors.red,
                           textColor: Colors.red,
                           onTap: () {
@@ -555,7 +558,6 @@ class SettingsMenuScreen extends StatelessWidget {
 
                 return TextButton(
                   onPressed: () {
-                    print('🔴 [LOGOUT] User confirmed logout');
                     context.read<AuthBloc>().add(const LogoutEvent());
                   },
                   child: Text(
@@ -683,6 +685,223 @@ class _MenuTile extends StatelessWidget {
                 desktop: 20,
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageTile extends StatelessWidget {
+  final BuildContext context;
+  final VoidCallback onLanguageChanged;
+
+  const _LanguageTile({required this.context, required this.onLanguageChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    final currentLocale = context.locale;
+    final isArabic = currentLocale.languageCode == 'ar';
+
+    return InkWell(
+      onTap: () => _showLanguageDialog(context, onLanguageChanged),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: ResponsiveUtils.spacing(
+            context,
+            mobile: 20,
+            tablet: 24,
+            desktop: 32,
+          ),
+          vertical: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 18,
+            desktop: 20,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.language,
+              color: AppColors.textSecondary,
+              size: ResponsiveUtils.size(
+                context,
+                mobile: 24,
+                tablet: 26,
+                desktop: 28,
+              ),
+            ),
+            SizedBox(
+              width: ResponsiveUtils.spacing(
+                context,
+                mobile: 16,
+                tablet: 18,
+                desktop: 20,
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'language'.tr(),
+                    style: AppTextStyles.bodyMedium.copyWith(
+                      fontWeight: FontWeight.w500,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 16,
+                        tablet: 17,
+                        desktop: 18,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 2,
+                      tablet: 3,
+                      desktop: 4,
+                    ),
+                  ),
+                  Text(
+                    isArabic ? 'العربية' : 'English',
+                    style: AppTextStyles.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 13,
+                        tablet: 14,
+                        desktop: 15,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    isArabic ? '🇸🇦' : '🇬🇧',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    isArabic ? 'AR' : 'EN',
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context, VoidCallback onLanguageChanged) {
+    final currentLocale = context.locale;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Icon(Icons.language, color: AppColors.primary),
+            const SizedBox(width: 12),
+            Text(
+              'language'.tr(),
+              style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.w600),
+            ),
+          ],
+        ),
+        content: Column(
+mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildLanguageOption(
+              dialogContext,
+              context,
+              'English',
+              '🇬🇧',
+              const Locale('en'),
+              currentLocale.languageCode == 'en',
+              onLanguageChanged,
+            ),
+            const SizedBox(height: 12),
+            _buildLanguageOption(
+              dialogContext,
+              context,
+              'العربية',
+              '🇸🇦',
+              const Locale('ar'),
+              currentLocale.languageCode == 'ar',
+              onLanguageChanged,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(
+    BuildContext dialogContext,
+    BuildContext parentContext,
+    String language,
+    String flag,
+    Locale locale,
+    bool isSelected,
+    VoidCallback onLanguageChanged,
+  ) {
+    return InkWell(
+      onTap: () async {
+        await parentContext.setLocale(locale);
+        if (dialogContext.mounted) {
+          Navigator.pop(dialogContext);
+        }
+        // Notify parent to rebuild
+        onLanguageChanged();
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withOpacity(0.1)
+              : Colors.grey[100],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 24)),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                language,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Icon(Icons.check_circle, color: AppColors.primary, size: 24),
           ],
         ),
       ),

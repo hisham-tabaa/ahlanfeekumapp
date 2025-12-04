@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:ui' as ui;
 
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/validators.dart';
@@ -9,10 +10,12 @@ import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/language_switcher_button.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import 'otp_verification_screen.dart';
+import 'choose_account_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -49,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (emailOrPhone.isEmpty) {
       context.showSnackBar(
-        'Please enter your email or phone first',
+        'enter_email_or_phone_first'.tr(),
         isError: true,
       );
       return;
@@ -98,7 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
             );
           }
         },
-        child: ResponsiveUtils.isDesktop(context) || ResponsiveUtils.isTablet(context)
+        child:
+            ResponsiveUtils.isDesktop(context) ||
+                ResponsiveUtils.isTablet(context)
             ? _buildDesktopLayout(context)
             : _buildMobileLayout(context),
       ),
@@ -120,16 +125,45 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
 
+        // Language Switcher at top right
+        Positioned(
+          top: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56),
+          right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+          child: LanguageSwitcherButton(
+            isDark: true,
+            onLanguageChanged: () {
+              setState(() {
+                // Force rebuild when language changes
+              });
+            },
+          ),
+        ),
+
         // Logo
         Positioned(
-          top: ResponsiveUtils.size(context, mobile: 120, tablet: 140, desktop: 160),
+          top: ResponsiveUtils.size(
+            context,
+            mobile: 120,
+            tablet: 140,
+            desktop: 160,
+          ),
           left: 0,
           right: 0,
           child: Center(
             child: Image.asset(
               'assets/images/home_icon.png',
-              width: ResponsiveUtils.size(context, mobile: 150, tablet: 180, desktop: 200),
-              height: ResponsiveUtils.size(context, mobile: 82, tablet: 98, desktop: 110),
+              width: ResponsiveUtils.size(
+                context,
+                mobile: 150,
+                tablet: 180,
+                desktop: 200,
+              ),
+              height: ResponsiveUtils.size(
+                context,
+                mobile: 82,
+                tablet: 98,
+                desktop: 110,
+              ),
             ),
           ),
         ),
@@ -142,7 +176,12 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ClipPath(
             clipper: LoginTopCurveClipper(),
             child: Container(
-              height: ResponsiveUtils.size(context, mobile: 540, tablet: 580, desktop: 620),
+              height: ResponsiveUtils.size(
+                context,
+                mobile: 540,
+                tablet: 580,
+                desktop: 620,
+              ),
               color: const Color(0xFFF2F3F6),
             ),
           ),
@@ -156,14 +195,39 @@ class _LoginScreenState extends State<LoginScreen> {
           child: ClipPath(
             clipper: LoginTopCurveClipper(),
             child: Container(
-              height: ResponsiveUtils.size(context, mobile: 520, tablet: 560, desktop: 600),
+              height: ResponsiveUtils.size(
+                context,
+                mobile: 520,
+                tablet: 560,
+                desktop: 600,
+              ),
               color: Colors.white,
               child: SingleChildScrollView(
                 padding: EdgeInsets.fromLTRB(
-                  ResponsiveUtils.spacing(context, mobile: 24, tablet: 32, desktop: 40),
-                  ResponsiveUtils.spacing(context, mobile: 60, tablet: 70, desktop: 80),
-                  ResponsiveUtils.spacing(context, mobile: 24, tablet: 32, desktop: 40),
-                  ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56),
+                  ResponsiveUtils.spacing(
+                    context,
+                    mobile: 24,
+                    tablet: 32,
+                    desktop: 40,
+                  ),
+                  ResponsiveUtils.spacing(
+                    context,
+                    mobile: 60,
+                    tablet: 70,
+                    desktop: 80,
+                  ),
+                  ResponsiveUtils.spacing(
+                    context,
+                    mobile: 24,
+                    tablet: 32,
+                    desktop: 40,
+                  ),
+                  ResponsiveUtils.spacing(
+                    context,
+                    mobile: 40,
+                    tablet: 48,
+                    desktop: 56,
+                  ),
                 ),
                 child: _buildLoginForm(),
               ),
@@ -176,7 +240,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildDesktopLayout(BuildContext context) {
     return ResponsiveLayout(
-      child: Row(
+      child: Stack(
+        children: [
+          Row(
         children: [
           // Left side - Background image with logo
           Expanded(
@@ -205,28 +271,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset(
                         'assets/images/home_icon.png',
-                        width: ResponsiveUtils.size(context,
+                        width: ResponsiveUtils.size(
+                          context,
                           mobile: 150,
                           tablet: 200,
                           desktop: 250,
                         ),
-                        height: ResponsiveUtils.size(context,
+                        height: ResponsiveUtils.size(
+                          context,
                           mobile: 82,
                           tablet: 110,
                           desktop: 135,
                         ),
                       ),
                       SizedBox(
-                        height: ResponsiveUtils.spacing(context,
+                        height: ResponsiveUtils.spacing(
+                          context,
                           mobile: 24,
                           tablet: 28,
                           desktop: 32,
                         ),
                       ),
                       Text(
-                        'Welcome Back',
+                        'welcome_back'.tr(),
                         style: AppTextStyles.h2.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(context,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
                             mobile: 24,
                             tablet: 28,
                             desktop: 32,
@@ -237,16 +307,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(
-                        height: ResponsiveUtils.spacing(context,
+                        height: ResponsiveUtils.spacing(
+                          context,
                           mobile: 12,
                           tablet: 16,
                           desktop: 20,
                         ),
                       ),
                       Text(
-                        'Sign in to access your account',
+                        'sign_in_to_access'.tr(),
                         style: AppTextStyles.bodyMedium.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(context,
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
                             mobile: 14,
                             tablet: 16,
                             desktop: 18,
@@ -270,7 +342,8 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Center(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(
-                    ResponsiveUtils.spacing(context,
+                    ResponsiveUtils.spacing(
+                      context,
                       mobile: 24,
                       tablet: 40,
                       desktop: 48,
@@ -278,7 +351,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth: ResponsiveUtils.size(context,
+                      maxWidth: ResponsiveUtils.size(
+                        context,
                         mobile: double.infinity,
                         tablet: 400,
                         desktop: 450,
@@ -288,6 +362,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+            ),
+          ),
+            ],
+          ),
+          
+          // Language Switcher at top right
+          Positioned(
+            top: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            child: LanguageSwitcherButton(
+              onLanguageChanged: () {
+                setState(() {
+                  // Force rebuild when language changes
+                });
+              },
             ),
           ),
         ],
@@ -303,9 +392,10 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           // Title
           Text(
-            'Login',
+            'login_title'.tr(),
             style: AppTextStyles.h2.copyWith(
-              fontSize: ResponsiveUtils.fontSize(context,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
                 mobile: 28,
                 tablet: 32,
                 desktop: 36,
@@ -316,7 +406,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           SizedBox(
-            height: ResponsiveUtils.spacing(context,
+            height: ResponsiveUtils.spacing(
+              context,
               mobile: 8,
               tablet: 12,
               desktop: 16,
@@ -325,9 +416,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // Subtitle
           Text(
-            'Please Put Your Credentials To Login To Your Account',
+            'login_subtitle'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
-              fontSize: ResponsiveUtils.fontSize(context,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
                 mobile: 14,
                 tablet: 16,
                 desktop: 18,
@@ -337,7 +429,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           SizedBox(
-            height: ResponsiveUtils.spacing(context,
+            height: ResponsiveUtils.spacing(
+              context,
               mobile: 40,
               tablet: 48,
               desktop: 56,
@@ -345,25 +438,48 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           // Email or Phone Field
-          CustomTextField(
-            labelText: '',
-            hintText: 'Email Or Phone Number',
-            controller: _emailOrPhoneController,
-            keyboardType: TextInputType.emailAddress,
-            validator: Validators.validateEmailOrPhone,
-            prefixIcon: Icon(
-              Icons.email_outlined,
-              color: AppColors.textSecondary,
-              size: ResponsiveUtils.size(context,
-                mobile: 20,
-                tablet: 22,
-                desktop: 24,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Directionality(
+                textDirection: ui.TextDirection.ltr,
+                child: CustomTextField(
+                  labelText: '',
+                  hintText: 'email_or_phone_hint'.tr(),
+                  controller: _emailOrPhoneController,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: Validators.validateEmailOrPhone,
+                  prefixIcon: Icon(
+                    Icons.email_outlined,
+                    color: AppColors.textSecondary,
+                    size: ResponsiveUtils.size(
+                      context,
+                      mobile: 20,
+                      tablet: 22,
+                      desktop: 24,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              SizedBox(height: 4),
+              Text(
+                'phone_format_hint'.tr(),
+                style: AppTextStyles.bodySmall.copyWith(
+                  fontSize: ResponsiveUtils.fontSize(
+                    context,
+                    mobile: 12,
+                    tablet: 13,
+                    desktop: 14,
+                  ),
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
           ),
 
           SizedBox(
-            height: ResponsiveUtils.spacing(context,
+            height: ResponsiveUtils.spacing(
+              context,
               mobile: 24,
               tablet: 28,
               desktop: 32,
@@ -371,25 +487,30 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           // Password Field
-          CustomTextField(
-            labelText: '',
-            hintText: 'Password',
-            controller: _passwordController,
-            obscureText: true,
-            validator: Validators.validatePassword,
-            prefixIcon: Icon(
-              Icons.lock_outline,
-              color: AppColors.textSecondary,
-              size: ResponsiveUtils.size(context,
-                mobile: 20,
-                tablet: 22,
-                desktop: 24,
+          Directionality(
+            textDirection: ui.TextDirection.ltr,
+            child: CustomTextField(
+              labelText: '',
+              hintText: 'password_hint'.tr(),
+              controller: _passwordController,
+              obscureText: true,
+              validator: Validators.validatePassword,
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                color: AppColors.textSecondary,
+                size: ResponsiveUtils.size(
+                  context,
+                  mobile: 20,
+                  tablet: 22,
+                  desktop: 24,
+                ),
               ),
             ),
           ),
 
           SizedBox(
-            height: ResponsiveUtils.spacing(context,
+            height: ResponsiveUtils.spacing(
+              context,
               mobile: 16,
               tablet: 20,
               desktop: 24,
@@ -402,9 +523,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: TextButton(
               onPressed: _handleForgotPassword,
               child: Text(
-                'Forgot Password ?',
+                'forgot_password'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: ResponsiveUtils.fontSize(context,
+                  fontSize: ResponsiveUtils.fontSize(
+                    context,
                     mobile: 14,
                     tablet: 16,
                     desktop: 18,
@@ -417,7 +539,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           SizedBox(
-            height: ResponsiveUtils.spacing(context,
+            height: ResponsiveUtils.spacing(
+              context,
               mobile: 32,
               tablet: 40,
               desktop: 48,
@@ -428,7 +551,7 @@ class _LoginScreenState extends State<LoginScreen> {
           BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               return CustomButton(
-                text: 'Login',
+                text: 'login_title'.tr(),
                 onPressed: _handleLogin,
                 isLoading: state is AuthLoading,
                 width: double.infinity,
@@ -439,7 +562,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
 
           SizedBox(
-            height: ResponsiveUtils.spacing(context,
+            height: ResponsiveUtils.spacing(
+              context,
               mobile: 24,
               tablet: 28,
               desktop: 32,
@@ -451,7 +575,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child: RichText(
               text: TextSpan(
                 style: AppTextStyles.bodyMedium.copyWith(
-                  fontSize: ResponsiveUtils.fontSize(context,
+                  fontSize: ResponsiveUtils.fontSize(
+                    context,
                     mobile: 14,
                     tablet: 16,
                     desktop: 18,
@@ -459,26 +584,28 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: AppColors.textSecondary,
                 ),
                 children: [
-                  const TextSpan(
-                    text: "Don't Have An Account, ",
-                  ),
+                  TextSpan(text: 'dont_have_account'.tr()),
                   WidgetSpan(
                     child: GestureDetector(
                       onTap: () {
-                        // Navigate to sign up screen
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ChooseAccountScreen(),
+                          ),
+                        );
                       },
                       child: Text(
-                        'Register',
-                        style: AppTextStyles.bodyMedium
-                            .copyWith(
-                              fontSize: ResponsiveUtils.fontSize(context,
-                                mobile: 14,
-                                tablet: 16,
-                                desktop: 18,
-                              ),
-                              color: const Color(0xFFED1C24),
-                              fontWeight: FontWeight.w500,
-                            ),
+                        'register'.tr(),
+                        style: AppTextStyles.bodyMedium.copyWith(
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 16,
+                            desktop: 18,
+                          ),
+                          color: const Color(0xFFED1C24),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),

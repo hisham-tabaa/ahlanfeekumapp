@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -44,7 +45,9 @@ class _BookingBottomSheetWithAvailabilityState
 
   int get _totalNights {
     if (_checkInDate == null || _checkOutDate == null) return 0;
-    return _checkOutDate!.difference(_checkInDate!).inDays;
+    final nights = _checkOutDate!.difference(_checkInDate!).inDays;
+    // Minimum 1 night for same day or consecutive day bookings
+    return nights < 1 ? 1 : nights;
   }
 
   double get _subtotal => widget.pricePerNight * _totalNights;
@@ -86,10 +89,6 @@ class _BookingBottomSheetWithAvailabilityState
       final isAvailable = availabilityMap[dateStr] ?? false;
 
       if (!isAvailable) {
-        print(
-          '⚠️ [Booking] Date $dateStr is not available for booking. '
-          'This should have been caught by the calendar widget.',
-        );
         return false;
       }
 
@@ -153,7 +152,7 @@ class _BookingBottomSheetWithAvailabilityState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Select Dates',
+                    'select_dates'.tr(),
                     style: AppTextStyles.h3.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
@@ -206,8 +205,19 @@ class _BookingBottomSheetWithAvailabilityState
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _checkInDate != null && _checkOutDate != null
-                      ? () => Navigator.pop(context)
+                  onPressed: _checkInDate != null
+                      ? () {
+                          // If only check-in selected, auto-set checkout to next day for 1-night booking
+                          if (_checkOutDate == null) {
+                            final nextDay = _checkInDate!.add(
+                              const Duration(days: 1),
+                            );
+                            setState(() {
+                              _checkOutDate = nextDay;
+                            });
+                          }
+                          Navigator.pop(context);
+                        }
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -233,8 +243,10 @@ class _BookingBottomSheetWithAvailabilityState
                   ),
                   child: Text(
                     _checkInDate != null && _checkOutDate != null
-                        ? 'Confirm Dates ($_totalNights night${_totalNights != 1 ? 's' : ''})'
-                        : 'Select Check-in and Check-out',
+                        ? '${'confirm'.tr()} ($_totalNights ${'night'.tr()}${_totalNights != 1 ? 's' : ''})'
+                        : _checkInDate != null
+                        ? '${'confirm'.tr()} (1 ${'night'.tr()})'
+                        : 'select_dates'.tr(),
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -280,7 +292,7 @@ class _BookingBottomSheetWithAvailabilityState
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Select Guests',
+                  'select_guests'.tr(),
                   style: AppTextStyles.h4.copyWith(fontWeight: FontWeight.w600),
                 ),
                 SizedBox(
@@ -291,7 +303,7 @@ class _BookingBottomSheetWithAvailabilityState
                     desktop: 32,
                   ),
                 ),
-                _buildGuestCounter('Adults', _adults, (value) {
+                _buildGuestCounter('adults'.tr(), _adults, (value) {
                   setModalState(() => _adults = value);
                   setState(() {});
                 }),
@@ -303,7 +315,7 @@ class _BookingBottomSheetWithAvailabilityState
                     desktop: 20,
                   ),
                 ),
-                _buildGuestCounter('Children', _children, (value) {
+                _buildGuestCounter('children'.tr(), _children, (value) {
                   setModalState(() => _children = value);
                   setState(() {});
                 }),
@@ -340,7 +352,7 @@ class _BookingBottomSheetWithAvailabilityState
                         ),
                       ),
                     ),
-                    child: const Text('Done'),
+                    child: Text('done'.tr()),
                   ),
                 ),
               ],
@@ -552,7 +564,7 @@ class _BookingBottomSheetWithAvailabilityState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Select your dates',
+                                'select_your_dates'.tr(),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.textSecondary,
                                   fontWeight: FontWeight.w500,
@@ -561,8 +573,8 @@ class _BookingBottomSheetWithAvailabilityState
                               const SizedBox(height: 4),
                               Text(
                                 _checkInDate != null && _checkOutDate != null
-                                    ? '${DateFormat('MMM d').format(_checkInDate!)} - ${DateFormat('MMM d, yyyy').format(_checkOutDate!)} ($_totalNights night${_totalNights != 1 ? 's' : ''})'
-                                    : 'Tap to view available dates',
+                                    ? '${DateFormat('MMM d').format(_checkInDate!)} - ${DateFormat('MMM d, yyyy').format(_checkOutDate!)} ($_totalNights ${'night'.tr()}${_totalNights != 1 ? 's' : ''})'
+                                    : 'tap_view_dates'.tr(),
                                 style: AppTextStyles.bodyMedium.copyWith(
                                   color: AppColors.textPrimary,
                                   fontWeight: FontWeight.w600,
@@ -620,7 +632,7 @@ class _BookingBottomSheetWithAvailabilityState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Guests',
+                              'guests'.tr(),
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                               ),
@@ -661,8 +673,8 @@ class _BookingBottomSheetWithAvailabilityState
                 TextField(
                   controller: _notesController,
                   decoration: InputDecoration(
-                    labelText: 'Special requests (optional)',
-                    hintText: 'Add any special requests or notes...',
+                    labelText: 'special_requests'.tr(),
+                    hintText: 'add_special_requests'.tr(),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         ResponsiveUtils.radius(
@@ -720,7 +732,7 @@ class _BookingBottomSheetWithAvailabilityState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Price Breakdown',
+                          'price_breakdown'.tr(),
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -734,7 +746,7 @@ class _BookingBottomSheetWithAvailabilityState
                           ),
                         ),
                         _buildPriceRow(
-                          '${widget.pricePerNight.toStringAsFixed(0)} × $_totalNights night${_totalNights != 1 ? 's' : ''}',
+                          '${widget.pricePerNight.toStringAsFixed(0)} × $_totalNights ${'night'.tr()}${_totalNights != 1 ? 's' : ''}',
                           '${_total.toStringAsFixed(2)} \$',
                           isBold: true,
                         ),
@@ -763,11 +775,7 @@ class _BookingBottomSheetWithAvailabilityState
                       },
                       activeColor: AppColors.primary,
                     ),
-                    const Expanded(
-                      child: Text(
-                        'I have read all the information and I agree',
-                      ),
-                    ),
+                    Expanded(child: Text('i_agree_terms'.tr())),
                   ],
                 ),
 
@@ -895,7 +903,7 @@ class _BookingBottomSheetWithAvailabilityState
                         ),
                       ),
                     ),
-                    child: const Text('See Details'),
+                    child: Text('see_details'.tr()),
                   ),
                 ),
               ],

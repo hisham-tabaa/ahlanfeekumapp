@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/home_entities.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -82,7 +83,7 @@ class SpecialStaysWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Special Stays',
+                  'special_stays'.tr(),
                   style: AppTextStyles.h4.copyWith(
                     color: AppColors.textPrimary,
                     fontSize: titleFontSize,
@@ -96,7 +97,7 @@ class SpecialStaysWidget extends StatelessWidget {
                     Navigator.pushNamed(context, '/search');
                   },
                   child: Text(
-                    'See all',
+                    'see_all'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.primary,
                       fontSize: seeAllFontSize,
@@ -116,6 +117,9 @@ class SpecialStaysWidget extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.symmetric(horizontal: listPadding),
               itemCount: properties.length,
+              cacheExtent: 500, // Preload items for smoother scrolling
+              addAutomaticKeepAlives: true,
+              physics: const BouncingScrollPhysics(),
               itemBuilder: (context, index) {
                 final property = properties[index];
                 final cardWidth = ResponsiveUtils.size(

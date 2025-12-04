@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -36,13 +37,18 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Report a problem'),
+        title: Text('report_problem'.tr()),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         titleTextStyle: AppTextStyles.h2.copyWith(
           color: AppColors.textPrimary,
-          fontSize: ResponsiveUtils.fontSize(context, mobile: 18, tablet: 20, desktop: 22),
+          fontSize: ResponsiveUtils.fontSize(
+            context,
+            mobile: 18,
+            tablet: 20,
+            desktop: 22,
+          ),
         ),
         iconTheme: IconThemeData(color: AppColors.textPrimary),
       ),
@@ -61,11 +67,25 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
           return ResponsiveLayout(
             maxWidth: 700,
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
+              padding: EdgeInsets.all(
+                ResponsiveUtils.spacing(
+                  context,
+                  mobile: 20,
+                  tablet: 24,
+                  desktop: 28,
+                ),
+              ),
               child: Column(
                 children: [
                   _buildHeader(context),
-                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 24,
+                      tablet: 28,
+                      desktop: 32,
+                    ),
+                  ),
                   Row(
                     children: [
                       Expanded(
@@ -76,10 +96,22 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                               'First Name',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
-                                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                                fontSize: ResponsiveUtils.fontSize(
+                                  context,
+                                  mobile: 14,
+                                  tablet: 15,
+                                  desktop: 16,
+                                ),
                               ),
                             ),
-                            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                            SizedBox(
+                              height: ResponsiveUtils.spacing(
+                                context,
+                                mobile: 8,
+                                tablet: 10,
+                                desktop: 12,
+                              ),
+                            ),
                             CustomTextField(
                               controller: _firstNameController,
                               hintText: '',
@@ -87,7 +119,14 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(width: ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
+                      SizedBox(
+                        width: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 16,
+                          tablet: 17,
+                          desktop: 18,
+                        ),
+                      ),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,10 +135,22 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                               'Last Name',
                               style: AppTextStyles.bodyMedium.copyWith(
                                 fontWeight: FontWeight.w500,
-                                fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                                fontSize: ResponsiveUtils.fontSize(
+                                  context,
+                                  mobile: 14,
+                                  tablet: 15,
+                                  desktop: 16,
+                                ),
                               ),
                             ),
-                            SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                            SizedBox(
+                              height: ResponsiveUtils.spacing(
+                                context,
+                                mobile: 8,
+                                tablet: 10,
+                                desktop: 12,
+                              ),
+                            ),
                             CustomTextField(
                               controller: _lastNameController,
                               hintText: '',
@@ -109,7 +160,14 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 24,
+                      tablet: 28,
+                      desktop: 32,
+                    ),
+                  ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -117,10 +175,22 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                         'Your Problem',
                         style: AppTextStyles.bodyMedium.copyWith(
                           fontWeight: FontWeight.w500,
-                          fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 15, desktop: 16),
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 15,
+                            desktop: 16,
+                          ),
                         ),
                       ),
-                      SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
                       CustomTextField(
                         controller: _descriptionController,
                         hintText: '',
@@ -128,7 +198,14 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 34, desktop: 36)),
+                  SizedBox(
+                    height: ResponsiveUtils.spacing(
+                      context,
+                      mobile: 32,
+                      tablet: 34,
+                      desktop: 36,
+                    ),
+                  ),
                   CustomButton(
                     text: 'Submit',
                     isLoading: state.isSubmitting,
@@ -164,10 +241,14 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
 
   Widget _buildHeader(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18)),
+      padding: EdgeInsets.all(
+        ResponsiveUtils.spacing(context, mobile: 16, tablet: 17, desktop: 18),
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18)),
+        borderRadius: BorderRadius.circular(
+          ResponsiveUtils.radius(context, mobile: 16, tablet: 17, desktop: 18),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -179,8 +260,18 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
       child: Row(
         children: [
           Container(
-            width: ResponsiveUtils.size(context, mobile: 50, tablet: 55, desktop: 60),
-            height: ResponsiveUtils.size(context, mobile: 50, tablet: 55, desktop: 60),
+            width: ResponsiveUtils.size(
+              context,
+              mobile: 50,
+              tablet: 55,
+              desktop: 60,
+            ),
+            height: ResponsiveUtils.size(
+              context,
+              mobile: 50,
+              tablet: 55,
+              desktop: 60,
+            ),
             decoration: BoxDecoration(
               color: Colors.orange.withValues(alpha: 0.15),
               shape: BoxShape.circle,
@@ -188,16 +279,33 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
             child: Icon(
               Icons.headset_mic_outlined,
               color: Colors.orange,
-              size: ResponsiveUtils.fontSize(context, mobile: 28, tablet: 30, desktop: 32),
+              size: ResponsiveUtils.fontSize(
+                context,
+                mobile: 28,
+                tablet: 30,
+                desktop: 32,
+              ),
             ),
           ),
-          SizedBox(width: ResponsiveUtils.spacing(context, mobile: 12, tablet: 13, desktop: 14)),
+          SizedBox(
+            width: ResponsiveUtils.spacing(
+              context,
+              mobile: 12,
+              tablet: 13,
+              desktop: 14,
+            ),
+          ),
           Expanded(
             child: Text(
               'Report a problem',
               style: AppTextStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
-                fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 17, desktop: 18),
+                fontSize: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 16,
+                  tablet: 17,
+                  desktop: 18,
+                ),
               ),
             ),
           ),

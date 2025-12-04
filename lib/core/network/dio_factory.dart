@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_constants.dart';
 import '../di/injection.dart';
+import 'performance_interceptor.dart';
 
 class DioFactory {
   static Dio? _dio;
@@ -28,6 +29,12 @@ class DioFactory {
         // Try to use credentials for CORS
         _dio!.options.extra['withCredentials'] = false;
       }
+
+      // Add performance interceptor for caching and optimization
+      _dio!.interceptors.add(PerformanceInterceptor(
+        cacheDuration: const Duration(minutes: 5),
+        maxCacheSize: 50,
+      ));
 
       if (kDebugMode) {
         _dio!.interceptors.add(

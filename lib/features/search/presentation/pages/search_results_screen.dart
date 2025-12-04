@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../bloc/search_bloc.dart';
 import '../bloc/search_event.dart';
 import '../bloc/search_state.dart';
@@ -10,6 +11,7 @@ import '../../../../theming/text_styles.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../core/utils/web_compatible_network_image.dart';
 import '../../../../core/utils/web_scroll_behavior.dart';
+import '../../../../core/constants/app_constants.dart';
 
 class SearchResultsScreen extends StatefulWidget {
   const SearchResultsScreen({super.key});
@@ -20,7 +22,7 @@ class SearchResultsScreen extends StatefulWidget {
 
 class _SearchResultsScreenState extends State<SearchResultsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _selectedSort = 'Lowest Price';
+  String _selectedSort = 'lowest_price';
   final ScrollController _scrollController = ScrollController();
   SearchFilter? _currentFilter;
 
@@ -74,7 +76,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Search Result',
+          'search_results'.tr(),
           style: AppTextStyles.h4.copyWith(color: AppColors.textPrimary),
         ),
         backgroundColor: Colors.white,
@@ -102,12 +104,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                     ),
                     SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
                     Text(
-                      'Something went wrong',
+                      'something_went_wrong'.tr(),
                       style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
                     ),
                     SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
                     Text(
-                      state.message,
+                      state.message.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
                         color: Colors.grey[500],
                       ),
@@ -118,7 +120,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                       onPressed: () => context.read<SearchBloc>().add(
                         const LoadLookupsEvent(),
                       ),
-                      child: const Text('Retry'),
+                      child: Text('retry'.tr()),
                     ),
                   ],
                 ),
@@ -251,7 +253,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${state.totalCount} Result Founded',
+                'results_found'.tr(args: ['${state.totalCount}']),
                 style: AppTextStyles.bodyLarge.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -260,7 +262,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
               GestureDetector(
                 onTap: () => _showSortBottomSheet(),
                 child: Text(
-                  'Sort By',
+                  'sort_by'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w500,
@@ -277,11 +279,11 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   Widget _buildPropertyGrid(List<PropertyEntity> properties) {
     // Sort properties based on selected sort option
     List<PropertyEntity> sortedProperties = List.from(properties);
-    if (_selectedSort == 'Lowest Price') {
+    if (_selectedSort == 'lowest_price') {
       sortedProperties.sort(
         (a, b) => a.pricePerNight.compareTo(b.pricePerNight),
       );
-    } else if (_selectedSort == 'Highest Price') {
+    } else if (_selectedSort == 'highest_price') {
       sortedProperties.sort(
         (a, b) => b.pricePerNight.compareTo(a.pricePerNight),
       );
@@ -490,12 +492,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
           Icon(Icons.search_off, size: ResponsiveUtils.fontSize(context, mobile: 64, tablet: 72, desktop: 80), color: Colors.grey[400]),
           SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
           Text(
-            'No Results Found',
+            'no_results_found'.tr(),
             style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
           ),
           SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
           Text(
-            'Try adjusting your search filters',
+            'try_adjusting_filters'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(color: Colors.grey[500]),
           ),
         ],
@@ -525,15 +527,15 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             ),
             SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
             Text(
-              'Sort By',
+              'sort_by'.tr(),
               style: AppTextStyles.h4.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
-            _buildSortOption('Lowest Price'),
-            _buildSortOption('Highest Price'),
+            _buildSortOption('lowest_price'),
+            _buildSortOption('highest_price'),
             SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 28)),
           ],
         ),
@@ -572,7 +574,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             SizedBox(width: ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20)),
             Expanded(
               child: Text(
-                option,
+                option.tr(),
                 style: AppTextStyles.bodyLarge.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
@@ -620,7 +622,15 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
   }
 
   String _buildFullImageUrl(String relativePath) {
-    const baseUrl = 'http://srv954186.hstgr.cloud:5000';
+    // If the path is already a complete URL, return it as is
+    if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+      return relativePath;
+    }
+
+    // Use the domain from AppConstants.baseUrl
+    final uri = Uri.parse(AppConstants.baseUrl);
+    final baseUrl = '${uri.scheme}://${uri.host}';
+
     if (relativePath.startsWith('/')) {
       return '$baseUrl$relativePath';
     }

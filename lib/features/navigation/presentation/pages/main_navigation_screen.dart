@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../home/presentation/pages/home_screen.dart';
 import '../../../home/presentation/bloc/home_bloc.dart';
@@ -107,10 +108,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       return [
         BlocProvider.value(value: _homeBloc, child: const HomeScreen()),
         _GuestRestrictedScreen(
-          title: 'Saved Properties',
+          title: 'saved_properties'.tr(),
           icon: Icons.favorite_border,
-          description:
-              'Sign in to save your favorite properties and access them anytime.',
+          description: 'sign_in_to_save'.tr(),
           onContinueBrowsing: () {
             setState(() {
               _currentIndex = 0;
@@ -118,10 +118,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           },
         ),
         _GuestRestrictedScreen(
-          title: 'Upcoming Reservations',
+          title: 'upcoming_reservations'.tr(),
           icon: Icons.calendar_today_outlined,
-          description:
-              'Sign in to view your upcoming reservations and manage your bookings.',
+          description: 'sign_in_to_view_reservations'.tr(),
           onContinueBrowsing: () {
             setState(() {
               _currentIndex = 0;
@@ -129,10 +128,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           },
         ),
         _GuestRestrictedScreen(
-          title: 'Settings',
+          title: 'settings'.tr(),
           icon: Icons.settings_outlined,
-          description:
-              'Sign in to access your profile settings, reservations, and account preferences.',
+          description: 'sign_in_to_access_settings'.tr(),
           onContinueBrowsing: () {
             setState(() {
               _currentIndex = 0;
@@ -230,30 +228,39 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewPadding.bottom > 0 
-              ? ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)
+                ? ResponsiveUtils.spacing(
+                    context,
+                    mobile: 8,
+                    tablet: 10,
+                    desktop: 12,
+                  )
               : 0,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(icon: Icons.home_filled, label: 'Home', index: 0),
+              _buildNavItem(
+                icon: Icons.home_filled,
+                label: 'home'.tr(),
+                index: 0,
+              ),
               _buildNavItem(
                 icon: _currentIndex == 1
                     ? Icons.favorite
                     : Icons.favorite_border,
-                label: isAuthenticated ? 'Favorite' : 'Saved',
+                label: isAuthenticated ? 'favorite'.tr() : 'saved'.tr(),
                 index: 1,
               ),
               // Only show add button for users with roleId 1 (host) or 0 (admin)
               if (canCreateRent) _buildAddButton(),
               _buildNavItem(
                 icon: Icons.calendar_today_outlined,
-                label: 'Reservations',
+                label: 'reservations'.tr(),
                 index: 2,
               ),
               _buildNavItem(
                 icon: Icons.settings_outlined,
-                label: 'Settings',
+                label: 'settings'.tr(),
                 index: 3,
               ),
             ],
@@ -429,22 +436,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 children: [
                   _buildSideNavItem(
                     icon: Icons.home_filled,
-                    label: 'Home',
+                    label: 'home'.tr(),
                     index: 0,
                   ),
                   _buildSideNavItem(
                     icon: Icons.favorite,
-                    label: isAuthenticated ? 'Favorite' : 'Saved',
+                    label: isAuthenticated ? 'favorite'.tr() : 'saved'.tr(),
                     index: 1,
                   ),
                   _buildSideNavItem(
                     icon: Icons.calendar_today_outlined,
-                    label: 'Reservations',
+                    label: 'reservations'.tr(),
                     index: 2,
                   ),
                   _buildSideNavItem(
                     icon: Icons.settings_outlined,
-                    label: 'Settings',
+                    label: 'settings'.tr(),
                     index: 3,
                   ),
                 ],
@@ -466,7 +473,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _navigateToAddProperty,
                   icon: const Icon(Icons.add),
-                  label: const Text('Add Property'),
+                  label: Text('add_new_property'.tr()),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
@@ -698,7 +705,7 @@ class _GuestRestrictedScreen extends StatelessWidget {
 
                 // Title
                 Text(
-                  'Sign in to access $title',
+                  '${'sign_in_to_access_title'.tr()} $title',
                   style: AppTextStyles.h3.copyWith(
                     color: AppColors.textPrimary,
                     fontSize: ResponsiveUtils.fontSize(
@@ -747,7 +754,7 @@ class _GuestRestrictedScreen extends StatelessWidget {
 
                 // Sign in button
                 CustomButton(
-                  text: 'Sign In',
+                  text: 'sign_in'.tr(),
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
@@ -771,7 +778,7 @@ class _GuestRestrictedScreen extends StatelessWidget {
 
                 // Continue browsing button
                 CustomButton(
-                  text: 'Continue Browsing',
+                  text: 'continue_browsing'.tr(),
                   onPressed: onContinueBrowsing,
                   width: double.infinity,
                   backgroundColor: Colors.transparent,

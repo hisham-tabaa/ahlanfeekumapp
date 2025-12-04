@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pinput/pinput.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
+import 'dart:ui' as ui;
 
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -98,7 +99,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           // Phone verification
 
           try {
-            context.showSnackBar('Verifying phone number...');
+            context.showSnackBar('verifying_phone_number'.tr());
 
             final result = await getIt<VerifyPhoneUseCase>()(
               phone: widget.email,
@@ -146,12 +147,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           );
         }
       }
-    } else {
-      context.showSnackBar(
-        'Please enter the complete 4-digit OTP',
-        isError: true,
-      );
-    }
+      } else {
+        context.showSnackBar(
+          'enter_complete_otp'.tr(),
+          isError: true,
+        );
+      }
   }
 
   void _handleResendOtp() async {
@@ -162,21 +163,21 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         // Resend phone OTP
 
         try {
-          context.showSnackBar('Resending OTP...');
+          context.showSnackBar('resending_otp'.tr());
 
           final result = await getIt<SendOtpPhoneUseCase>()(widget.email);
 
           result.fold(
             (failure) {
-              context.showSnackBar(failure.message, isError: true);
+              context.showSnackBar(failure.message.tr(), isError: true);
             },
             (message) {
-              context.showSnackBar('OTP sent successfully');
+              context.showSnackBar('otp_sent_success'.tr());
               _startTimer();
             },
           );
         } catch (e) {
-          context.showSnackBar('Failed to resend OTP: $e', isError: true);
+          context.showSnackBar('resend_otp_failed'.tr(args: ['$e']), isError: true);
         }
       } else {
         // Resend email OTP (existing flow)
@@ -376,8 +377,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   Center(
                     child: Text(
                       widget.email.contains('@')
-                          ? 'Verify Through Email'
-                          : 'Verify Through WhatsApp',
+                          ? 'verify_through_email'.tr()
+                          : 'verify_through_whatsapp'.tr(),
                       style: AppTextStyles.h2.copyWith(
                         fontSize: ResponsiveUtils.fontSize(
                           context,
@@ -405,8 +406,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   Center(
                     child: Text(
                       widget.email.contains('@')
-                          ? 'We Sent A 4 - Digit Code To ${widget.email.replaceAll(RegExp(r'(?<=.{3}).(?=.*@)'), '*')} , Please Check Your Mail Inbox.'
-                          : 'We Sent A 4 - Digit Code To ${widget.email} Via WhatsApp. Please Check Your Messages.',
+                          ? 'otp_sent_email'.tr(args: [
+                              widget.email.replaceAll(
+                                RegExp(r'(?<=.{3}).(?=.*@)'),
+                                '*',
+                              ),
+                            ])
+                          : 'otp_sent_whatsapp'.tr(args: [widget.email]),
                       style: AppTextStyles.bodyMedium.copyWith(
                         fontSize: ResponsiveUtils.fontSize(
                           context,
@@ -431,14 +437,17 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
                   // OTP Input
                   Center(
-                    child: Pinput(
-                      controller: _otpController,
-                      length: 4, // Changed to 4 digits
-                      defaultPinTheme: defaultPinTheme,
-                      focusedPinTheme: focusedPinTheme,
-                      submittedPinTheme: submittedPinTheme,
-                      showCursor: true,
-                      onCompleted: (pin) => _handleVerifyOtp(),
+                    child: Directionality(
+                      textDirection: ui.TextDirection.ltr,
+                      child: Pinput(
+                        controller: _otpController,
+                        length: 4, // Changed to 4 digits
+                        defaultPinTheme: defaultPinTheme,
+                        focusedPinTheme: focusedPinTheme,
+                        submittedPinTheme: submittedPinTheme,
+                        showCursor: true,
+                        onCompleted: (pin) => _handleVerifyOtp(),
+                      ),
                     ),
                   ),
 
@@ -457,7 +466,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       children: [
                         if (!_canResend) ...[
                           Text(
-                            '${_remainingTime}s left',
+                            'otp_seconds_left'
+                                .tr(args: ['$_remainingTime']),
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontSize: ResponsiveUtils.fontSize(
                                 context,
@@ -472,7 +482,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           TextButton(
                             onPressed: _handleResendOtp,
                             child: Text(
-                              'Resend',
+                              'resend_otp_button'.tr(),
                               style: AppTextStyles.linkText.copyWith(
                                 fontSize: ResponsiveUtils.fontSize(
                                   context,
@@ -502,7 +512,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       return CustomButton(
-                        text: 'Verify',
+                        text: 'verify'.tr(),
                         onPressed: _handleVerifyOtp,
                         isLoading: state is AuthLoading,
                         width: double.infinity,

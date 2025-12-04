@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -70,7 +71,7 @@ class _ChooseAccountScreenState extends State<ChooseAccountScreen> {
                         ),
                       ),
                       Text(
-                        'Choose Your Account',
+                        'choose_account_type'.tr(),
                         style: AppTextStyles.h3.copyWith(
                           color: AppColors.textPrimary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -91,7 +92,7 @@ class _ChooseAccountScreenState extends State<ChooseAccountScreen> {
                         ),
                       ),
                       Text(
-                        'Select Your Account Type To Continue Your Journey',
+                        'select_account_type_subtitle'.tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -114,8 +115,8 @@ class _ChooseAccountScreenState extends State<ChooseAccountScreen> {
                         children: [
                           Expanded(
                             child: _AccountCard(
-                              title: 'Host',
-                              subtitle: 'Rent Out Your Property',
+                              title: 'host_account'.tr(),
+                              subtitle: 'rent_out_property'.tr(),
                               svgPath: 'assets/images/host.svg',
                               selected: _selectedRole == 1,
                               onTap: () {
@@ -135,8 +136,8 @@ class _ChooseAccountScreenState extends State<ChooseAccountScreen> {
                           ),
                           Expanded(
                             child: _AccountCard(
-                              title: 'Guest',
-                              subtitle: 'Book Any Property To Stay',
+                              title: 'guest_account'.tr(),
+                              subtitle: 'book_any_property'.tr(),
                               svgPath: 'assets/images/Guest.svg',
                               selected: _selectedRole == 2,
                               onTap: () {
@@ -150,7 +151,7 @@ class _ChooseAccountScreenState extends State<ChooseAccountScreen> {
                       ),
                       const Spacer(),
                       CustomButton(
-                        text: 'Continue As Visitor',
+                        text: 'continue_as_visitor'.tr(),
                         backgroundColor: Colors.grey[100],
                         textColor: AppColors.textPrimary,
                         onPressed: () {

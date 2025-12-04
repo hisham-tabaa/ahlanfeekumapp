@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -46,7 +47,8 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.error_outline,
-                      size: ResponsiveUtils.size(context,
+                      size: ResponsiveUtils.size(
+                        context,
                         mobile: 64,
                         tablet: 72,
                         desktop: 80,
@@ -54,7 +56,8 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.grey[400],
                     ),
                     SizedBox(
-                      height: ResponsiveUtils.spacing(context,
+                      height: ResponsiveUtils.spacing(
+                        context,
                         mobile: 16,
                         tablet: 20,
                         desktop: 24,
@@ -65,7 +68,8 @@ class HomeScreen extends StatelessWidget {
                       style: AppTextStyles.h4.copyWith(color: Colors.grey[600]),
                     ),
                     SizedBox(
-                      height: ResponsiveUtils.spacing(context,
+                      height: ResponsiveUtils.spacing(
+                        context,
                         mobile: 8,
                         tablet: 12,
                         desktop: 16,
@@ -79,7 +83,8 @@ class HomeScreen extends StatelessWidget {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(
-                      height: ResponsiveUtils.spacing(context,
+                      height: ResponsiveUtils.spacing(
+                        context,
                         mobile: 16,
                         tablet: 20,
                         desktop: 24,
@@ -89,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                       onPressed: () => context.read<HomeBloc>().add(
                         const LoadHomeDataEvent(),
                       ),
-                      child: const Text('Retry'),
+                      child: Text('retry'.tr()),
                     ),
                   ],
                 ),
@@ -117,7 +122,8 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         SizedBox(
-                          height: ResponsiveUtils.spacing(context,
+                          height: ResponsiveUtils.spacing(
+                            context,
                             mobile: 15,
                             tablet: 20,
                             desktop: 24,
@@ -135,7 +141,8 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         SizedBox(
-                          height: ResponsiveUtils.spacing(context,
+                          height: ResponsiveUtils.spacing(
+                            context,
                             mobile: 8,
                             tablet: 12,
                             desktop: 16,
@@ -158,7 +165,8 @@ class HomeScreen extends StatelessWidget {
                         ),
 
                         SizedBox(
-                          height: ResponsiveUtils.spacing(context,
+                          height: ResponsiveUtils.spacing(
+                            context,
                             mobile: 100,
                             tablet: 120,
                             desktop: 140,

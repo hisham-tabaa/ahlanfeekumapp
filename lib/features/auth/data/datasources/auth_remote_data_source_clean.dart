@@ -120,7 +120,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<OtpResponse> sendOtpPhone(String phone) async {
     try {
       final url =
-          '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?phone=$phone';
+          '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?input=$phone';
 
       final response = await dio.post(
         url,
