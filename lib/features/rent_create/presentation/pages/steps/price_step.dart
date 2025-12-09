@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
@@ -17,6 +18,20 @@ class PriceStep extends StatefulWidget {
 
 class _PriceStepState extends State<PriceStep> {
   final _priceController = TextEditingController();
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   void dispose() {

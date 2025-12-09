@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../theming/colors.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/text_styles.dart';
@@ -27,6 +28,20 @@ class RentCreateFlowScreen extends StatefulWidget {
 class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
   final PageController _pageController = PageController();
   DateTime? _lastNavigationTime;
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   void dispose() {
@@ -36,6 +51,9 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Reference locale to ensure widget rebuilds when language changes
+    context.locale;
+
     return BlocListener<RentCreateBloc, RentCreateState>(
       listener: (context, state) {
         if (state.errorMessage != null) {
@@ -69,8 +87,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
-          } else {
-          }
+          } else {}
         }
 
         // Auto-navigate to next step when images are uploaded
@@ -84,8 +101,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
-          } else {
-          }
+          } else {}
         }
 
         // Auto-navigate to next step when price is set
@@ -98,8 +114,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
-          } else {
-          }
+          } else {}
         }
 
         // Navigate to completion screen when property is submitted
@@ -121,7 +136,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
             onPressed: () => _showExitDialog(context),
           ),
           title: Text(
-            'Add Property',
+            'add_property'.tr(),
             style: AppTextStyles.h4.copyWith(
               color: AppColors.textPrimary,
               fontSize: ResponsiveUtils.fontSize(
@@ -345,7 +360,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
                           ),
                         ),
                         child: Text(
-                          'Only hosts and admins can create rent listings',
+                          'only_hosts_admins_create_rent'.tr(),
                           style: AppTextStyles.bodySmall.copyWith(
                             color: Colors.orange[700],
                             fontWeight: FontWeight.w500,
@@ -388,8 +403,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
-              } else if (!bloc.isClosed) {
-              }
+              } else if (!bloc.isClosed) {}
             });
           } else {
             bloc.add(const NextStepEvent());
@@ -413,8 +427,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
               );
-            } else if (!bloc.isClosed) {
-            }
+            } else if (!bloc.isClosed) {}
           });
           return;
         case PropertyCreationStep.availability:
@@ -440,14 +453,12 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Exit Property Creation?'),
-        content: const Text(
-          'Are you sure you want to exit? Your progress will be lost.',
-        ),
+        title: Text('exit_property_creation'.tr()),
+        content: Text('exit_property_creation_message'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () {
@@ -455,7 +466,7 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('Exit'),
+            child: Text('exit'.tr()),
           ),
         ],
       ),
@@ -477,6 +488,20 @@ class _PropertyCreatedSuccessScreenState
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   void initState() {
@@ -619,7 +644,7 @@ class _PropertyCreatedSuccessScreenState
                     FadeTransition(
                       opacity: _fadeAnimation,
                       child: Text(
-                        'Property Listed Successfully!',
+                        'property_listed_successfully'.tr(),
                         style: AppTextStyles.h3.copyWith(
                           color: AppColors.textPrimary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -648,7 +673,7 @@ class _PropertyCreatedSuccessScreenState
                     FadeTransition(
                       opacity: _fadeAnimation,
                       child: Text(
-                        'Congratulations! 🎉 Your property is now under review and will be live soon.',
+                        'property_under_review_message'.tr(),
                         style: AppTextStyles.bodyLarge.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -678,9 +703,8 @@ class _PropertyCreatedSuccessScreenState
                       icon: Icons.hourglass_empty_rounded,
                       iconColor: Colors.orange,
                       iconBgColor: Colors.orange.withValues(alpha: 0.1),
-                      title: 'Under Review',
-                      description:
-                          'Our team is reviewing your property details. This usually takes 24-48 hours.',
+                      title: 'under_review'.tr(),
+                      description: 'property_review_timeline'.tr(),
                     ),
 
                     SizedBox(
@@ -697,9 +721,8 @@ class _PropertyCreatedSuccessScreenState
                       icon: Icons.notifications_active_rounded,
                       iconColor: Colors.blue,
                       iconBgColor: Colors.blue.withValues(alpha: 0.1),
-                      title: 'Stay Updated',
-                      description:
-                          'You\'ll receive a notification once your property is approved and goes live.',
+                      title: 'stay_updated'.tr(),
+                      description: 'property_approval_notification'.tr(),
                     ),
 
                     SizedBox(
@@ -763,7 +786,7 @@ class _PropertyCreatedSuccessScreenState
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                'Quick Tips',
+                                'quick_tips'.tr(),
                                 style: AppTextStyles.bodyLarge.copyWith(
                                   color: AppColors.primary,
                                   fontSize: ResponsiveUtils.fontSize(
@@ -785,21 +808,15 @@ class _PropertyCreatedSuccessScreenState
                               desktop: 20,
                             ),
                           ),
+                          _buildTipItem(context, 'tip_calendar_updated'.tr()),
+                          _buildTipItem(context, 'tip_respond_quickly'.tr()),
                           _buildTipItem(
                             context,
-                            '📅 Keep your calendar updated regularly',
+                            'tip_enable_notifications'.tr(),
                           ),
                           _buildTipItem(
                             context,
-                            '⚡ Respond quickly to booking inquiries',
-                          ),
-                          _buildTipItem(
-                            context,
-                            '🔔 Enable notifications to stay informed',
-                          ),
-                          _buildTipItem(
-                            context,
-                            '📸 High-quality photos attract more guests',
+                            'tip_high_quality_photos'.tr(),
                           ),
                         ],
                       ),
@@ -877,7 +894,7 @@ class _PropertyCreatedSuccessScreenState
                               ),
                             ),
                             Text(
-                              'Back to Home',
+                              'back_to_home'.tr(),
                               style: TextStyle(
                                 fontSize: ResponsiveUtils.fontSize(
                                   context,
@@ -969,7 +986,7 @@ class _PropertyCreatedSuccessScreenState
                               ),
                             ),
                             Text(
-                              'Add Another Property',
+                              'add_another_property'.tr(),
                               style: TextStyle(
                                 fontSize: ResponsiveUtils.fontSize(
                                   context,

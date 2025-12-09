@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
@@ -10,8 +11,28 @@ import '../../bloc/rent_create_bloc.dart';
 import '../../bloc/rent_create_event.dart';
 import '../../bloc/rent_create_state.dart';
 
-class PhotosStep extends StatelessWidget {
+class PhotosStep extends StatefulWidget {
   const PhotosStep({super.key});
+
+  @override
+  State<PhotosStep> createState() => _PhotosStepState();
+}
+
+class _PhotosStepState extends State<PhotosStep> {
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

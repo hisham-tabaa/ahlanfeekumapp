@@ -41,11 +41,33 @@ class PropertyDetailScreen extends StatelessWidget {
   }
 }
 
-class _PropertyDetailView extends StatelessWidget {
+class _PropertyDetailView extends StatefulWidget {
   const _PropertyDetailView();
 
   @override
+  State<_PropertyDetailView> createState() => _PropertyDetailViewState();
+}
+
+class _PropertyDetailViewState extends State<_PropertyDetailView> {
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Reference locale to ensure widget rebuilds when language changes
+    context.locale;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -61,7 +83,7 @@ class _PropertyDetailView extends StatelessWidget {
 
             final property = state.propertyDetail;
             if (property == null) {
-              return _buildErrorState(context, 'Property details not found');
+              return _buildErrorState(context, 'property_details_not_found'.tr());
             }
 
             return Stack(
@@ -95,7 +117,7 @@ class _PropertyDetailView extends StatelessWidget {
                                   property: property,
                                   onSignInPrompt: () => _showSignInPrompt(
                                     context,
-                                    'Save to Favorites',
+                                    'save_to_favorites'.tr(),
                                   ),
                                 ),
                                 SizedBox(
@@ -240,7 +262,7 @@ class _PropertyDetailView extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('Go Back'),
+            child: Text('go_back'.tr()),
           ),
         ],
       ),
@@ -471,7 +493,7 @@ class _PropertyDetailView extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    property.averageRating > 4.5 ? 'Great' : 'Good',
+                    property.averageRating > 4.5 ? 'great'.tr() : 'good'.tr(),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.primary,
                     ),
@@ -485,7 +507,7 @@ class _PropertyDetailView extends StatelessWidget {
                 return IconButton(
                   onPressed: () {
                     if (authState is AuthGuest) {
-                      _showSignInPrompt(context, 'Save to Favorites');
+                      _showSignInPrompt(context, 'save_to_favorites'.tr());
                     } else {
                       context.read<PropertyDetailBloc>().add(
                         ToggleFavoriteEvent(
@@ -569,7 +591,7 @@ class _PropertyDetailView extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                property.address ?? 'Address not provided',
+                property.address ?? 'address_not_provided'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -606,7 +628,7 @@ class _PropertyDetailView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Main Details',
+            'main_details'.tr(),
             style: AppTextStyles.h4.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -621,39 +643,39 @@ class _PropertyDetailView extends StatelessWidget {
             ),
           ),
           _buildDetailRow(
-            'Price',
-            '${property.pricePerNight.toStringAsFixed(0)} S / Night',
+            'price'.tr(),
+            '${property.pricePerNight.toStringAsFixed(0)} ${'currency_symbol'.tr()} / ${'night'.tr()}',
             context,
           ),
-          _buildDetailRow('Property Type', property.propertyTypeName, context),
-          _buildDetailRow('Bedrooms', '${property.bedrooms} Bedrooms', context),
+          _buildDetailRow('property_type'.tr(), property.propertyTypeName, context),
+          _buildDetailRow('bedrooms'.tr(), '${property.bedrooms} ${'bedrooms'.tr()}', context),
           _buildDetailRow(
-            'Living Rooms',
-            '${property.livingrooms} Rooms',
-            context,
-          ),
-          _buildDetailRow(
-            'Bathrooms',
-            '${property.bathrooms} Bathrooms',
+            'living_rooms'.tr(),
+            '${property.livingrooms} ${'rooms'.tr()}',
             context,
           ),
           _buildDetailRow(
-            'Number Of Beds',
-            '${property.numberOfBeds} Beds',
+            'bathrooms'.tr(),
+            '${property.bathrooms} ${'bathrooms'.tr()}',
             context,
           ),
           _buildDetailRow(
-            'Maximum Guests',
-            '${property.maxGuests} Guests',
+            'number_of_beds'.tr(),
+            '${property.numberOfBeds} ${'beds'.tr()}',
             context,
           ),
-          _buildDetailRow('Floor', '${property.floor} Floor', context),
-          _buildDetailRow('Posted By', property.ownerName, context),
-          _buildDetailRow('Governorate', property.governorateName, context),
+          _buildDetailRow(
+            'maximum_guests'.tr(),
+            '${property.maxGuests} ${'guests'.tr()}',
+            context,
+          ),
+          _buildDetailRow('floor'.tr(), '${property.floor} ${'floor'.tr()}', context),
+          _buildDetailRow('posted_by'.tr(), property.ownerName, context),
+          _buildDetailRow('governorate'.tr(), property.governorateName, context),
           if (property.area != null)
             _buildDetailRow(
-              'Area',
-              '${property.area!.toStringAsFixed(0)} m²',
+              'area'.tr(),
+              '${property.area!.toStringAsFixed(0)} ${'square_meters'.tr()}',
               context,
             ),
         ],
@@ -705,7 +727,7 @@ class _PropertyDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Property Features',
+          'property_features'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -801,7 +823,7 @@ class _PropertyDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Property Location',
+          'property_location'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -912,7 +934,7 @@ class _PropertyDetailView extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            property.address ?? 'Location not available',
+                            property.address ?? 'location_not_available'.tr(),
                             style: AppTextStyles.bodySmall.copyWith(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
@@ -930,7 +952,7 @@ class _PropertyDetailView extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                'Tap to view full map',
+                                'tap_to_view_full_map'.tr(),
                                 style: AppTextStyles.bodySmall.copyWith(
                                   color: Colors.white70,
                                   fontSize: 12,
@@ -978,7 +1000,7 @@ class _PropertyDetailView extends StatelessWidget {
               ),
               Expanded(
                 child: Text(
-                  'Landmark: ${property.landMark}',
+                  '${'landmark'.tr()}: ${property.landMark}',
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -1000,7 +1022,7 @@ class _PropertyDetailView extends StatelessWidget {
       // Show error message if coordinates are not available
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Location coordinates not available'),
+          content: Text('location_coordinates_not_available'.tr()),
           backgroundColor: AppColors.error,
           duration: const Duration(seconds: 2),
         ),
@@ -1023,18 +1045,18 @@ class _PropertyDetailView extends StatelessWidget {
 
   Widget _buildRatesSection(PropertyDetail property, BuildContext context) {
     final ratings = [
-      _RatingItem(title: 'Cleanliness', value: property.averageCleanliness),
-      _RatingItem(title: 'Price & Value', value: property.averagePriceAndValue),
-      _RatingItem(title: 'Location', value: property.averageLocation),
-      _RatingItem(title: 'Accuracy', value: property.averageAccuracy),
-      _RatingItem(title: 'Attitude', value: property.averageAttitude),
+      _RatingItem(title: 'cleanliness'.tr(), value: property.averageCleanliness),
+      _RatingItem(title: 'price_value'.tr(), value: property.averagePriceAndValue),
+      _RatingItem(title: 'location'.tr(), value: property.averageLocation),
+      _RatingItem(title: 'accuracy'.tr(), value: property.averageAccuracy),
+      _RatingItem(title: 'attitude'.tr(), value: property.averageAttitude),
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Rates & Reviews',
+          'rates_reviews'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -1140,7 +1162,7 @@ class _PropertyDetailView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        'Based on ${property.evaluations.length} ${property.evaluations.length == 1 ? 'review' : 'reviews'}',
+                        '${'based_on'.tr()} ${property.evaluations.length} ${property.evaluations.length == 1 ? 'review'.tr() : 'reviews'.tr()}',
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -1204,7 +1226,7 @@ class _PropertyDetailView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'All Reviews',
+              'all_reviews'.tr(),
               style: AppTextStyles.h4.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -1216,9 +1238,9 @@ class _PropertyDetailView extends StatelessWidget {
                   builder: (context, authState) {
                     return TextButton.icon(
                       onPressed: () {
-                        if (authState is AuthGuest) {
-                          _showSignInPrompt(context, 'Rate Property');
-                        } else {
+                    if (authState is AuthGuest) {
+                      _showSignInPrompt(context, 'rate_property'.tr());
+                    } else {
                           final currentState = context
                               .read<PropertyDetailBloc>()
                               .state;
@@ -1231,14 +1253,14 @@ class _PropertyDetailView extends StatelessWidget {
                         }
                       },
                       icon: const Icon(Icons.star_border, size: 18),
-                      label: const Text('Rate'),
+                      label: Text('rate'.tr()),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
                       ),
                     );
                   },
                 ),
-                TextButton(onPressed: () {}, child: const Text('Show All')),
+                TextButton(onPressed: () {}, child: Text('show_all'.tr())),
               ],
             ),
           ],
@@ -1416,7 +1438,7 @@ class _PropertyDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'House Rules',
+          'house_rules'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -1493,7 +1515,7 @@ class _PropertyDetailView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Important To Read',
+          'important_to_read'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -1661,7 +1683,7 @@ class _PropertyDetailView extends StatelessWidget {
                                 desktop: 6,
                               ),
                             ),
-                            const Text('Super Host'),
+                            Text('super_host'.tr()),
                           ],
                         ),
                       ),
@@ -1692,7 +1714,7 @@ class _PropertyDetailView extends StatelessWidget {
                 availabilityData: propertyState.availabilityData,
                 onBook: (checkIn, checkOut, guests, notes) async {
                   if (authState is AuthGuest) {
-                    _showSignInPrompt(context, 'Book This Property');
+                    _showSignInPrompt(context, 'book_this_property'.tr());
                     return;
                   }
 
@@ -1763,8 +1785,8 @@ class _PropertyDetailView extends StatelessWidget {
         // Card payment via Stripe
         if (userEmail == null || userEmail.isEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Unable to process payment. User email not found.'),
+            SnackBar(
+              content: Text('unable_to_process_payment'.tr()),
               backgroundColor: Colors.red,
             ),
           );
@@ -1896,7 +1918,7 @@ class _PropertyDetailView extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Check-in: ${checkIn.toString().split(' ')[0]}',
+                              '${'check_in'.tr()}: ${checkIn.toString().split(' ')[0]}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
@@ -1913,7 +1935,7 @@ class _PropertyDetailView extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              'Check-out: ${checkOut.toString().split(' ')[0]}',
+                              '${'check_out'.tr()}: ${checkOut.toString().split(' ')[0]}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
@@ -1930,7 +1952,7 @@ class _PropertyDetailView extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              '$guests Guest${guests != 1 ? 's' : ''}',
+                              '$guests ${guests != 1 ? 'guests'.tr() : 'guest'.tr()}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 fontWeight: FontWeight.w500,
                               ),
@@ -2082,7 +2104,7 @@ class _PropertyDetailView extends StatelessWidget {
               ),
             ),
             Text(
-              'Sign In Required',
+              'sign_in_required'.tr(),
               style: AppTextStyles.h3.copyWith(
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -2097,7 +2119,7 @@ class _PropertyDetailView extends StatelessWidget {
               ),
             ),
             Text(
-              'To $action, please sign in to your account or create a new one.',
+              'sign_in_prompt_message'.tr().replaceAll('{0}', action),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
                 height: 1.5,
@@ -2144,7 +2166,7 @@ class _PropertyDetailView extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Sign In',
+                  'sign_in'.tr(),
                   style: AppTextStyles.bodyMedium.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -2163,7 +2185,7 @@ class _PropertyDetailView extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: Text(
-                'Continue Browsing',
+                'continue_browsing'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),

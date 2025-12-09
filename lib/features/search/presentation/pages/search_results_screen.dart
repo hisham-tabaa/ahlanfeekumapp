@@ -141,12 +141,12 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
             }
 
             if (state is LookupsLoaded) {
-              return const Center(
-                child: Text('Start searching to see results'),
+              return Center(
+                child: Text('start_searching_to_see_results'.tr()),
               );
             }
 
-            return const Center(child: Text('Loading...'));
+            return Center(child: Text('loading'.tr()));
           },
         ),
       ),

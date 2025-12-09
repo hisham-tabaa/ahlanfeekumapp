@@ -158,7 +158,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                       Navigator.pushNamed(context, '/rent-create');
                     },
                     icon: const Icon(Icons.add),
-                    label: const Text('Add Property'),
+                    label: Text('add_property'.tr()),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,

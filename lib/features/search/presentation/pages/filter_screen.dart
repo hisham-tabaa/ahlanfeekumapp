@@ -9,6 +9,7 @@ import '../../../rent_create/presentation/pages/map_picker_page.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../../core/utils/responsive_utils.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class FilterScreen extends StatefulWidget {
   final SearchFilter currentFilter;
@@ -106,7 +107,7 @@ class _FilterScreenState extends State<FilterScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not open map. Please try again.'),
+            content: Text('could_not_open_map'.tr()),
             backgroundColor: AppColors.error,
             duration: Duration(seconds: 3),
           ),

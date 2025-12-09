@@ -110,7 +110,7 @@ class _SavedPropertiesScreenState extends State<SavedPropertiesScreen>
                     ),
                   ),
                   Text(
-                    'No Saved Properties',
+                    'no_saved_properties'.tr(),
                     style: AppTextStyles.h3.copyWith(
                       fontSize: ResponsiveUtils.fontSize(
                         context,
@@ -130,7 +130,7 @@ class _SavedPropertiesScreenState extends State<SavedPropertiesScreen>
                     ),
                   ),
                   Text(
-                    'Save properties you like to find them easily later',
+                    'save_properties_message'.tr(),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                       fontSize: ResponsiveUtils.fontSize(
@@ -383,7 +383,7 @@ class _PropertyCard extends StatelessWidget {
                   children: [
                     // Title
                     Text(
-                      property.title ?? 'Property',
+                      property.title ?? 'property'.tr(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
@@ -394,7 +394,7 @@ class _PropertyCard extends StatelessWidget {
                     ),
                     // Price
                     Text(
-                      '\$${property.pricePerNight.toStringAsFixed(0)} / Night',
+                      '\$${property.pricePerNight.toStringAsFixed(0)} / ${'night'.tr()}',
                       style: const TextStyle(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w700,

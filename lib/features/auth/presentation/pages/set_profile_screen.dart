@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -52,7 +53,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.photo_library),
-                title: const Text('Gallery'),
+                title: Text('gallery'.tr()),
                 onTap: () {
                   Navigator.pop(context);
                   _getImage(ImageSource.gallery);
@@ -60,7 +61,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.photo_camera),
-                title: const Text('Camera'),
+                title: Text('camera'.tr()),
                 onTap: () {
                   Navigator.pop(context);
                   _getImage(ImageSource.camera);
@@ -86,15 +87,15 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
         if (mounted) {
           context.read<RegistrationCubit>().setProfilePhotoFile(image);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Photo selected successfully!')),
+            SnackBar(content: Text('photo_selected_successfully'.tr())),
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${'error_picking_image'.tr()}: $e')),
+        );
       }
     }
   }

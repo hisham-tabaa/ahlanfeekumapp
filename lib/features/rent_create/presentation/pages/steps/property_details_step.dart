@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../../../../core/utils/responsive_utils.dart';
@@ -25,6 +26,20 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
   final _houseRulesController = TextEditingController();
   final _importantInfoController = TextEditingController();
   final _areaController = TextEditingController();
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   void dispose() {
@@ -61,7 +76,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSectionTitle(context, 'Property Type'),
+              _buildSectionTitle(context, 'property_type'.tr()),
               SizedBox(
                 height: ResponsiveUtils.spacing(
                   context,
@@ -80,7 +95,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                   desktop: 32,
                 ),
               ),
-              _buildSectionTitle(context, 'Property Title'),
+              _buildSectionTitle(context, 'property_title'.tr()),
               SizedBox(
                 height: ResponsiveUtils.spacing(
                   context,
@@ -92,7 +107,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
               _buildTextField(
                 context,
                 controller: _titleController,
-                hintText: 'Title',
+                hintText: 'title'.tr(),
                 onChanged: (value) {
                   context.read<RentCreateBloc>().add(
                     UpdatePropertyTitleEvent(value),
@@ -108,7 +123,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                   desktop: 32,
                 ),
               ),
-              _buildSectionTitle(context, 'Property Details'),
+              _buildSectionTitle(context, 'property_details'.tr()),
               SizedBox(
                 height: ResponsiveUtils.spacing(
                   context,
@@ -127,7 +142,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                   desktop: 20, // Reduced spacing on desktop
                 ),
               ),
-              _buildSectionTitle(context, 'Property Description'),
+              _buildSectionTitle(context, 'property_description'.tr()),
               SizedBox(
                 height: ResponsiveUtils.spacing(
                   context,
@@ -139,7 +154,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
               _buildTextField(
                 context,
                 controller: _descriptionController,
-                hintText: 'Type Here',
+                hintText: 'type_here'.tr(),
                 maxLines: 4,
                 onChanged: (value) {
                   context.read<RentCreateBloc>().add(
@@ -156,7 +171,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                   desktop: 20, // Reduced spacing on desktop
                 ),
               ),
-              _buildSectionTitle(context, 'More Features'),
+              _buildSectionTitle(context, 'more_features'.tr()),
               SizedBox(
                 height: ResponsiveUtils.spacing(
                   context,
@@ -286,7 +301,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle(context, 'Instructions'),
+          _buildSectionTitle(context, 'instructions'.tr()),
           SizedBox(
             height: ResponsiveUtils.spacing(
               context,
@@ -302,7 +317,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSubSectionTitle(context, 'House Rules'),
+                    _buildSubSectionTitle(context, 'house_rules'.tr()),
                     SizedBox(
                       height: ResponsiveUtils.spacing(
                         context,
@@ -314,7 +329,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                     _buildTextField(
                       context,
                       controller: _houseRulesController,
-                      hintText: 'Type Here',
+                      hintText: 'type_here'.tr(),
                       maxLines: 5,
                       onChanged: (value) {
                         context.read<RentCreateBloc>().add(
@@ -330,7 +345,10 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSubSectionTitle(context, 'Important Information'),
+                    _buildSubSectionTitle(
+                      context,
+                      'important_information'.tr(),
+                    ),
                     SizedBox(
                       height: ResponsiveUtils.spacing(
                         context,
@@ -342,7 +360,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                     _buildTextField(
                       context,
                       controller: _importantInfoController,
-                      hintText: 'Type Here',
+                      hintText: 'type_here'.tr(),
                       maxLines: 5,
                       onChanged: (value) {
                         context.read<RentCreateBloc>().add(
@@ -363,7 +381,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle(context, 'Instructions'),
+        _buildSectionTitle(context, 'instructions'.tr()),
         SizedBox(
           height: ResponsiveUtils.spacing(
             context,
@@ -372,7 +390,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             desktop: 20,
           ),
         ),
-        _buildSubSectionTitle(context, 'House Rules'),
+        _buildSubSectionTitle(context, 'house_rules'.tr()),
         SizedBox(
           height: ResponsiveUtils.spacing(
             context,
@@ -384,7 +402,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
         _buildTextField(
           context,
           controller: _houseRulesController,
-          hintText: 'Type Here',
+          hintText: 'type_here'.tr(),
           maxLines: 3,
           onChanged: (value) {
             context.read<RentCreateBloc>().add(UpdateHouseRulesEvent(value));
@@ -398,7 +416,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             desktop: 20,
           ),
         ),
-        _buildSubSectionTitle(context, 'Important Information'),
+        _buildSubSectionTitle(context, 'important_information'.tr()),
         SizedBox(
           height: ResponsiveUtils.spacing(
             context,
@@ -410,7 +428,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
         _buildTextField(
           context,
           controller: _importantInfoController,
-          hintText: 'Type Here',
+          hintText: 'type_here'.tr(),
           maxLines: 3,
           onChanged: (value) {
             context.read<RentCreateBloc>().add(UpdateImportantInfoEvent(value));
@@ -578,7 +596,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             children: [
               Expanded(
                 child: CounterWidget(
-                  title: 'Bedrooms',
+                  title: 'bedrooms'.tr(),
                   value: state.formData.bedrooms,
                   minValue: 0,
                   maxValue: 20,
@@ -592,7 +610,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
               SizedBox(width: 16),
               Expanded(
                 child: CounterWidget(
-                  title: 'Bathrooms',
+                  title: 'bathrooms'.tr(),
                   value: state.formData.bathrooms,
                   minValue: 0,
                   maxValue: 20,
@@ -611,7 +629,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             children: [
               Expanded(
                 child: CounterWidget(
-                  title: 'Number Of Beds',
+                  title: 'number_of_beds'.tr(),
                   value: state.formData.numberOfBeds,
                   minValue: 0,
                   maxValue: 20,
@@ -625,7 +643,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
               SizedBox(width: 16),
               Expanded(
                 child: CounterWidget(
-                  title: 'Living Rooms',
+                  title: 'living_rooms'.tr(),
                   value: state.formData.livingRooms,
                   minValue: 0,
                   maxValue: 20,
@@ -644,7 +662,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
             children: [
               Expanded(
                 child: CounterWidget(
-                  title: 'Floor',
+                  title: 'floor'.tr(),
                   value: state.formData.floor,
                   minValue: 0,
                   maxValue: 50,
@@ -656,7 +674,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
               SizedBox(width: 16),
               Expanded(
                 child: CounterWidget(
-                  title: 'Maximum Number Of Guests',
+                  title: 'maximum_number_of_guests'.tr(),
                   value: state.formData.maximumNumberOfGuests,
                   minValue: 0,
                   maxValue: 50,
@@ -680,7 +698,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CounterWidget(
-          title: 'Bedrooms',
+          title: 'bedrooms'.tr(),
           value: state.formData.bedrooms,
           minValue: 0,
           maxValue: 20,
@@ -697,7 +715,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           ),
         ),
         CounterWidget(
-          title: 'Bathrooms',
+          title: 'bathrooms'.tr(),
           value: state.formData.bathrooms,
           minValue: 0,
           maxValue: 20,
@@ -714,7 +732,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           ),
         ),
         CounterWidget(
-          title: 'Number Of Beds',
+          title: 'number_of_beds'.tr(),
           value: state.formData.numberOfBeds,
           minValue: 0,
           maxValue: 20,
@@ -731,7 +749,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           ),
         ),
         CounterWidget(
-          title: 'Floor',
+          title: 'floor'.tr(),
           value: state.formData.floor,
           minValue: 0,
           maxValue: 50,
@@ -748,7 +766,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           ),
         ),
         CounterWidget(
-          title: 'Maximum Number Of Guests',
+          title: 'maximum_number_of_guests'.tr(),
           value: state.formData.maximumNumberOfGuests,
           minValue: 0,
           maxValue: 50,
@@ -765,7 +783,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           ),
         ),
         CounterWidget(
-          title: 'Living Rooms',
+          title: 'living_rooms'.tr(),
           value: state.formData.livingRooms,
           minValue: 0,
           maxValue: 20,
@@ -791,7 +809,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Area (m²)',
+          '${'area'.tr()} (${'square_meters'.tr()})',
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textPrimary,
             fontSize: ResponsiveUtils.fontSize(
@@ -839,7 +857,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
               context.read<RentCreateBloc>().add(UpdateAreaEvent(intValue));
             },
             decoration: InputDecoration(
-              hintText: 'Enter area in m²',
+              hintText: 'enter_area_in_square_meters'.tr(),
               hintStyle: AppTextStyles.bodyMedium.copyWith(
                 color: Colors.grey[400],
                 fontSize: ResponsiveUtils.fontSize(
@@ -964,7 +982,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle(context, 'Governorate'),
+        _buildSectionTitle(context, 'governorate'.tr()),
         SizedBox(
           height: ResponsiveUtils.spacing(
             context,
@@ -1029,7 +1047,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
                           ),
                         ),
                         hint: Text(
-                          'Select Governorate',
+                          'select_governorate'.tr(),
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.grey[400],
                             fontSize: ResponsiveUtils.fontSize(

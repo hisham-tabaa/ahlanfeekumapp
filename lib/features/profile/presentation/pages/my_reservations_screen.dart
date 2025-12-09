@@ -127,7 +127,7 @@ class _MyReservationsScreenState extends State<MyReservationsScreen> {
                         const LoadMyReservationsEvent(),
                       );
                     },
-                    child: const Text('Retry'),
+                    child: Text('retry'.tr()),
                   ),
                 ],
               ),

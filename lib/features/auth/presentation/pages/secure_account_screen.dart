@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/text_styles.dart';
@@ -20,9 +21,25 @@ class SecureAccountScreen extends StatefulWidget {
 class _SecureAccountScreenState extends State<SecureAccountScreen> {
   bool _obscure1 = true;
   bool _obscure2 = true;
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Reference locale to ensure widget rebuilds when language changes
+    context.locale;
     final cubit = context.read<RegistrationCubit>();
     final passController = TextEditingController(text: cubit.state.password);
     final confirmController = TextEditingController(
@@ -47,8 +64,8 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                 content: Text(state.error!),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 5),
-                action: SnackBarAction(
-                  label: 'OK',
+                  action: SnackBarAction(
+                  label: 'ok'.tr(),
                   textColor: Colors.white,
                   onPressed: () {
                     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -58,12 +75,10 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
             );
           } else if (state.success) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Account created successfully! Please login to continue.',
-                ),
+              SnackBar(
+                content: Text('account_created_successfully'.tr()),
                 backgroundColor: Colors.green,
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
               ),
             );
             // Navigate to login screen and clear all previous routes
@@ -123,7 +138,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                   ),
 
                 Text(
-                  'Secure Your Account',
+                  'secure_your_account'.tr(),
                   style: AppTextStyles.h3.copyWith(
                     color: AppColors.textPrimary,
                     fontSize: ResponsiveUtils.fontSize(context, mobile: 22, tablet: 24, desktop: 26),
@@ -132,7 +147,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                 ),
                 SizedBox(height: ResponsiveUtils.spacing(context, mobile: 6, tablet: 8, desktop: 10)),
                 Text(
-                  'Create A Strong , Long And Hard Guessing Password',
+                  'create_strong_password'.tr(),
                   style: AppTextStyles.bodySmall.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -142,8 +157,8 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                 // Password
                 CustomTextField(
                   controller: passController,
-                  labelText: 'Password',
-                  hintText: 'Password',
+                  labelText: 'password'.tr(),
+                  hintText: 'password'.tr(),
                   obscureText: _obscure1,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -164,8 +179,8 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                 // Confirm
                 CustomTextField(
                   controller: confirmController,
-                  labelText: 'Repeat Password',
-                  hintText: 'Repeat Password',
+                  labelText: 'repeat_password'.tr(),
+                  hintText: 'repeat_password'.tr(),
                   obscureText: _obscure2,
                   suffixIcon: IconButton(
                     icon: Icon(
@@ -184,7 +199,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                 SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56)),
 
                 CustomButton(
-                  text: state.isLoading ? 'Creating...' : 'Create Account',
+                  text: state.isLoading ? 'creating'.tr() : 'create_account'.tr(),
                   backgroundColor: const Color(0xFFED1C24),
                   textColor: Colors.white,
                   onPressed: state.isLoading

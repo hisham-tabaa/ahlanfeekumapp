@@ -107,7 +107,7 @@ class _BookingBottomSheetWithAvailabilityState
           children: [
             Icon(Icons.error_outline, color: Colors.red[700]),
             const SizedBox(width: 8),
-            const Text('Dates Not Available'),
+            Text('dates_not_available'.tr()),
           ],
         ),
         content: const Text(
@@ -118,7 +118,7 @@ class _BookingBottomSheetWithAvailabilityState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text('ok'.tr()),
           ),
         ],
       ),
@@ -857,7 +857,7 @@ class _BookingBottomSheetWithAvailabilityState
                             desktop: 12,
                           ),
                         ),
-                        const Text('Book Now'),
+                        Text('book_now'.tr()),
                       ],
                     ),
                   ),

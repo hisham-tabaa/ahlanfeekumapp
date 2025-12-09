@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
@@ -20,6 +21,20 @@ class ReviewStep extends StatefulWidget {
 class _ReviewStepState extends State<ReviewStep> {
   int _currentImageIndex = 0;
   final PageController _pageController = PageController();
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
 
   @override
   void dispose() {
@@ -247,7 +262,7 @@ class _ReviewStepState extends State<ReviewStep> {
                   ),
                 ),
                 child: Text(
-                  'View ${_currentImageIndex + 1} Image',
+                  '${'view'.tr()} ${_currentImageIndex + 1} ${'image'.tr()}',
                   style: AppTextStyles.bodySmall.copyWith(
                     color: Colors.white,
                     fontSize: ResponsiveUtils.fontSize(
@@ -402,7 +417,7 @@ class _ReviewStepState extends State<ReviewStep> {
 
   Widget _buildPropertyTitle(BuildContext context, RentCreateState state) {
     return Text(
-      state.formData.propertyTitle ?? 'Property Title Not Set',
+      state.formData.propertyTitle ?? 'property_title_not_set'.tr(),
       style: AppTextStyles.h4.copyWith(
         color: AppColors.textPrimary,
         fontSize: ResponsiveUtils.fontSize(
@@ -439,7 +454,7 @@ class _ReviewStepState extends State<ReviewStep> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Main Details',
+            'main_details'.tr(),
             style: AppTextStyles.h4.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -455,43 +470,43 @@ class _ReviewStepState extends State<ReviewStep> {
           ),
           _buildDetailRow(
             context,
-            'Price',
-            '${state.formData.pricePerNight ?? 0} \$ / Night',
+            'price'.tr(),
+            '${state.formData.pricePerNight ?? 0} ${'currency_symbol'.tr()} / ${'night'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Property Type',
-            state.formData.propertyTypeName ?? 'Not Set',
+            'property_type'.tr(),
+            state.formData.propertyTypeName ?? 'not_set'.tr(),
           ),
           _buildDetailRow(
             context,
-            'Bedrooms',
-            '${state.formData.bedrooms} Bedrooms',
+            'bedrooms'.tr(),
+            '${state.formData.bedrooms} ${'bedrooms'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Living Rooms',
-            '${state.formData.livingRooms} Rooms',
+            'living_rooms'.tr(),
+            '${state.formData.livingRooms} ${'rooms'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Bathrooms',
-            '${state.formData.bathrooms} Bathrooms',
+            'bathrooms'.tr(),
+            '${state.formData.bathrooms} ${'bathrooms'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Number Of Beds',
-            '${state.formData.numberOfBeds} Beds',
+            'number_of_beds'.tr(),
+            '${state.formData.numberOfBeds} ${'beds'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Maximum Guests',
-            '${state.formData.maximumNumberOfGuests} Guests',
+            'maximum_guests'.tr(),
+            '${state.formData.maximumNumberOfGuests} ${'guests'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Floor',
-            '${state.formData.floor}${_getFloorSuffix(state.formData.floor)} Floor',
+            'floor'.tr(),
+            '${state.formData.floor}${_getFloorSuffix(state.formData.floor)} ${'floor'.tr()}',
           ),
         ],
       ),
@@ -520,7 +535,7 @@ class _ReviewStepState extends State<ReviewStep> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Property Description',
+            'property_description'.tr(),
             style: AppTextStyles.h4.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -537,7 +552,7 @@ class _ReviewStepState extends State<ReviewStep> {
           Text(
             state.formData.propertyDescription?.isNotEmpty == true
                 ? state.formData.propertyDescription!
-                : 'No description provided',
+                : 'no_description_provided'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
               fontSize: ResponsiveUtils.fontSize(
@@ -572,7 +587,7 @@ class _ReviewStepState extends State<ReviewStep> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Property Features',
+          'property_features'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -674,7 +689,7 @@ class _ReviewStepState extends State<ReviewStep> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Property Location',
+          'property_location'.tr(),
           style: AppTextStyles.h4.copyWith(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -697,7 +712,7 @@ class _ReviewStepState extends State<ReviewStep> {
                         latitude: state.formData.latitude!,
                         longitude: state.formData.longitude!,
                         address: state.formData.address,
-                        title: 'Property Location',
+                        title: 'property_location'.tr(),
                       ),
                     ),
                   );
@@ -723,8 +738,8 @@ class _ReviewStepState extends State<ReviewStep> {
                 ),
               ),
               border: Border.all(
-                color: AppColors.primary.withValues(alpha: 
-                  hasValidLocation ? 0.3 : 0.2,
+                color: AppColors.primary.withValues(
+                  alpha: hasValidLocation ? 0.3 : 0.2,
                 ),
                 width: hasValidLocation ? 2 : 1,
               ),
@@ -804,7 +819,7 @@ class _ReviewStepState extends State<ReviewStep> {
                                 Text(
                                   state.formData.address?.isNotEmpty == true
                                       ? state.formData.address!
-                                      : 'Property Location',
+                                      : 'property_location'.tr(),
                                   style: AppTextStyles.bodySmall.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -822,7 +837,7 @@ class _ReviewStepState extends State<ReviewStep> {
                                     ),
                                     const SizedBox(width: 4),
                                     Text(
-                                      'Tap to view full map',
+                                      'tap_to_view_full_map'.tr(),
                                       style: AppTextStyles.bodySmall.copyWith(
                                         color: Colors.white70,
                                         fontSize: 12,
@@ -869,7 +884,7 @@ class _ReviewStepState extends State<ReviewStep> {
                             ),
                           ),
                           child: Text(
-                            'Location not available',
+                            'location_not_available'.tr(),
                             style: AppTextStyles.bodyMedium.copyWith(
                               color: AppColors.textSecondary,
                             ),
@@ -907,7 +922,7 @@ class _ReviewStepState extends State<ReviewStep> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'House Rules',
+            'house_rules'.tr(),
             style: AppTextStyles.h4.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -921,11 +936,11 @@ class _ReviewStepState extends State<ReviewStep> {
               desktop: 20,
             ),
           ),
-          _buildRuleItem(context, 'Check In After 3:00 PM'),
-          _buildRuleItem(context, 'Check Out Before 12:00 AM'),
-          _buildRuleItem(context, 'Minimum Age To Rent : 18'),
-          _buildRuleItem(context, 'No Pets Allowed'),
-          _buildRuleItem(context, 'Smoking Is Not Permitted'),
+          _buildRuleItem(context, 'check_in_after_3pm'.tr()),
+          _buildRuleItem(context, 'check_out_before_12am'.tr()),
+          _buildRuleItem(context, 'minimum_age_to_rent_18'.tr()),
+          _buildRuleItem(context, 'no_pets_allowed'.tr()),
+          _buildRuleItem(context, 'smoking_not_permitted'.tr()),
           // Add user's custom house rules if provided
           if (state.formData.houseRules?.isNotEmpty == true) ...[
             SizedBox(
@@ -937,7 +952,7 @@ class _ReviewStepState extends State<ReviewStep> {
               ),
             ),
             Text(
-              'Additional Rules:',
+              'additional_rules'.tr(),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textPrimary,
                 fontSize: ResponsiveUtils.fontSize(
@@ -1028,12 +1043,12 @@ class _ReviewStepState extends State<ReviewStep> {
   Widget _buildCancellationPolicySection(BuildContext context) {
     return _buildWhiteSection(
       context,
-      title: 'Cancellation Policy',
+      title: 'cancellation_policy'.tr(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'No Refund',
+            'no_refund'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
               fontSize: ResponsiveUtils.fontSize(
@@ -1054,7 +1069,7 @@ class _ReviewStepState extends State<ReviewStep> {
             ),
           ),
           Text(
-            'A Policy Of No Refund And Cancel Your Booking You Will Not Get A Refund Or Credit For Future Stay.',
+            'cancellation_policy_description'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
               fontSize: ResponsiveUtils.fontSize(
@@ -1077,12 +1092,12 @@ class _ReviewStepState extends State<ReviewStep> {
   ) {
     return _buildWhiteSection(
       context,
-      title: 'Important To Read',
+      title: 'important_to_read'.tr(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'You Need To Know',
+            'you_need_to_know'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
               fontSize: ResponsiveUtils.fontSize(
@@ -1105,7 +1120,7 @@ class _ReviewStepState extends State<ReviewStep> {
           Text(
             state.formData.importantInformation?.isNotEmpty == true
                 ? state.formData.importantInformation!
-                : 'No additional information provided.',
+                : 'no_additional_information_provided'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
               fontSize: ResponsiveUtils.fontSize(

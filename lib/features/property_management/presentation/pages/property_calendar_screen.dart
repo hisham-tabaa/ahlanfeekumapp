@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
@@ -76,8 +77,8 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
   void _updateAvailability(bool isAvailable) {
     if (_selectedDates.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select dates to update'),
+         SnackBar(
+          content: Text('please_select_dates_to_update'.tr()),
         ),
       );
       return;
@@ -446,7 +447,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                                           color: Colors.white,
                                         ),
                                       )
-                                    : const Text('Mark Unavailable'),
+                                    : Text('mark_unavailable'.tr()),
                               ),
                             ),
                             SizedBox(
@@ -482,7 +483,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                                           color: Colors.white,
                                         ),
                                       )
-                                    : const Text('Mark Available'),
+                                    : Text('mark_available'.tr()),
                               ),
                             ),
                           ],
