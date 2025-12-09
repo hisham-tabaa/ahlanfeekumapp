@@ -39,49 +39,50 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.dio});
 
+  /// Common headers used for JSON API requests
+  Options get _jsonHeaders => Options(
+        headers: {
+          'accept': 'text/plain',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      );
+
+  /// Handles DioException and converts them to appropriate custom exceptions
+  Never _handleDioException(DioException e, String operationName) {
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout ||
+        e.type == DioExceptionType.connectionError) {
+      throw const NetworkException('Network connection error');
+    } else if (e.response != null) {
+      final errorMessage = e.response?.data?['message'] ?? '$operationName failed';
+      throw ServerException(errorMessage, e.response?.statusCode);
+    } else {
+      throw const NetworkException('Unknown network error');
+    }
+  }
+
   @override
   Future<LoginResponse> login(LoginRequest request) async {
     try {
       final url = '${AppConstants.baseUrl}${AppConstants.loginEndpoint}';
-      final requestData = request.toJson();
-
-      if (requestData['fcmToken'] != null) {
-      }
-
       final response = await dio.post(
         url,
-        data: requestData,
-        options: Options(
-          headers: {
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
+        data: request.toJson(),
+        options: _jsonHeaders,
       );
 
-
       if (response.statusCode == 200) {
-        final loginResponse = LoginResponse.fromJson(response.data);
-        return loginResponse;
-      } else {
-        throw ServerException(
-          'Login failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
+        return LoginResponse.fromJson(response.data);
       }
+      throw ServerException(
+        'Login failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage = e.response?.data?['message'] ?? 'Login failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const ServerException('Unknown server error');
-      }
+      _handleDioException(e, 'Login');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -95,43 +96,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         fcmToken: fcmToken,
       ).toJson();
 
-
       final response = await dio.post(
         url,
         data: requestData,
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
+        options: _jsonHeaders,
       );
 
-
       if (response.statusCode == 200) {
-        final loginResponse = LoginResponse.fromJson(response.data);
-        return loginResponse;
-      } else {
-        throw ServerException(
-          'Firebase auth failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
+        return LoginResponse.fromJson(response.data);
       }
+      throw ServerException(
+        'Firebase auth failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage =
-            e.response?.data?['message'] ?? 'Firebase auth failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const ServerException('Unknown server error');
-      }
+      _handleDioException(e, 'Firebase auth');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -141,40 +122,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final url =
           '${AppConstants.baseUrl}${AppConstants.sendOtpEmailEndpoint}?email=$email';
-
-      final response = await dio.post(
-        url,
-        data: '',
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
+      final response = await dio.post(url, data: '', options: _jsonHeaders);
 
       if (response.statusCode == 200) {
-        final otpResponse = OtpResponse.fromJson(response.data);
-        return otpResponse;
-      } else {
-        throw ServerException(
-          'Send OTP failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
+        return OtpResponse.fromJson(response.data);
       }
+      throw ServerException(
+        'Send OTP failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage = e.response?.data?['message'] ?? 'Send OTP failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Send OTP');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -182,50 +142,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<OtpResponse> sendOtpPhone(String phone) async {
     try {
-
       // Remove '+' symbol from phone number as backend expects digits only
       final cleanPhone = phone.replaceAll('+', '');
-
-      // Call backend to generate OTP and send via WhatsApp (backend handles WhatsApp automatically)
-      // Using 'email' parameter as specified in the API curl
       final url =
           '${AppConstants.baseUrl}${AppConstants.sendOtpPhoneEndpoint}?input=$cleanPhone';
 
-
-      final response = await dio.post(
-        url,
-        data: '',
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
-
+      final response = await dio.post(url, data: '', options: _jsonHeaders);
 
       if (response.statusCode == 200) {
-        final otpResponse = OtpResponse.fromJson(response.data);
-        return otpResponse;
-      } else {
-        throw ServerException(
-          'Send OTP failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
+        return OtpResponse.fromJson(response.data);
       }
+      throw ServerException(
+        'Send OTP failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage = e.response?.data?['message'] ?? 'Send OTP failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Send OTP');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -241,40 +175,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'emailOrPhone': emailOrPhone,
         'securityCode': securityCode,
       };
-
-      final response = await dio.post(
-        url,
-        data: requestData,
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
+      final response = await dio.post(url, data: requestData, options: _jsonHeaders);
 
       if (response.statusCode == 200) {
         return OtpVerificationResponse.fromJson(response.data);
-      } else {
-        throw ServerException(
-          'Verify OTP failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
       }
+      throw ServerException(
+        'Verify OTP failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage =
-            e.response?.data?['message'] ?? 'Verify OTP failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Verify OTP');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -285,48 +198,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String securityCode,
   ) async {
     try {
-
       // Remove '+' symbol from phone number as backend expects digits only
       final cleanPhone = phone.replaceAll('+', '');
-
       final url = '${AppConstants.baseUrl}${AppConstants.verifyPhoneEndpoint}';
       final requestData = {'phone': cleanPhone, 'securityCode': securityCode};
-
-
-      final response = await dio.post(
-        url,
-        data: requestData,
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
-
+      final response = await dio.post(url, data: requestData, options: _jsonHeaders);
 
       if (response.statusCode == 200) {
         return OtpVerificationResponse.fromJson(response.data);
-      } else {
-        throw ServerException(
-          'Verify phone failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
       }
+      throw ServerException(
+        'Verify phone failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage =
-            e.response?.data?['message'] ?? 'Verify phone failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Verify phone');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -337,40 +225,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final url =
           '${AppConstants.baseUrl}${AppConstants.passwordResetRequestEndpoint}';
       final requestData = {'emailOrPhone': emailOrPhone};
-
-      final response = await dio.post(
-        url,
-        data: requestData,
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
+      final response = await dio.post(url, data: requestData, options: _jsonHeaders);
 
       if (response.statusCode == 200) {
         return OtpResponse.fromJson(response.data);
-      } else {
-        throw ServerException(
-          'Password reset request failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
       }
+      throw ServerException(
+        'Password reset request failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage =
-            e.response?.data?['message'] ?? 'Password reset request failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Password reset request');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -389,40 +256,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'securityCode': securityCode,
         'newPassword': newPassword,
       };
-
-      final response = await dio.post(
-        url,
-        data: requestData,
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
+      final response = await dio.post(url, data: requestData, options: _jsonHeaders);
 
       if (response.statusCode == 200) {
         return OtpResponse.fromJson(response.data);
-      } else {
-        throw ServerException(
-          'Confirm password reset failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
       }
+      throw ServerException(
+        'Confirm password reset failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage =
-            e.response?.data?['message'] ?? 'Confirm password reset failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Confirm password reset');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }
@@ -505,40 +351,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     try {
       final url =
           '${AppConstants.baseUrl}${AppConstants.checkUserExistEndpoint}?PhoneOrEmail=$phoneOrEmail';
-
-      final response = await dio.post(
-        url,
-        data: '',
-        options: Options(
-          headers: {
-            'accept': 'text/plain',
-            'Content-Type': 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-          },
-        ),
-      );
+      final response = await dio.post(url, data: '', options: _jsonHeaders);
 
       if (response.statusCode == 200) {
         return CheckUserExistResponse.fromJson(response.data);
-      } else {
-        throw ServerException(
-          'Check user exist failed with status code: ${response.statusCode}',
-          response.statusCode,
-        );
       }
+      throw ServerException(
+        'Check user exist failed with status code: ${response.statusCode}',
+        response.statusCode,
+      );
     } on DioException catch (e) {
-      if (e.type == DioExceptionType.connectionTimeout ||
-          e.type == DioExceptionType.receiveTimeout ||
-          e.type == DioExceptionType.connectionError) {
-        throw const NetworkException('Network connection error');
-      } else if (e.response != null) {
-        final errorMessage =
-            e.response?.data?['message'] ?? 'Check user exist failed';
-        throw ServerException(errorMessage, e.response?.statusCode);
-      } else {
-        throw const NetworkException('Unknown network error');
-      }
+      _handleDioException(e, 'Check user exist');
     } catch (e) {
+      if (e is ServerException || e is NetworkException) rethrow;
       throw ServerException('Unexpected error: $e');
     }
   }

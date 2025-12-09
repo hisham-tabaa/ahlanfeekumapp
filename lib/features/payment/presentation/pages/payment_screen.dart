@@ -230,10 +230,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
               );
 
               // Delay navigation to show success message
+              final navigator = Navigator.of(context);
               Future.delayed(const Duration(milliseconds: 1500), () {
                 if (!mounted) return;
                 widget.onSuccess?.call();
-                Navigator.of(context).pop(true);
+                if (mounted) navigator.pop(true);
               });
             } else if (state is PaymentFailure) {
               final errorMessage = state.error.toLowerCase().contains('card')

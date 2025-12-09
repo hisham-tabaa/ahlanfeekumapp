@@ -273,7 +273,8 @@ class _LocationStepState extends State<LocationStep> {
           ),
           GestureDetector(
             onTap: () async {
-              final formState = context.read<RentCreateBloc>().state;
+              final bloc = context.read<RentCreateBloc>();
+              final formState = bloc.state;
               final initLat = formState.formData.latitude ?? 33.5138;
               final initLng = formState.formData.longitude ?? 36.2765;
               final result = await Navigator.push<Map<String, dynamic>>(
@@ -287,34 +288,26 @@ class _LocationStepState extends State<LocationStep> {
               if (!mounted) return;
 
               if (result != null) {
-                if (!mounted) return;
-                context.read<RentCreateBloc>().add(
+                bloc.add(
                   UpdateLocationEvent(result['lat']!, result['lng']!),
                 );
 
                 final address = result['address'] as String?;
                 if (address != null && address.isNotEmpty) {
                   _addressController.text = address;
-                  if (!mounted) return;
-                  context.read<RentCreateBloc>().add(
-                    UpdateAddressEvent(address),
-                  );
+                  bloc.add(UpdateAddressEvent(address));
                 }
 
                 final street = result['street'] as String?;
                 if (street != null && street.isNotEmpty) {
                   _streetController.text = street;
-                  if (!mounted) return;
-                  context.read<RentCreateBloc>().add(UpdateStreetEvent(street));
+                  bloc.add(UpdateStreetEvent(street));
                 }
 
                 final landMark = result['landmark'] as String?;
                 if (landMark != null && landMark.isNotEmpty) {
                   _landMarkController.text = landMark;
-                  if (!mounted) return;
-                  context.read<RentCreateBloc>().add(
-                    UpdateLandMarkEvent(landMark),
-                  );
+                  bloc.add(UpdateLandMarkEvent(landMark));
                 }
               }
             },
