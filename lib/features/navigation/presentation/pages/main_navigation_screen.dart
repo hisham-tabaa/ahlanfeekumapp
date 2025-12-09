@@ -48,7 +48,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
     // Only initialize HomeBloc on startup
     _homeBloc = getIt<HomeBloc>()..add(const LoadHomeDataEvent());
-    
+
     // Check if user is a host and redirect to settings
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authState = context.read<AuthBloc>().state;
@@ -162,7 +162,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           return Scaffold(
             body: Row(
               children: [
-                _buildSideNavigation(authState),
+                _LocaleAwareBuilder(
+                  builder: (context) => _buildSideNavigation(authState),
+                ),
                 Expanded(
                   child: IndexedStack(index: _currentIndex, children: pages),
                 ),
@@ -176,7 +178,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
               bottom: false,
               child: IndexedStack(index: _currentIndex, children: pages),
             ),
-            bottomNavigationBar: _buildBottomNavigation(authState),
+            bottomNavigationBar: _LocaleAwareBuilder(
+              builder: (context) => _buildBottomNavigation(authState),
+            ),
             extendBody: false,
           );
         }
@@ -227,14 +231,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
         child: Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewPadding.bottom > 0 
+            bottom: MediaQuery.of(context).viewPadding.bottom > 0
                 ? ResponsiveUtils.spacing(
                     context,
                     mobile: 8,
                     tablet: 10,
                     desktop: 12,
                   )
-              : 0,
+                : 0,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -328,7 +332,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       tablet: 56,
       desktop: 60,
     );
-    
+
     return GestureDetector(
       onTap: () {
         _navigateToAddProperty();
@@ -605,6 +609,40 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         ),
       ),
     );
+  }
+}
+
+// Widget that rebuilds when locale changes
+class _LocaleAwareBuilder extends StatefulWidget {
+  final Widget Function(BuildContext context) builder;
+
+  const _LocaleAwareBuilder({required this.builder});
+
+  @override
+  State<_LocaleAwareBuilder> createState() => _LocaleAwareBuilderState();
+}
+
+class _LocaleAwareBuilderState extends State<_LocaleAwareBuilder> {
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Reference locale to ensure rebuild
+    context.locale;
+    return widget.builder(context);
   }
 }
 
