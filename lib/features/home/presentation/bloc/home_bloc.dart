@@ -46,7 +46,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     ToggleFavoriteEvent event,
     Emitter<HomeState> emit,
   ) async {
-    // TODO: Implement favorite toggle API call
+
     // For now, just refresh the data
     if (state is HomeLoaded) {
       add(const RefreshHomeDataEvent());

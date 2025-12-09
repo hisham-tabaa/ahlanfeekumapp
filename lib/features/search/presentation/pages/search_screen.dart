@@ -128,7 +128,7 @@ class _SearchScreenState extends State<SearchScreen> {
           tablet: 14,
           desktop: 16,
         )),
-        border: Border.all(color: AppColors.border.withOpacity(0.3)),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
       ),
       child: TextFormField(
         controller: _locationController,
@@ -211,7 +211,7 @@ class _SearchScreenState extends State<SearchScreen> {
             tablet: 14,
             desktop: 16,
           )),
-          border: Border.all(color: AppColors.border.withOpacity(0.3)),
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -274,7 +274,7 @@ class _SearchScreenState extends State<SearchScreen> {
           tablet: 14,
           desktop: 16,
         )),
-        border: Border.all(color: AppColors.border.withOpacity(0.3)),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
       ),
       child: TextFormField(
         readOnly: true,
@@ -396,7 +396,7 @@ class _SearchScreenState extends State<SearchScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 0,
             blurRadius: 10,
             offset: const Offset(0, -2),
@@ -852,7 +852,6 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _removeRecentSearch(RecentSearch search) {
-    // TODO: Implement remove recent search functionality
     // This would require adding a new event to the bloc
   }
 

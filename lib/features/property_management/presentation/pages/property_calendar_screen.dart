@@ -151,7 +151,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                           ),
                         );
                   },
-                  activeColor: AppColors.primary,
+                  activeThumbColor: AppColors.primary,
                 ),
               ],
             ),
@@ -207,7 +207,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
+                              color: Colors.grey.withValues(alpha: 0.1),
                               spreadRadius: 1,
                               blurRadius: 10,
                               offset: const Offset(0, 2),
@@ -241,7 +241,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                                   shape: BoxShape.circle,
                                 ),
                                 todayDecoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.5),
+                                  color: AppColors.primary.withValues(alpha: 0.5),
                                   shape: BoxShape.circle,
                                 ),
                                 markerDecoration: BoxDecoration(
@@ -261,7 +261,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                                 formatButtonVisible: true,
                                 titleCentered: true,
                                 formatButtonDecoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.1),
+                                  color: AppColors.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(
                                     ResponsiveUtils.radius(
                                       context,
@@ -300,11 +300,11 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                                   Color textColor = Colors.white;
                                   
                                   if (status.isBooked) {
-                                    backgroundColor = Colors.red.withOpacity(0.7);
+                                    backgroundColor = Colors.red.withValues(alpha: 0.7);
                                   } else if (status.isAvailable) {
-                                    backgroundColor = Colors.green.withOpacity(0.7);
+                                    backgroundColor = Colors.green.withValues(alpha: 0.7);
                                   } else {
-                                    backgroundColor = Colors.grey.withOpacity(0.7);
+                                    backgroundColor = Colors.grey.withValues(alpha: 0.7);
                                   }
                                   
                                   return Container(
@@ -394,7 +394,7 @@ class _PropertyCalendarScreenState extends State<PropertyCalendarScreen> {
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.grey.withValues(alpha: 0.1),
                         spreadRadius: 1,
                         blurRadius: 10,
                         offset: const Offset(0, -2),

@@ -203,7 +203,7 @@ class _AvailabilityCalendarWidgetState
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -264,7 +264,7 @@ class _AvailabilityCalendarWidgetState
 
               // Today
               todayDecoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 shape: BoxShape.circle,
               ),
               todayTextStyle: const TextStyle(
@@ -291,7 +291,7 @@ class _AvailabilityCalendarWidgetState
                 color: AppColors.primary,
                 shape: BoxShape.circle,
               ),
-              rangeHighlightColor: AppColors.primary.withOpacity(0.2),
+              rangeHighlightColor: AppColors.primary.withValues(alpha: 0.2),
 
               // Weekend
               weekendTextStyle: const TextStyle(color: Colors.black87),
@@ -305,7 +305,7 @@ class _AvailabilityCalendarWidgetState
               titleCentered: true,
               formatButtonShowsNext: false,
               formatButtonDecoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               formatButtonTextStyle: const TextStyle(
@@ -415,7 +415,7 @@ class _AvailabilityCalendarWidgetState
     }
 
     if (isToday) {
-      backgroundColor = AppColors.primary.withOpacity(0.3);
+      backgroundColor = AppColors.primary.withValues(alpha: 0.3);
     }
 
     return Container(
@@ -443,7 +443,7 @@ class _AvailabilityCalendarWidgetState
         ResponsiveUtils.spacing(context, mobile: 12, tablet: 14, desktop: 16),
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.1),
+        color: AppColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(
           ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16),
         ),

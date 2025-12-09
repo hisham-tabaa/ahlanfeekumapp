@@ -309,7 +309,7 @@ class _PropertyDetailView extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.black.withOpacity(0.2), Colors.transparent],
+                  colors: [Colors.black.withValues(alpha: 0.2), Colors.transparent],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -329,7 +329,7 @@ class _PropertyDetailView extends StatelessWidget {
                 desktop: 20,
               ),
               child: CircleAvatar(
-                backgroundColor: Colors.black.withOpacity(0.4),
+                backgroundColor: Colors.black.withValues(alpha: 0.4),
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
                   onPressed: () => Navigator.of(context).pop(),
@@ -380,7 +380,7 @@ class _PropertyDetailView extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: dotIndex == index
                           ? Colors.white
-                          : Colors.white.withOpacity(0.4),
+                          : Colors.white.withValues(alpha: 0.4),
                       borderRadius: BorderRadius.circular(
                         ResponsiveUtils.radius(
                           context,
@@ -422,7 +422,7 @@ class _PropertyDetailView extends StatelessWidget {
                 ),
               ),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(
                   ResponsiveUtils.radius(
                     context,
@@ -590,7 +590,7 @@ class _PropertyDetailView extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -743,7 +743,7 @@ class _PropertyDetailView extends StatelessWidget {
                 ),
               ),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(
                   ResponsiveUtils.radius(
                     context,
@@ -828,7 +828,7 @@ class _PropertyDetailView extends StatelessWidget {
                 ),
               ),
               border: Border.all(
-                color: AppColors.primary.withOpacity(0.3),
+                color: AppColors.primary.withValues(alpha: 0.3),
                 width: 2,
               ),
             ),
@@ -897,7 +897,7 @@ class _PropertyDetailView extends StatelessWidget {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.black.withOpacity(0.7),
+                            Colors.black.withValues(alpha: 0.7),
                           ],
                         ),
                       ),
@@ -1063,7 +1063,7 @@ class _PropertyDetailView extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),
@@ -1276,7 +1276,7 @@ class _PropertyDetailView extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -1288,7 +1288,7 @@ class _PropertyDetailView extends StatelessWidget {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: AppColors.primary.withOpacity(0.1),
+                        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
                         child: Icon(Icons.person, color: AppColors.primary),
                       ),
                       SizedBox(
@@ -1551,7 +1551,7 @@ class _PropertyDetailView extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -1566,7 +1566,7 @@ class _PropertyDetailView extends StatelessWidget {
                 tablet: 32,
                 desktop: 36,
               ),
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               child: Icon(
                 Icons.person,
                 color: AppColors.primary,
@@ -1623,7 +1623,7 @@ class _PropertyDetailView extends StatelessWidget {
                           ),
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
+                          color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(
                             ResponsiveUtils.radius(
                               context,
@@ -1870,10 +1870,10 @@ class _PropertyDetailView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.05),
+                      color: AppColors.primary.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: AppColors.primary.withOpacity(0.2),
+                        color: AppColors.primary.withValues(alpha: 0.2),
                         width: 1,
                       ),
                     ),
@@ -2218,7 +2218,7 @@ class _RatingChip extends StatelessWidget {
         ),
       ),
       decoration: BoxDecoration(
-        color: AppColors.primary.withOpacity(0.08),
+        color: AppColors.primary.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(
           ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16),
         ),

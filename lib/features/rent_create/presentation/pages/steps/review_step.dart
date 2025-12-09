@@ -101,7 +101,7 @@ class _ReviewStepState extends State<ReviewStep> {
       desktop: 400.0, // Reduced from 500 to minimize scrolling
     );
 
-    return Container(
+    return SizedBox(
       height: sliderHeight,
       width: double.infinity,
       child: Stack(
@@ -197,7 +197,7 @@ class _ReviewStepState extends State<ReviewStep> {
                     decoration: BoxDecoration(
                       color: index == _currentImageIndex
                           ? Colors.white
-                          : Colors.white.withOpacity(0.5),
+                          : Colors.white.withValues(alpha: 0.5),
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -236,7 +236,7 @@ class _ReviewStepState extends State<ReviewStep> {
                   ),
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
+                  color: Colors.black.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(
                     ResponsiveUtils.radius(
                       context,
@@ -429,7 +429,7 @@ class _ReviewStepState extends State<ReviewStep> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -510,7 +510,7 @@ class _ReviewStepState extends State<ReviewStep> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -616,7 +616,7 @@ class _ReviewStepState extends State<ReviewStep> {
                 ),
               ),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.08),
+                color: AppColors.primary.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(
                   ResponsiveUtils.radius(
                     context,
@@ -713,7 +713,7 @@ class _ReviewStepState extends State<ReviewStep> {
             decoration: BoxDecoration(
               color: hasValidLocation
                   ? Colors.white
-                  : AppColors.primary.withOpacity(0.05),
+                  : AppColors.primary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(
                 ResponsiveUtils.radius(
                   context,
@@ -723,7 +723,7 @@ class _ReviewStepState extends State<ReviewStep> {
                 ),
               ),
               border: Border.all(
-                color: AppColors.primary.withOpacity(
+                color: AppColors.primary.withValues(alpha: 
                   hasValidLocation ? 0.3 : 0.2,
                 ),
                 width: hasValidLocation ? 2 : 1,
@@ -793,7 +793,7 @@ class _ReviewStepState extends State<ReviewStep> {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  Colors.black.withOpacity(0.7),
+                                  Colors.black.withValues(alpha: 0.7),
                                 ],
                               ),
                             ),
@@ -897,7 +897,7 @@ class _ReviewStepState extends State<ReviewStep> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -1140,7 +1140,7 @@ class _ReviewStepState extends State<ReviewStep> {
         border: Border.all(color: Colors.grey[200]!),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: Colors.grey.withValues(alpha: 0.05),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 1),

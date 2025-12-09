@@ -344,7 +344,7 @@ class _PropertyCard extends StatelessWidget {
                             ),
                           );
                         },
-                        activeColor: AppColors.primary,
+                        activeThumbColor: AppColors.primary,
                       ),
                     ],
                   ),
@@ -477,8 +477,8 @@ class _PropertyCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: property.isActive
-                          ? Colors.green.withOpacity(0.1)
-                          : Colors.red.withOpacity(0.1),
+                          ? Colors.green.withValues(alpha: 0.1)
+                          : Colors.red.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         ResponsiveUtils.radius(
                           context,

@@ -425,7 +425,6 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
                               title: 'rate_app'.tr(),
                               subtitle: 'go_to_google_play'.tr(),
                           onTap: () {
-                            // TODO: Open app store
                           },
                         ),
                         _buildDivider(context),
@@ -662,7 +661,7 @@ class _MenuTile extends StatelessWidget {
                     subtitle,
                     style: AppTextStyles.bodySmall.copyWith(
                       color:
-                          textColor?.withOpacity(0.7) ??
+                          textColor?.withValues(alpha: 0.7) ??
                           AppColors.textSecondary,
                       fontSize: ResponsiveUtils.fontSize(
                         context,
@@ -782,7 +781,7 @@ class _LanguageTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Row(
@@ -878,7 +877,7 @@ mainAxisSize: MainAxisSize.min,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primary.withOpacity(0.1)
+              ? AppColors.primary.withValues(alpha: 0.1)
               : Colors.grey[100],
           borderRadius: BorderRadius.circular(12),
           border: Border.all(

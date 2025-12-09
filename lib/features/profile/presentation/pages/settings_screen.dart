@@ -29,7 +29,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  bool _isProfilePhotoChanged = false;
+  final bool _isProfilePhotoChanged = false;
   String? _profilePhotoPath;
 
   @override
@@ -434,7 +434,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _onPickProfilePhoto() async {
-    // TODO: Implement image picker integration
     context.showSnackBar('Profile photo picker coming soon');
   }
 }

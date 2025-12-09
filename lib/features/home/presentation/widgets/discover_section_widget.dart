@@ -147,7 +147,7 @@ class DiscoverSectionWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(cardRadius),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           spreadRadius: 0,
                           blurRadius: 8,
                           offset: const Offset(0, 2),
@@ -182,7 +182,7 @@ class DiscoverSectionWidget extends StatelessWidget {
                                     return Container(
                                       width: cardWidth,
                                       height: cardHeight,
-                                      color: AppColors.primary.withOpacity(0.1),
+                                      color: AppColors.primary.withValues(alpha: 0.1),
                                       child: Icon(
                                         Icons.location_city,
                                         color: AppColors.primary,
@@ -199,7 +199,7 @@ class DiscoverSectionWidget extends StatelessWidget {
                               : Container(
                                   width: cardWidth,
                                   height: cardHeight,
-                                  color: AppColors.primary.withOpacity(0.1),
+                                  color: AppColors.primary.withValues(alpha: 0.1),
                                   child: Icon(
                                     Icons.location_city,
                                     color: AppColors.primary,
@@ -224,7 +224,7 @@ class DiscoverSectionWidget extends StatelessWidget {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  Colors.black.withOpacity(0.6),
+                                  Colors.black.withValues(alpha: 0.6),
                                 ],
                               ),
                             ),
@@ -299,6 +299,7 @@ class DiscoverSectionWidget extends StatelessWidget {
     } catch (e) {
       // Fallback navigation with minimal filter
       try {
+        if (!context.mounted) return;
         await Navigator.of(context).pushNamed(
           '/search-results',
           arguments: {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';

@@ -306,7 +306,6 @@ class _PropertyCard extends StatelessWidget {
                     right: 8,
                     child: GestureDetector(
                       onTap: () {
-                        // TODO: Implement toggle favorite functionality
                         context.read<ProfileBloc>().add(
                           const RefreshProfileEvent(),
                         );

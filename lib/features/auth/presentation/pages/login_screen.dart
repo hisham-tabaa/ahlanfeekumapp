@@ -51,10 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final emailOrPhone = _emailOrPhoneController.text.trim();
 
     if (emailOrPhone.isEmpty) {
-      context.showSnackBar(
-        'enter_email_or_phone_first'.tr(),
-        isError: true,
-      );
+      context.showSnackBar('enter_email_or_phone_first'.tr(), isError: true);
       return;
     }
 
@@ -127,8 +124,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Language Switcher at top right
         Positioned(
-          top: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56),
-          right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+          top: ResponsiveUtils.spacing(
+            context,
+            mobile: 40,
+            tablet: 48,
+            desktop: 56,
+          ),
+          right: ResponsiveUtils.spacing(
+            context,
+            mobile: 16,
+            tablet: 20,
+            desktop: 24,
+          ),
           child: LanguageSwitcherButton(
             isDark: true,
             onLanguageChanged: () {
@@ -243,134 +250,144 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Stack(
         children: [
           Row(
-        children: [
-          // Left side - Background image with logo
-          Expanded(
-            flex: ResponsiveUtils.isDesktop(context) ? 3 : 2,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/bulding.jpg'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.3),
-                      Colors.black.withOpacity(0.6),
-                    ],
+            children: [
+              // Left side - Background image with logo
+              Expanded(
+                flex: ResponsiveUtils.isDesktop(context) ? 3 : 2,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/bulding.jpg'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.3),
+                          Colors.black.withValues(alpha: 0.6),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/home_icon.png',
+                            width: ResponsiveUtils.size(
+                              context,
+                              mobile: 150,
+                              tablet: 200,
+                              desktop: 250,
+                            ),
+                            height: ResponsiveUtils.size(
+                              context,
+                              mobile: 82,
+                              tablet: 110,
+                              desktop: 135,
+                            ),
+                          ),
+                          SizedBox(
+                            height: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 24,
+                              tablet: 28,
+                              desktop: 32,
+                            ),
+                          ),
+                          Text(
+                            'welcome_back'.tr(),
+                            style: AppTextStyles.h2.copyWith(
+                              fontSize: ResponsiveUtils.fontSize(
+                                context,
+                                mobile: 24,
+                                tablet: 28,
+                                desktop: 32,
+                              ),
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(
+                            height: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 12,
+                              tablet: 16,
+                              desktop: 20,
+                            ),
+                          ),
+                          Text(
+                            'sign_in_to_access'.tr(),
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontSize: ResponsiveUtils.fontSize(
+                                context,
+                                mobile: 14,
+                                tablet: 16,
+                                desktop: 18,
+                              ),
+                              color: Colors.white.withValues(alpha: 0.9),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/home_icon.png',
-                        width: ResponsiveUtils.size(
-                          context,
-                          mobile: 150,
-                          tablet: 200,
-                          desktop: 250,
-                        ),
-                        height: ResponsiveUtils.size(
-                          context,
-                          mobile: 82,
-                          tablet: 110,
-                          desktop: 135,
-                        ),
-                      ),
-                      SizedBox(
-                        height: ResponsiveUtils.spacing(
+              ),
+
+              // Right side - Login form
+              Expanded(
+                flex: ResponsiveUtils.isDesktop(context) ? 2 : 3,
+                child: Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(
+                        ResponsiveUtils.spacing(
                           context,
                           mobile: 24,
-                          tablet: 28,
-                          desktop: 32,
+                          tablet: 40,
+                          desktop: 48,
                         ),
                       ),
-                      Text(
-                        'welcome_back'.tr(),
-                        style: AppTextStyles.h2.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: ResponsiveUtils.size(
                             context,
-                            mobile: 24,
-                            tablet: 28,
-                            desktop: 32,
+                            mobile: double.infinity,
+                            tablet: 400,
+                            desktop: 450,
                           ),
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
                         ),
-                        textAlign: TextAlign.center,
+                        child: _buildLoginForm(),
                       ),
-                      SizedBox(
-                        height: ResponsiveUtils.spacing(
-                          context,
-                          mobile: 12,
-                          tablet: 16,
-                          desktop: 20,
-                        ),
-                      ),
-                      Text(
-                        'sign_in_to_access'.tr(),
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(
-                            context,
-                            mobile: 14,
-                            tablet: 16,
-                            desktop: 18,
-                          ),
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          
-          // Right side - Login form
-          Expanded(
-            flex: ResponsiveUtils.isDesktop(context) ? 2 : 3,
-            child: Container(
-              color: Colors.white,
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(
-                    ResponsiveUtils.spacing(
-                      context,
-                      mobile: 24,
-                      tablet: 40,
-                      desktop: 48,
-                    ),
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: ResponsiveUtils.size(
-                        context,
-                        mobile: double.infinity,
-                        tablet: 400,
-                        desktop: 450,
-                      ),
-                    ),
-                    child: _buildLoginForm(),
-                  ),
-                ),
-              ),
-            ),
-          ),
             ],
           ),
-          
+
           // Language Switcher at top right
           Positioned(
-            top: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
-            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            top: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
+            right: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
             child: LanguageSwitcherButton(
               onLanguageChanged: () {
                 setState(() {

@@ -292,7 +292,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       boxShadow: _selectedMethod == SignupMethod.phone
                           ? [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 4,
                                 offset: Offset(0, 2),
                               )
@@ -337,7 +337,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       boxShadow: _selectedMethod == SignupMethod.email
                           ? [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.05),
+                                color: Colors.black.withValues(alpha: 0.05),
                                 blurRadius: 4,
                                 offset: Offset(0, 2),
                               )

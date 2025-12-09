@@ -168,7 +168,7 @@ class OnlyForYouWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(cardRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withValues(alpha: 0.06),
             spreadRadius: 1,
             blurRadius: 6,
             offset: const Offset(0, 2),
@@ -196,7 +196,7 @@ class OnlyForYouWidget extends StatelessWidget {
           errorWidget: (context, url, error) => Container(
             width: double.infinity,
             height: height,
-            color: AppColors.primary.withOpacity(0.1),
+            color: AppColors.primary.withValues(alpha: 0.1),
             child: Center(
               child: Icon(
                 Icons.image_outlined,

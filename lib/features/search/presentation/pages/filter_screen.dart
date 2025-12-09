@@ -438,7 +438,7 @@ class _FilterScreenState extends State<FilterScreen> {
           ResponsiveUtils.spacing(context, mobile: 16, tablet: 18, desktop: 20),
         ),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.green.withOpacity(0.1) : Colors.white,
+          color: isSelected ? AppColors.green.withValues(alpha: 0.1) : Colors.white,
           borderRadius: BorderRadius.circular(
             ResponsiveUtils.radius(
               context,
@@ -530,7 +530,7 @@ class _FilterScreenState extends State<FilterScreen> {
               desktop: 16,
             ),
           ),
-          border: Border.all(color: AppColors.border.withOpacity(0.3)),
+          border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -596,7 +596,7 @@ class _FilterScreenState extends State<FilterScreen> {
                 desktop: 16,
               ),
             ),
-            border: Border.all(color: AppColors.border.withOpacity(0.3)),
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
           ),
           child: TextFormField(
             controller: _hotelNameController,
@@ -654,7 +654,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       desktop: 16,
                     ),
                   ),
-                  border: Border.all(color: AppColors.border.withOpacity(0.3)),
+                  border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
                 ),
                 child: TextFormField(
                   controller: _minPriceController,
@@ -701,7 +701,7 @@ class _FilterScreenState extends State<FilterScreen> {
                       desktop: 16,
                     ),
                   ),
-                  border: Border.all(color: AppColors.border.withOpacity(0.3)),
+                  border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
                 ),
                 child: TextFormField(
                   controller: _maxPriceController,
@@ -768,8 +768,8 @@ class _FilterScreenState extends State<FilterScreen> {
               ),
               border: Border.all(
                 color: (_selectedLatitude != null && _selectedLongitude != null)
-                    ? AppColors.primary.withOpacity(0.5)
-                    : AppColors.border.withOpacity(0.3),
+                    ? AppColors.primary.withValues(alpha: 0.5)
+                    : AppColors.border.withValues(alpha: 0.3),
               ),
             ),
             child: Padding(
@@ -1016,7 +1016,7 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
           decoration: BoxDecoration(
             color: isSelected
-                ? AppColors.green.withOpacity(0.1)
+                ? AppColors.green.withValues(alpha: 0.1)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(
               ResponsiveUtils.radius(
@@ -1094,7 +1094,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         ),
                       ),
                       border: Border.all(
-                        color: AppColors.border.withOpacity(0.3),
+                        color: AppColors.border.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -1211,7 +1211,7 @@ class _FilterScreenState extends State<FilterScreen> {
                         ),
                       ),
                       border: Border.all(
-                        color: AppColors.border.withOpacity(0.3),
+                        color: AppColors.border.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -1326,10 +1326,10 @@ class _FilterScreenState extends State<FilterScreen> {
                 desktop: 16,
               ),
             ),
-            border: Border.all(color: AppColors.border.withOpacity(0.3)),
+            border: Border.all(color: AppColors.border.withValues(alpha: 0.3)),
           ),
           child: DropdownButtonFormField<String>(
-            value: _selectedGovernorateId,
+            initialValue: _selectedGovernorateId,
             decoration: InputDecoration(
               hintText: 'Select Governorate',
               hintStyle: AppTextStyles.bodyMedium.copyWith(
@@ -1450,7 +1450,7 @@ class _FilterScreenState extends State<FilterScreen> {
           ),
         ),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.green.withOpacity(0.1) : Colors.white,
+          color: isSelected ? AppColors.green.withValues(alpha: 0.1) : Colors.white,
           borderRadius: BorderRadius.circular(
             ResponsiveUtils.radius(
               context,
@@ -1517,7 +1517,7 @@ class _FilterScreenState extends State<FilterScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
+            color: Colors.grey.withValues(alpha: 0.1),
             spreadRadius: 0,
             blurRadius: 10,
             offset: const Offset(0, -2),

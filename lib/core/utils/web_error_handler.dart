@@ -36,8 +36,8 @@ class WebErrorHandler {
     if (!kIsWeb) return child;
 
     return ErrorBoundary(
-      child: child,
       fallback: fallback,
+      child: child,
     );
   }
 }

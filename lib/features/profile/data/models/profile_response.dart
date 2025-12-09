@@ -48,7 +48,7 @@ class ProfileResponse {
         )
         .toList();
 
-    double _parseDouble(dynamic value) {
+    double parseDouble(dynamic value) {
       if (value == null) return 0;
       if (value is num) return value.toDouble();
       if (value is String) {
@@ -67,11 +67,11 @@ class ProfileResponse {
       address: json['address'] as String?,
       profilePhoto: json['profilePhoto'] as String?,
       isSuperHost: json['isSuperHost'] as bool? ?? false,
-      speedOfCompletion: _parseDouble(json['speedOfCompletion']),
-      dealing: _parseDouble(json['dealing']),
-      cleanliness: _parseDouble(json['cleanliness']),
-      perfection: _parseDouble(json['perfection']),
-      price: _parseDouble(json['price']),
+      speedOfCompletion: parseDouble(json['speedOfCompletion']),
+      dealing: parseDouble(json['dealing']),
+      cleanliness: parseDouble(json['cleanliness']),
+      perfection: parseDouble(json['perfection']),
+      price: parseDouble(json['price']),
       favoriteProperties: favoriteList,
       myProperties: myPropertiesList,
     );
@@ -108,7 +108,7 @@ class ProfilePropertyDto {
   });
 
   factory ProfilePropertyDto.fromJson(Map<String, dynamic> json) {
-    double? _toDouble(dynamic value) {
+    double? toDouble(dynamic value) {
       if (value == null) return null;
       if (value is num) return value.toDouble();
       if (value is String) {
@@ -144,11 +144,11 @@ class ProfilePropertyDto {
       address: json['address'] as String?,
       streetAndBuildingNumber: json['streetAndBuildingNumber'] as String?,
       landMark: json['landMark'] as String?,
-      averageRating: _toDouble(json['averageRating']),
-      pricePerNight: _toDouble(json['pricePerNight']) ?? 0,
+      averageRating: toDouble(json['averageRating']),
+      pricePerNight: toDouble(json['pricePerNight']) ?? 0,
       isActive: json['isActive'] as bool? ?? false,
       isFavorite: json['isFavorite'] as bool? ?? false,
-      area: _toDouble(json['area']),
+      area: toDouble(json['area']),
       mainImage: json['mainImage'] as String?,
     );
   }

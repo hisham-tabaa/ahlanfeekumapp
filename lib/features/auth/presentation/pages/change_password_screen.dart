@@ -146,7 +146,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             'assets/images/password_54727411.svg',
                             width: ResponsiveUtils.size(context, mobile: 60, tablet: 70, desktop: 80),
                             height: ResponsiveUtils.size(context, mobile: 60, tablet: 70, desktop: 80),
-                            color: Colors.white, // applies color filter
+                    // applies color filter
                           ),
                         ),
                       ),

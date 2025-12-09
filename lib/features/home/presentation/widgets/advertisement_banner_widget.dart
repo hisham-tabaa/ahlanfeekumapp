@@ -70,7 +70,7 @@ class _AdvertisementBannerWidgetState extends State<AdvertisementBannerWidget> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       spreadRadius: 1,
                       blurRadius: 8,
                       offset: const Offset(0, 4),
@@ -106,7 +106,7 @@ class _AdvertisementBannerWidgetState extends State<AdvertisementBannerWidget> {
                         ),
                         errorWidget: (context, url, error) {
                           return Container(
-                            color: AppColors.primary.withOpacity(0.1),
+                            color: AppColors.primary.withValues(alpha: 0.1),
                             child: Center(
                               child: Icon(
                                 Icons.image_outlined,
@@ -131,7 +131,7 @@ class _AdvertisementBannerWidgetState extends State<AdvertisementBannerWidget> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              Colors.black.withOpacity(0.7),
+                              Colors.black.withValues(alpha: 0.7),
                             ],
                           ),
                         ),
@@ -233,7 +233,7 @@ class _AdvertisementBannerWidgetState extends State<AdvertisementBannerWidget> {
                   decoration: BoxDecoration(
                     color: _currentPage == i
                         ? Colors.white
-                        : Colors.white.withOpacity(0.5),
+                        : Colors.white.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(
                       ResponsiveUtils.radius(
                         context,

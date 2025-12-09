@@ -143,7 +143,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
           border: Border.all(color: Colors.grey[300]!),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 1,
               blurRadius: 4,
               offset: const Offset(0, 2),
@@ -176,7 +176,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                 ),
               ),
               decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(
                   ResponsiveUtils.radius(
                     context,
@@ -416,7 +416,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                       ),
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(
                         ResponsiveUtils.radius(
                           context,
@@ -507,7 +507,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                 ],
               ),
             );
-          }).toList(),
+          }),
           if (unselectedNext7Days.isNotEmpty)
             SizedBox(
               height: ResponsiveUtils.spacing(
@@ -657,7 +657,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
 
         // Empty state
@@ -995,7 +995,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                                   shape: BoxShape.circle,
                                 ),
                                 todayDecoration: BoxDecoration(
-                                  color: AppColors.primary.withOpacity(0.3),
+                                  color: AppColors.primary.withValues(alpha: 0.3),
                                   shape: BoxShape.circle,
                                 ),
                                 defaultTextStyle: AppTextStyles.bodySmall

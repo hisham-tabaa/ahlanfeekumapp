@@ -77,7 +77,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   Profile _mapResponseToEntity(ProfileResponse response) {
-    String? _mapImageUrl(String? path) {
+    String? mapImageUrl(String? path) {
       if (path == null || path.isEmpty) {
         return null;
       }
@@ -105,7 +105,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
             isActive: dto.isActive,
             isFavorite: dto.isFavorite,
             area: dto.area,
-            mainImageUrl: _mapImageUrl(dto.mainImage),
+            mainImageUrl: mapImageUrl(dto.mainImage),
           ),
         )
         .toList();
@@ -124,7 +124,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
             isActive: dto.isActive,
             isFavorite: dto.isFavorite,
             area: dto.area,
-            mainImageUrl: _mapImageUrl(dto.mainImage),
+            mainImageUrl: mapImageUrl(dto.mainImage),
           ),
         )
         .toList();
@@ -137,7 +137,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       latitude: response.latitude,
       longitude: response.longitude,
       address: response.address,
-      profilePhotoUrl: _mapImageUrl(response.profilePhoto),
+      profilePhotoUrl: mapImageUrl(response.profilePhoto),
       isSuperHost: response.isSuperHost,
       speedOfCompletion: response.speedOfCompletion,
       dealing: response.dealing,

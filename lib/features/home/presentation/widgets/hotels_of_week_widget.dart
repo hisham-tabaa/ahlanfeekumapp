@@ -197,7 +197,7 @@ class HotelsOfWeekWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(cardRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             spreadRadius: 0,
             blurRadius: 8,
             offset: const Offset(0, 2),
@@ -211,7 +211,7 @@ class HotelsOfWeekWidget extends StatelessWidget {
             // Profile Avatar
             CircleAvatar(
               radius: avatarRadius,
-              backgroundColor: AppColors.primary.withOpacity(0.15),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.15),
               backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
                   ? NetworkImage(avatarUrl)
                   : null,

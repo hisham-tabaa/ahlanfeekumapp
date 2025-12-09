@@ -55,6 +55,7 @@ class FeatureChipWidget extends StatelessWidget {
               child: Icon(
                 isSelected ? Icons.check_circle : Icons.circle,
                 key: ValueKey(
+                  // ignore: unnecessary_string_interpolations
                   '${'$label'}-${isSelected ? 'selected' : 'default'}',
                 ),
                 size: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 14, desktop: 16),

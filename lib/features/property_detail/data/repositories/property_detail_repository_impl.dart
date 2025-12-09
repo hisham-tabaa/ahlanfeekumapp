@@ -30,7 +30,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
   }
 
   PropertyDetail _mapResponseToEntity(PropertyDetailResponse response) {
-    String? _mapImageUrl(String? path) {
+    String? mapImageUrl(String? path) {
       if (path == null || path.isEmpty) {
         return null;
       }
@@ -50,7 +50,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
           (item) => PropertyFeature(
             id: item.id,
             title: item.title,
-            iconUrl: _mapImageUrl(item.icon),
+            iconUrl: mapImageUrl(item.icon),
             order: item.order,
             isActive: item.isActive,
           ),
@@ -61,7 +61,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
         .map(
           (item) => PropertyMedia(
             id: item.id,
-            imageUrl: _mapImageUrl(item.image),
+            imageUrl: mapImageUrl(item.image),
             order: item.order,
             isActive: item.isActive,
           ),
@@ -110,7 +110,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
       ownerName: response.ownerName,
       ownerId: response.ownerId,
       area: response.area,
-      mainImageUrl: _mapImageUrl(response.mainImage),
+      mainImageUrl: mapImageUrl(response.mainImage),
       features: features,
       media: media,
       evaluations: evaluations,
@@ -180,7 +180,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
   }
 
   HostProfile _mapHostProfileResponseToEntity(HostProfileResponse response) {
-    String? _mapImageUrl(String? path) {
+    String? mapImageUrl(String? path) {
       if (path == null || path.isEmpty) {
         return null;
       }
@@ -205,7 +205,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
             title: item.propertyTitle,
             address: item.address,
             landMark: item.landMark,
-            mainImageUrl: _mapImageUrl(item.mainImage),
+            mainImageUrl: mapImageUrl(item.mainImage),
             pricePerNight: item.pricePerNight ?? 0.0,
             averageRating: item.averageRating ?? 0.0,
             isFavorite: item.isFavorite ?? false,
@@ -220,7 +220,7 @@ class PropertyDetailRepositoryImpl implements PropertyDetailRepository {
       email: response.email,
       phoneNumber: response.phoneNumber,
       address: response.address,
-      profilePhotoUrl: _mapImageUrl(response.profilePhoto),
+      profilePhotoUrl: mapImageUrl(response.profilePhoto),
       isSuperHost: response.isSuperHost ?? false,
       properties: properties,
     );

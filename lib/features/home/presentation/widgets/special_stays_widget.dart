@@ -156,7 +156,7 @@ class SpecialStaysWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(cardRadius),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Colors.black.withValues(alpha: 0.1),
                           spreadRadius: 0,
                           blurRadius: 8,
                           offset: const Offset(0, 4),
@@ -186,7 +186,7 @@ class SpecialStaysWidget extends StatelessWidget {
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
-                              color: AppColors.primary.withOpacity(0.1),
+                              color: AppColors.primary.withValues(alpha: 0.1),
                               child: Center(
                                 child: Icon(
                                   Icons.home_outlined,
@@ -210,7 +210,7 @@ class SpecialStaysWidget extends StatelessWidget {
                                 end: Alignment.bottomCenter,
                                 colors: [
                                   Colors.transparent,
-                                  Colors.black.withOpacity(0.7),
+                                  Colors.black.withValues(alpha: 0.7),
                                 ],
                               ),
                             ),
@@ -240,7 +240,7 @@ class SpecialStaysWidget extends StatelessWidget {
                                 ),
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.9),
+                                color: Colors.white.withValues(alpha: 0.9),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(

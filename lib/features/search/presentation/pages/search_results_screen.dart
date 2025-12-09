@@ -167,7 +167,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                     color: AppColors.inputBackground,
                     borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16)),
                     border: Border.all(
-                      color: AppColors.border.withOpacity(0.3),
+                      color: AppColors.border.withValues(alpha: 0.3),
                     ),
                   ),
                   child: TextFormField(
@@ -392,7 +392,7 @@ class _SearchResultsScreenState extends State<SearchResultsScreen> {
                       child: Container(
                         padding: EdgeInsets.all(ResponsiveUtils.spacing(context, mobile: 6, tablet: 7, desktop: 8)),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          color: Colors.white.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(ResponsiveUtils.radius(context, mobile: 20, tablet: 22, desktop: 24)),
                         ),
                         child: Icon(

@@ -164,7 +164,7 @@ class HighlyRatedPropertiesWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(cardRadius),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
+                          color: Colors.black.withValues(alpha: 0.05),
                           spreadRadius: 1,
                           blurRadius: 6,
                           offset: const Offset(0, 2),
@@ -190,7 +190,7 @@ class HighlyRatedPropertiesWidget extends StatelessWidget {
                                 placeholder: (context, url) =>
                                     Container(color: Colors.grey[200]),
                                 errorWidget: (context, url, error) => Container(
-                                  color: AppColors.primary.withOpacity(0.1),
+                                  color: AppColors.primary.withValues(alpha: 0.1),
                                   child: Icon(
                                     Icons.home_outlined,
                                     color: AppColors.primary,
@@ -245,8 +245,8 @@ class HighlyRatedPropertiesWidget extends StatelessWidget {
                                       ),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColors.warning.withOpacity(
-                                            0.3,
+                                          color: AppColors.warning.withValues(
+                                            alpha: 0.3,
                                           ),
                                           blurRadius: 8,
                                           offset: const Offset(0, 2),
@@ -318,7 +318,7 @@ class HighlyRatedPropertiesWidget extends StatelessWidget {
                                     ),
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.9),
+                                    color: Colors.white.withValues(alpha: 0.9),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(

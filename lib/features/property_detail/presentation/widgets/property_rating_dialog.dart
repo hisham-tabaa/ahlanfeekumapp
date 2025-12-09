@@ -187,7 +187,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                             hintText:
                                 'Tell us more about your stay (optional)...',
                             hintStyle: AppTextStyles.bodyMedium.copyWith(
-                              color: AppColors.textSecondary.withOpacity(0.6),
+                              color: AppColors.textSecondary.withValues(alpha: 0.6),
                             ),
                             filled: true,
                             fillColor: Colors.grey[50],
@@ -346,7 +346,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                   ),
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(
                     ResponsiveUtils.radius(
                       context,

@@ -41,7 +41,6 @@ class HostProfileScreen extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.outlined_flag, color: AppColors.error),
               onPressed: () {
-                // TODO: Implement report functionality
               },
             ),
           ],
@@ -197,7 +196,7 @@ class HostProfileScreen extends StatelessWidget {
                 tablet: 34,
                 desktop: 38,
               ),
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               backgroundImage: profile.profilePhotoUrl != null
                   ? CachedNetworkImageProvider(profile.profilePhotoUrl!)
                   : null,
@@ -267,7 +266,7 @@ class HostProfileScreen extends StatelessWidget {
                   ),
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(
                     ResponsiveUtils.radius(
                       context,
@@ -492,7 +491,7 @@ class HostProfileScreen extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -671,7 +670,7 @@ class HostProfileScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
