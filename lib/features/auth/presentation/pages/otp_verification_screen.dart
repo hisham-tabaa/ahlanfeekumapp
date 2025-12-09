@@ -106,6 +106,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               otp: _otpController.text,
             );
 
+            if (!mounted) return;
+
             result.fold(
               (failure) {
                 context.showSnackBar(failure.message, isError: true);
@@ -138,6 +140,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               },
             );
           } catch (e) {
+            if (!mounted) return;
             context.showSnackBar('Verification failed: $e', isError: true);
           }
         } else {
@@ -147,12 +150,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
           );
         }
       }
-      } else {
-        context.showSnackBar(
-          'enter_complete_otp'.tr(),
-          isError: true,
-        );
-      }
+    } else {
+      context.showSnackBar('enter_complete_otp'.tr(), isError: true);
+    }
   }
 
   void _handleResendOtp() async {
@@ -167,6 +167,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
           final result = await getIt<SendOtpPhoneUseCase>()(widget.email);
 
+          if (!mounted) return;
+
           result.fold(
             (failure) {
               context.showSnackBar(failure.message.tr(), isError: true);
@@ -177,7 +179,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             },
           );
         } catch (e) {
-          context.showSnackBar('resend_otp_failed'.tr(args: ['$e']), isError: true);
+          if (!mounted) return;
+          context.showSnackBar(
+            'resend_otp_failed'.tr(args: ['$e']),
+            isError: true,
+          );
         }
       } else {
         // Resend email OTP (existing flow)
@@ -406,12 +412,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   Center(
                     child: Text(
                       widget.email.contains('@')
-                          ? 'otp_sent_email'.tr(args: [
-                              widget.email.replaceAll(
-                                RegExp(r'(?<=.{3}).(?=.*@)'),
-                                '*',
-                              ),
-                            ])
+                          ? 'otp_sent_email'.tr(
+                              args: [
+                                widget.email.replaceAll(
+                                  RegExp(r'(?<=.{3}).(?=.*@)'),
+                                  '*',
+                                ),
+                              ],
+                            )
                           : 'otp_sent_whatsapp'.tr(args: [widget.email]),
                       style: AppTextStyles.bodyMedium.copyWith(
                         fontSize: ResponsiveUtils.fontSize(
@@ -466,8 +474,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       children: [
                         if (!_canResend) ...[
                           Text(
-                            'otp_seconds_left'
-                                .tr(args: ['$_remainingTime']),
+                            'otp_seconds_left'.tr(args: ['$_remainingTime']),
                             style: AppTextStyles.bodyMedium.copyWith(
                               fontSize: ResponsiveUtils.fontSize(
                                 context,

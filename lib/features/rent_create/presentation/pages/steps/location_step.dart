@@ -283,7 +283,11 @@ class _LocationStepState extends State<LocationStep> {
                       MapPickerPage(initialLat: initLat, initialLng: initLng),
                 ),
               );
+
+              if (!mounted) return;
+
               if (result != null) {
+                if (!mounted) return;
                 context.read<RentCreateBloc>().add(
                   UpdateLocationEvent(result['lat']!, result['lng']!),
                 );
@@ -291,6 +295,7 @@ class _LocationStepState extends State<LocationStep> {
                 final address = result['address'] as String?;
                 if (address != null && address.isNotEmpty) {
                   _addressController.text = address;
+                  if (!mounted) return;
                   context.read<RentCreateBloc>().add(
                     UpdateAddressEvent(address),
                   );
@@ -299,12 +304,14 @@ class _LocationStepState extends State<LocationStep> {
                 final street = result['street'] as String?;
                 if (street != null && street.isNotEmpty) {
                   _streetController.text = street;
+                  if (!mounted) return;
                   context.read<RentCreateBloc>().add(UpdateStreetEvent(street));
                 }
 
                 final landMark = result['landmark'] as String?;
                 if (landMark != null && landMark.isNotEmpty) {
                   _landMarkController.text = landMark;
+                  if (!mounted) return;
                   context.read<RentCreateBloc>().add(
                     UpdateLandMarkEvent(landMark),
                   );

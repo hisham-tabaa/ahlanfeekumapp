@@ -108,8 +108,18 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
 
           // Language Switcher at top right
           Positioned(
-            top: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56),
-            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            top: ResponsiveUtils.spacing(
+              context,
+              mobile: 40,
+              tablet: 48,
+              desktop: 56,
+            ),
+            right: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
             child: LanguageSwitcherButton(
               isDark: true,
               onLanguageChanged: () {
@@ -135,193 +145,203 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
       child: Stack(
         children: [
           Row(
-        children: [
-          // Left side - Background image with logo (similar to login)
-          Expanded(
-            flex: ResponsiveUtils.isDesktop(context) ? 2 : 2,
-            child: Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/DarkBG.png'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.3),
-                      Colors.black.withOpacity(0.6),
-                    ],
+            children: [
+              // Left side - Background image with logo (similar to login)
+              Expanded(
+                flex: ResponsiveUtils.isDesktop(context) ? 2 : 2,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('assets/images/DarkBG.png'),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo with enhanced styling
-                      Container(
-                        padding: EdgeInsets.all(
-                          ResponsiveUtils.spacing(
-                            context,
-                            mobile: 16,
-                            tablet: 20,
-                            desktop: 24,
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveUtils.radius(
-                              context,
-                              mobile: 20,
-                              tablet: 22,
-                              desktop: 24,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withValues(alpha: 0.3),
+                          Colors.black.withValues(alpha: 0.6),
+                        ],
+                      ),
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Logo with enhanced styling
+                          Container(
+                            padding: EdgeInsets.all(
+                              ResponsiveUtils.spacing(
+                                context,
+                                mobile: 16,
+                                tablet: 20,
+                                desktop: 24,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveUtils.radius(
+                                  context,
+                                  mobile: 20,
+                                  tablet: 22,
+                                  desktop: 24,
+                                ),
+                              ),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Image.asset(
+                              'assets/images/home_icon.png',
+                              width: ResponsiveUtils.size(
+                                context,
+                                mobile: 120,
+                                tablet: 160,
+                                desktop: 200,
+                              ),
+                              height: ResponsiveUtils.size(
+                                context,
+                                mobile: 65,
+                                tablet: 85,
+                                desktop: 110,
+                              ),
                             ),
                           ),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
-                            width: 1,
-                          ),
-                        ),
-                        child: Image.asset(
-                          'assets/images/home_icon.png',
-                          width: ResponsiveUtils.size(
-                            context,
-                            mobile: 120,
-                            tablet: 160,
-                            desktop: 200,
-                          ),
-                          height: ResponsiveUtils.size(
-                            context,
-                            mobile: 65,
-                            tablet: 85,
-                            desktop: 110,
-                          ),
-                        ),
-                      ),
 
-                      SizedBox(
-                        height: ResponsiveUtils.spacing(
+                          SizedBox(
+                            height: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 32,
+                              tablet: 36,
+                              desktop: 40,
+                            ),
+                          ),
+
+                          Text(
+                            'welcome'.tr(),
+                            style: AppTextStyles.h2.copyWith(
+                              fontSize: ResponsiveUtils.responsive(
+                                context,
+                                mobile: 26,
+                                tablet: 30,
+                                desktop: 34,
+                              ),
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                              letterSpacing: 0.5,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+
+                          SizedBox(
+                            height: ResponsiveUtils.spacing(
+                              context,
+                              mobile: 16,
+                              tablet: 18,
+                              desktop: 20,
+                            ),
+                          ),
+
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: ResponsiveUtils.spacing(
+                                context,
+                                mobile: 24,
+                                tablet: 28,
+                                desktop: 32,
+                              ),
+                              vertical: ResponsiveUtils.spacing(
+                                context,
+                                mobile: 12,
+                                tablet: 14,
+                                desktop: 16,
+                              ),
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(
+                                ResponsiveUtils.radius(
+                                  context,
+                                  mobile: 25,
+                                  tablet: 28,
+                                  desktop: 30,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              'Get started with your rental journey',
+                              style: AppTextStyles.bodyMedium.copyWith(
+                                fontSize: ResponsiveUtils.responsive(
+                                  context,
+                                  mobile: 15,
+                                  tablet: 17,
+                                  desktop: 19,
+                                ),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Right side - Auth options form (similar to login)
+              Expanded(
+                flex: ResponsiveUtils.isDesktop(context) ? 3 : 3,
+                child: Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(
+                        ResponsiveUtils.spacing(
                           context,
-                          mobile: 32,
-                          tablet: 36,
+                          mobile: 24,
+                          tablet: 32,
                           desktop: 40,
                         ),
                       ),
-
-                      Text(
-                        'welcome'.tr(),
-                        style: AppTextStyles.h2.copyWith(
-                          fontSize: ResponsiveUtils.responsive(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: ResponsiveUtils.responsive(
                             context,
-                            mobile: 26,
-                            tablet: 30,
-                            desktop: 34,
+                            mobile: double.infinity,
+                            tablet: 600,
+                            desktop: 750,
                           ),
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 0.5,
                         ),
-                        textAlign: TextAlign.center,
+                        child: _buildAuthModal(context, isDesktop: true),
                       ),
-
-                      SizedBox(
-                        height: ResponsiveUtils.spacing(
-                          context,
-                          mobile: 16,
-                          tablet: 18,
-                          desktop: 20,
-                        ),
-                      ),
-
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: ResponsiveUtils.spacing(
-                            context,
-                            mobile: 24,
-                            tablet: 28,
-                            desktop: 32,
-                          ),
-                          vertical: ResponsiveUtils.spacing(
-                            context,
-                            mobile: 12,
-                            tablet: 14,
-                            desktop: 16,
-                          ),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(
-                            ResponsiveUtils.radius(
-                              context,
-                              mobile: 25,
-                              tablet: 28,
-                              desktop: 30,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'Get started with your rental journey',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            fontSize: ResponsiveUtils.responsive(
-                              context,
-                              mobile: 15,
-                              tablet: 17,
-                              desktop: 19,
-                            ),
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-
-          // Right side - Auth options form (similar to login)
-          Expanded(
-            flex: ResponsiveUtils.isDesktop(context) ? 3 : 3,
-            child: Container(
-              color: Colors.white,
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(
-                    ResponsiveUtils.spacing(
-                      context,
-                      mobile: 24,
-                      tablet: 32,
-                      desktop: 40,
-                    ),
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: ResponsiveUtils.responsive(
-                        context,
-                        mobile: double.infinity,
-                        tablet: 600,
-                        desktop: 750,
-                      ),
-                    ),
-                    child: _buildAuthModal(context, isDesktop: true),
-                  ),
-                ),
-              ),
-            ),
-          ),
             ],
           ),
-          
+
           // Language Switcher at top right
           Positioned(
-            top: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
-            right: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            top: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
+            right: ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
             child: LanguageSwitcherButton(
               onLanguageChanged: () {
                 setState(() {
@@ -499,7 +519,7 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
                     ),
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFED1C24).withOpacity(0.1),
+                    color: const Color(0xFFED1C24).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(
                       ResponsiveUtils.radius(
                         context,
@@ -509,7 +529,7 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
                       ),
                     ),
                     border: Border.all(
-                      color: const Color(0xFFED1C24).withOpacity(0.2),
+                      color: const Color(0xFFED1C24).withValues(alpha: 0.2),
                       width: 1,
                     ),
                   ),
@@ -637,7 +657,7 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFFED1C24).withOpacity(0.3),
+                        color: const Color(0xFFED1C24).withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -877,9 +897,7 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
                         height: 1.4,
                       ),
                       children: [
-                        TextSpan(
-                          text: 'by_continuing_agree'.tr(),
-                        ),
+                        TextSpan(text: 'by_continuing_agree'.tr()),
                         TextSpan(
                           text: 'terms_of_service'.tr(),
                           style: TextStyle(
@@ -1176,9 +1194,7 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
                         color: AppColors.textSecondary,
                       ),
                       children: [
-                        TextSpan(
-                          text: 'by_continuing_agree'.tr(),
-                        ),
+                        TextSpan(text: 'by_continuing_agree'.tr()),
                         TextSpan(
                           text: 'terms_of_use'.tr(),
                           style: TextStyle(

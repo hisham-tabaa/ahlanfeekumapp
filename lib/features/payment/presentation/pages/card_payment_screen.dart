@@ -33,11 +33,11 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   final _addressController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final CardFormEditController _cardController = CardFormEditController();
-  
+
   bool _isProcessing = false;
   String? _errorMessage;
   String _selectedCountry = 'Sweden';
-  bool _cardSelected = true;
+  final bool _cardSelected = true;
 
   final List<String> _countries = [
     'Sweden',
@@ -110,7 +110,12 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(
-            ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24),
+            ResponsiveUtils.spacing(
+              context,
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+            ),
           ),
           child: Form(
             key: _formKey,
@@ -153,12 +158,19 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.error_outline, color: Colors.red[700], size: 20),
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.red[700],
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _errorMessage!,
-                            style: TextStyle(color: Colors.red[700], fontSize: 14),
+                            style: TextStyle(
+                              color: Colors.red[700],
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ],
@@ -170,7 +182,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
 
                 // Pay Button
                 CustomButton(
-                  text: 'pay_now'.tr() + ' \$${_formatAmount()}',
+                  text: '${'pay_now'.tr()} \$${_formatAmount()}',
                   onPressed: _isProcessing ? null : _handlePayment,
                   isLoading: _isProcessing,
                   backgroundColor: AppColors.primary,
@@ -185,7 +197,11 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.lock_outline, size: 14, color: Colors.grey[500]),
+                      Icon(
+                        Icons.lock_outline,
+                        size: 14,
+                        color: Colors.grey[500],
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'Secured by Stripe',
@@ -212,8 +228,8 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
           color: _cardSelected
               ? AppColors.primary
               : isDark
-                  ? Colors.grey[700]!
-                  : Colors.grey[300]!,
+              ? Colors.grey[700]!
+              : Colors.grey[300]!,
           width: _cardSelected ? 2 : 1,
         ),
       ),
@@ -398,7 +414,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
             ),
           ),
           child: DropdownButtonFormField<String>(
-            value: _selectedCountry,
+            initialValue: _selectedCountry,
             decoration: InputDecoration(
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
@@ -416,10 +432,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
               color: isDark ? Colors.grey[400] : Colors.grey[600],
             ),
             items: _countries.map((country) {
-              return DropdownMenuItem(
-                value: country,
-                child: Text(country),
-              );
+              return DropdownMenuItem(value: country, child: Text(country));
             }).toList(),
             onChanged: (value) {
               setState(() {
@@ -433,7 +446,9 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
         Container(
           decoration: BoxDecoration(
             color: isDark ? Colors.grey[850] : Colors.white,
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
+            borderRadius: const BorderRadius.vertical(
+              bottom: Radius.circular(8),
+            ),
             border: Border(
               left: BorderSide(
                 color: isDark ? Colors.grey[700]! : Colors.grey[300]!,

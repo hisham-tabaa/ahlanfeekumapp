@@ -43,7 +43,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
     fontSize: 16,
     placeholderColor: const Color(0xFF9CA3AF),
     textErrorColor: const Color(0xFFEF4444),
-    borderColor: _cardFormHasFocus ? AppColors.primary : const Color(0xFFE5E7EB),
+    borderColor: _cardFormHasFocus
+        ? AppColors.primary
+        : const Color(0xFFE5E7EB),
     borderWidth: _cardFormHasFocus ? 2 : 1,
     borderRadius: 12,
     cursorColor: AppColors.primary,
@@ -87,7 +89,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         border: Border.all(color: const Color(0xFFE5E7EB)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -202,10 +204,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Payment Successful!', 
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                            Text('Your transaction has been completed',
-                              style: TextStyle(fontSize: 12, color: Colors.white70)),
+                            Text(
+                              'Payment Successful!',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              'Your transaction has been completed',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.white70,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -213,21 +222,24 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   backgroundColor: Colors.green[600],
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   duration: const Duration(seconds: 4),
                 ),
               );
-              
+
               // Delay navigation to show success message
               Future.delayed(const Duration(milliseconds: 1500), () {
+                if (!mounted) return;
                 widget.onSuccess?.call();
-                if (mounted) Navigator.pop(context, true);
+                Navigator.of(context).pop(true);
               });
             } else if (state is PaymentFailure) {
-              final errorMessage = state.error.toLowerCase().contains('card') 
-                ? 'Card declined. Please check your card details and try again.'
-                : 'Payment failed: ${state.error}';
-                
+              final errorMessage = state.error.toLowerCase().contains('card')
+                  ? 'Card declined. Please check your card details and try again.'
+                  : 'Payment failed: ${state.error}';
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Row(
@@ -239,10 +251,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Payment Failed', 
-                              style: TextStyle(fontWeight: FontWeight.w600)),
-                            Text(errorMessage,
-                              style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                            const Text(
+                              'Payment Failed',
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              errorMessage,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white70,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -250,7 +269,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   ),
                   backgroundColor: Colors.red[600],
                   behavior: SnackBarBehavior.floating,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   duration: const Duration(seconds: 6),
                   action: SnackBarAction(
                     label: 'Retry',
@@ -442,8 +463,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: (_cardFormHasFocus
-                                ? AppColors.primary.withOpacity(0.08)
-                                : Colors.black.withOpacity(0.04)),
+                                ? AppColors.primary.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.04)),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -463,18 +484,22 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             // Show specific validation errors
                             else if (details != null) {
                               final validationIssues = <String>[];
-                              if (details.validNumber != CardValidationState.Valid) {
+                              if (details.validNumber !=
+                                  CardValidationState.Valid) {
                                 validationIssues.add('card number');
                               }
-                              if (details.validExpiryDate != CardValidationState.Valid) {
+                              if (details.validExpiryDate !=
+                                  CardValidationState.Valid) {
                                 validationIssues.add('expiry date');
                               }
-                              if (details.validCVC != CardValidationState.Valid) {
+                              if (details.validCVC !=
+                                  CardValidationState.Valid) {
                                 validationIssues.add('CVC');
                               }
-                              
+
                               if (validationIssues.isNotEmpty) {
-                                _cardValidationError = 'Please check: ${validationIssues.join(', ')}';
+                                _cardValidationError =
+                                    'Please check: ${validationIssues.join(', ')}';
                               }
                             }
                           });
@@ -516,8 +541,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ? null
                             : () => _processPayment(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: state is PaymentLoading 
-                              ? AppColors.primary.withOpacity(0.8)
+                          backgroundColor: state is PaymentLoading
+                              ? AppColors.primary.withValues(alpha: 0.8)
                               : AppColors.primary,
                           padding: EdgeInsets.symmetric(
                             vertical: ResponsiveUtils.spacing(
@@ -537,9 +562,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               ),
                             ),
                           ),
-                          disabledBackgroundColor: AppColors.primary.withOpacity(0.6),
+                          disabledBackgroundColor: AppColors.primary.withValues(
+                            alpha: 0.6,
+                          ),
                           elevation: state is PaymentLoading ? 0 : 3,
-                          shadowColor: AppColors.primary.withOpacity(0.3),
+                          shadowColor: AppColors.primary.withValues(alpha: 0.3),
                         ),
                         child: state is PaymentLoading
                             ? Row(
@@ -550,9 +577,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     width: 20,
                                     child: CircularProgressIndicator(
                                       strokeWidth: 2,
-                                      valueColor: const AlwaysStoppedAnimation<Color>(
-                                        Colors.white,
-                                      ),
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                            Colors.white,
+                                          ),
                                     ),
                                   ),
                                   const SizedBox(width: 12),

@@ -115,10 +115,10 @@ class ErrorHandler {
   static void _handleUnauthorizedError() {
     // Use a short delay to ensure the error message is shown before navigation
     Future.delayed(const Duration(milliseconds: 500), () {
-      final context = navigatorKey.currentContext;
-      if (context != null) {
+      final navigatorState = navigatorKey.currentState;
+      if (navigatorState != null) {
         // Clear navigation stack and go to initial splash (which will redirect to login)
-        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+        navigatorState.pushNamedAndRemoveUntil('/', (route) => false);
       }
     });
   }
