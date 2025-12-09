@@ -117,8 +117,7 @@ class _MapPickerPageState extends State<MapPickerPage> {
         });
         return;
       }
-    } catch (fallbackError) {
-    }
+    } catch (fallbackError) {}
 
     // If fallback fails, try the geocoding package
     try {
@@ -193,7 +192,6 @@ class _MapPickerPageState extends State<MapPickerPage> {
         }
       }
     } catch (e) {
-
       // If both methods fail, show coordinates
       if (mounted) {
         setState(() {
@@ -399,8 +397,10 @@ class _MapPickerPageState extends State<MapPickerPage> {
       Position position;
       try {
         position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 15),
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            timeLimit: Duration(seconds: 15),
+          ),
         );
       } catch (e) {
         if (mounted) {

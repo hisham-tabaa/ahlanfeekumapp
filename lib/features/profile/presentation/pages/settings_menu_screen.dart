@@ -56,7 +56,7 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
         builder: (context, authState) {
           final isHost =
               authState is AuthAuthenticated && authState.user.roleId == 1;
-          
+
           return BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
               final profile = state.profile;
@@ -66,333 +66,333 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                  // Profile Header
-                  Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.all(
-                      ResponsiveUtils.spacing(
-                        context,
-                        mobile: 20,
-                        tablet: 28,
-                        desktop: 32,
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        // Profile Photo
-                        CircleAvatar(
-                          radius: ResponsiveUtils.size(
+                      // Profile Header
+                      Container(
+                        color: Colors.white,
+                        padding: EdgeInsets.all(
+                          ResponsiveUtils.spacing(
                             context,
-                            mobile: 35,
-                            tablet: 40,
-                            desktop: 45,
-                          ),
-                          backgroundColor: AppColors.primary.withValues(
-                            alpha: 0.1,
-                          ),
-                          backgroundImage: profile?.profilePhotoUrl != null
-                              ? CachedNetworkImageProvider(
-                                  profile!.profilePhotoUrl!,
-                                )
-                              : null,
-                          child: profile?.profilePhotoUrl == null
-                              ? Icon(
-                                  Icons.person,
-                                  size: ResponsiveUtils.size(
-                                    context,
-                                    mobile: 35,
-                                    tablet: 40,
-                                    desktop: 45,
-                                  ),
-                                  color: AppColors.textSecondary,
-                                )
-                              : null,
-                        ),
-                        SizedBox(
-                          width: ResponsiveUtils.spacing(
-                            context,
-                            mobile: 16,
-                            tablet: 18,
-                            desktop: 20,
+                            mobile: 20,
+                            tablet: 28,
+                            desktop: 32,
                           ),
                         ),
-                        // Profile Info
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                profile?.name ?? 'User',
-                                style: AppTextStyles.h3.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: ResponsiveUtils.fontSize(
-                                    context,
-                                    mobile: 18,
-                                    tablet: 20,
-                                    desktop: 22,
-                                  ),
-                                ),
+                        child: Row(
+                          children: [
+                            // Profile Photo
+                            CircleAvatar(
+                              radius: ResponsiveUtils.size(
+                                context,
+                                mobile: 35,
+                                tablet: 40,
+                                desktop: 45,
                               ),
-                              SizedBox(
-                                height: ResponsiveUtils.spacing(
-                                  context,
-                                  mobile: 4,
-                                  tablet: 5,
-                                  desktop: 6,
-                                ),
+                              backgroundColor: AppColors.primary.withValues(
+                                alpha: 0.1,
                               ),
-                              Text(
-                                profile?.email ?? '',
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textSecondary,
-                                  fontSize: ResponsiveUtils.fontSize(
-                                    context,
-                                    mobile: 14,
-                                    tablet: 15,
-                                    desktop: 16,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          child: Icon(
-                            Icons.edit,
-                            color: AppColors.primary,
-                            size: ResponsiveUtils.size(
-                              context,
-                              mobile: 24,
-                              tablet: 26,
-                              desktop: 28,
+                              backgroundImage: profile?.profilePhotoUrl != null
+                                  ? CachedNetworkImageProvider(
+                                      profile!.profilePhotoUrl!,
+                                    )
+                                  : null,
+                              child: profile?.profilePhotoUrl == null
+                                  ? Icon(
+                                      Icons.person,
+                                      size: ResponsiveUtils.size(
+                                        context,
+                                        mobile: 35,
+                                        tablet: 40,
+                                        desktop: 45,
+                                      ),
+                                      color: AppColors.textSecondary,
+                                    )
+                                  : null,
                             ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<ProfileBloc>(),
-                                  child: const MyProfileScreen(),
+                            SizedBox(
+                              width: ResponsiveUtils.spacing(
+                                context,
+                                mobile: 16,
+                                tablet: 18,
+                                desktop: 20,
+                              ),
+                            ),
+                            // Profile Info
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    profile?.name ?? 'User',
+                                    style: AppTextStyles.h3.copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: ResponsiveUtils.fontSize(
+                                        context,
+                                        mobile: 18,
+                                        tablet: 20,
+                                        desktop: 22,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: ResponsiveUtils.spacing(
+                                      context,
+                                      mobile: 4,
+                                      tablet: 5,
+                                      desktop: 6,
+                                    ),
+                                  ),
+                                  Text(
+                                    profile?.email ?? '',
+                                    style: AppTextStyles.bodySmall.copyWith(
+                                      color: AppColors.textSecondary,
+                                      fontSize: ResponsiveUtils.fontSize(
+                                        context,
+                                        mobile: 14,
+                                        tablet: 15,
+                                        desktop: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            InkWell(
+                              child: Icon(
+                                Icons.edit,
+                                color: AppColors.primary,
+                                size: ResponsiveUtils.size(
+                                  context,
+                                  mobile: 24,
+                                  tablet: 26,
+                                  desktop: 28,
                                 ),
                               ),
-                            );
-                          },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileBloc>(),
+                                      child: const MyProfileScreen(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
 
-                  SizedBox(
-                    height: ResponsiveUtils.spacing(
-                      context,
-                      mobile: 8,
-                      tablet: 10,
-                      desktop: 12,
-                    ),
-                  ),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
 
-                  // Menu Options
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        _MenuTile(
-                          icon: Icons.person_outline,
+                      // Menu Options
+                      Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            _MenuTile(
+                              icon: Icons.person_outline,
                               title: 'my_profile'.tr(),
                               subtitle: 'my_info_details'.tr(),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<ProfileBloc>(),
-                                  child: const MyProfileScreen(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        _buildDivider(context),
-                        _MenuTile(
-                          icon: Icons.favorite_border,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileBloc>(),
+                                      child: const MyProfileScreen(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildDivider(context),
+                            _MenuTile(
+                              icon: Icons.favorite_border,
                               title: 'saved'.tr(),
                               subtitle: 'saved_advertisements'.tr(),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<ProfileBloc>(),
-                                  child: const SavedPropertiesScreen(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        _buildDivider(context),
-                        _MenuTile(
-                          icon: Icons.calendar_today_outlined,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileBloc>(),
+                                      child: const SavedPropertiesScreen(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildDivider(context),
+                            _MenuTile(
+                              icon: Icons.calendar_today_outlined,
                               title: 'my_reservations'.tr(),
                               subtitle: 'reservations_orders'.tr(),
-                          onTap: () {
-                            Navigator.push(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<ProfileBloc>(),
+                                      child: const MyReservationsScreen(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Host Options Section
+                      if (isHost) ...[
+                        SizedBox(
+                          height: ResponsiveUtils.spacing(
+                            context,
+                            mobile: 24,
+                            tablet: 28,
+                            desktop: 32,
+                          ),
+                        ),
+
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveUtils.spacing(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider.value(
-                                  value: context.read<ProfileBloc>(),
-                                  child: const MyReservationsScreen(),
+                              mobile: 20,
+                              tablet: 24,
+                              desktop: 32,
+                            ),
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'host_management'.tr(),
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textSecondary,
+                                fontSize: ResponsiveUtils.fontSize(
+                                  context,
+                                  mobile: 14,
+                                  tablet: 15,
+                                  desktop: 16,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Host Options Section
-                  if (isHost) ...[
-                    SizedBox(
-                      height: ResponsiveUtils.spacing(
-                        context,
-                        mobile: 24,
-                        tablet: 28,
-                        desktop: 32,
-                      ),
-                    ),
-                    
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: ResponsiveUtils.spacing(
-                          context,
-                          mobile: 20,
-                          tablet: 24,
-                          desktop: 32,
-                        ),
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                              'host_management'.tr(),
-                          style: AppTextStyles.bodySmall.copyWith(
-                            color: AppColors.textSecondary,
-                            fontSize: ResponsiveUtils.fontSize(
-                              context,
-                              mobile: 14,
-                              tablet: 15,
-                              desktop: 16,
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    
-                    SizedBox(
-                      height: ResponsiveUtils.spacing(
-                        context,
-                        mobile: 8,
-                        tablet: 10,
-                        desktop: 12,
-                      ),
-                    ),
-                    
-                    Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          _MenuTile(
-                            icon: Icons.analytics_outlined,
+
+                        SizedBox(
+                          height: ResponsiveUtils.spacing(
+                            context,
+                            mobile: 8,
+                            tablet: 10,
+                            desktop: 12,
+                          ),
+                        ),
+
+                        Container(
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              _MenuTile(
+                                icon: Icons.analytics_outlined,
                                 title: 'my_performance'.tr(),
                                 subtitle: 'view_payment_summary'.tr(),
-                            onTap: () {
+                                onTap: () {
                                   Navigator.pushNamed(
                                     context,
                                     '/payment-summary',
                                   );
-                            },
-                          ),
-                          _buildDivider(context),
-                          _MenuTile(
-                            icon: Icons.home_work_outlined,
+                                },
+                              ),
+                              _buildDivider(context),
+                              _MenuTile(
+                                icon: Icons.home_work_outlined,
                                 title: 'my_properties'.tr(),
                                 subtitle: 'manage_properties'.tr(),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BlocProvider(
                                         create: (_) =>
                                             getIt<PropertyManagementBloc>(),
-                                    child: const MyPropertiesScreen(),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          _buildDivider(context),
-                          _MenuTile(
-                            icon: Icons.add_home_outlined,
+                                        child: const MyPropertiesScreen(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildDivider(context),
+                              _MenuTile(
+                                icon: Icons.add_home_outlined,
                                 title: 'add_new_property'.tr(),
                                 subtitle: 'list_new_property'.tr(),
-                            onTap: () {
-                              Navigator.pushNamed(context, '/rent-create');
-                            },
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/rent-create');
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  ],
+                        ),
+                      ],
 
-                  SizedBox(
-                    height: ResponsiveUtils.spacing(
-                      context,
-                      mobile: 24,
-                      tablet: 28,
-                      desktop: 32,
-                    ),
-                  ),
-
-                  // Options Section
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ResponsiveUtils.spacing(
-                        context,
-                        mobile: 20,
-                        tablet: 24,
-                        desktop: 32,
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 24,
+                          tablet: 28,
+                          desktop: 32,
+                        ),
                       ),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                            'options'.tr(),
-                        style: AppTextStyles.bodySmall.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: ResponsiveUtils.fontSize(
+
+                      // Options Section
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveUtils.spacing(
                             context,
-                            mobile: 14,
-                            tablet: 15,
-                            desktop: 16,
+                            mobile: 20,
+                            tablet: 24,
+                            desktop: 32,
+                          ),
+                        ),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'options'.tr(),
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                              fontSize: ResponsiveUtils.fontSize(
+                                context,
+                                mobile: 14,
+                                tablet: 15,
+                                desktop: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
 
-                  SizedBox(
-                    height: ResponsiveUtils.spacing(
-                      context,
-                      mobile: 8,
-                      tablet: 10,
-                      desktop: 12,
-                    ),
-                  ),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
 
-                  Container(
-                    color: Colors.white,
-                    child: Column(
-                      children: [
+                      Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
                             // Language Switcher
                             _LanguageTile(
                               context: context,
@@ -403,53 +403,52 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
                               },
                             ),
                             _buildDivider(context),
-                        _MenuTile(
-                          icon: Icons.help_outline,
+                            _MenuTile(
+                              icon: Icons.help_outline,
                               title: 'help'.tr(),
                               subtitle: 'help_subtitle'.tr(),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) => getIt<HelpBloc>(),
-                                  child: const HelpScreen(),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        _buildDivider(context),
-                        _MenuTile(
-                          icon: Icons.star_outline,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => BlocProvider(
+                                      create: (_) => getIt<HelpBloc>(),
+                                      child: const HelpScreen(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildDivider(context),
+                            _MenuTile(
+                              icon: Icons.star_outline,
                               title: 'rate_app'.tr(),
                               subtitle: 'go_to_google_play'.tr(),
-                          onTap: () {
-                          },
-                        ),
-                        _buildDivider(context),
-                        _MenuTile(
-                          icon: Icons.share_outlined,
+                              onTap: () {},
+                            ),
+                            _buildDivider(context),
+                            _MenuTile(
+                              icon: Icons.share_outlined,
                               title: 'share_app'.tr(),
                               subtitle: 'share_app_subtitle'.tr(),
-                          onTap: () {
-                            _shareApp(context);
-                          },
-                        ),
-                        _buildDivider(context),
-                        _MenuTile(
-                          icon: Icons.logout,
+                              onTap: () {
+                                _shareApp(context);
+                              },
+                            ),
+                            _buildDivider(context),
+                            _MenuTile(
+                              icon: Icons.logout,
                               title: 'log_out'.tr(),
                               subtitle: 'account'.tr(),
-                          iconColor: Colors.red,
-                          textColor: Colors.red,
-                          onTap: () {
-                            _showLogoutDialog(context);
-                          },
+                              iconColor: Colors.red,
+                              textColor: Colors.red,
+                              onTap: () {
+                                _showLogoutDialog(context);
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
+                      ),
                     ],
                   ),
                 ),
@@ -481,11 +480,14 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
     );
   }
 
-  void _shareApp(BuildContext context) {
-    Share.share(
-      'Check out Ahlan Feekum - Your trusted property rental app! '
-      'Download now: https://play.google.com/store/apps/details?id=com.example.ahlanfeekum',
-      subject: 'Ahlan Feekum - Property Rental App',
+  Future<void> _shareApp(BuildContext context) async {
+    await SharePlus.instance.share(
+      ShareParams(
+        text:
+            'Check out Ahlan Feekum - Your trusted property rental app! '
+            'Download now: https://play.google.com/store/apps/details?id=com.example.ahlanfeekum',
+        subject: 'Ahlan Feekum - Property Rental App',
+      ),
     );
   }
 
@@ -809,7 +811,10 @@ class _LanguageTile extends StatelessWidget {
     );
   }
 
-  void _showLanguageDialog(BuildContext context, VoidCallback onLanguageChanged) {
+  void _showLanguageDialog(
+    BuildContext context,
+    VoidCallback onLanguageChanged,
+  ) {
     final currentLocale = context.locale;
 
     showDialog(
@@ -827,7 +832,7 @@ class _LanguageTile extends StatelessWidget {
           ],
         ),
         content: Column(
-mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             _buildLanguageOption(
               dialogContext,

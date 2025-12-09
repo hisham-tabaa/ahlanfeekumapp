@@ -309,7 +309,10 @@ class _PropertyDetailView extends StatelessWidget {
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.black.withValues(alpha: 0.2), Colors.transparent],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.2),
+                    Colors.transparent,
+                  ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),
@@ -503,9 +506,12 @@ class _PropertyDetailView extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                Share.share(
-                  'Check out this amazing property: ${property.title}\n\nLocation: ${property.address}\n\nPrice: ${property.pricePerNight.toStringAsFixed(0)} \$ per night\n\nBedrooms: ${property.bedrooms} | Bathrooms: ${property.bathrooms}',
-                  subject: property.title,
+                SharePlus.instance.share(
+                  ShareParams(
+                    text:
+                        'Check out this amazing property: ${property.title}\n\nLocation: ${property.address}\n\nPrice: ${property.pricePerNight.toStringAsFixed(0)} \$ per night\n\nBedrooms: ${property.bedrooms} | Bathrooms: ${property.bathrooms}',
+                    subject: property.title,
+                  ),
                 );
               },
               icon: Icon(Icons.share_outlined, color: AppColors.textPrimary),
@@ -1288,7 +1294,9 @@ class _PropertyDetailView extends StatelessWidget {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.1,
+                        ),
                         child: Icon(Icons.person, color: AppColors.primary),
                       ),
                       SizedBox(

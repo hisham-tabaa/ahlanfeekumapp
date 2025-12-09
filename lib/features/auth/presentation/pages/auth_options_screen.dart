@@ -64,7 +64,7 @@ class _AuthOptionsScreenState extends State<AuthOptionsScreen> {
                 ),
               ),
               child: Image.asset(
-                'assets/icons/Rectangle.png',
+                'assets/icons/rectangle_icon.png',
                 width: ResponsiveUtils.size(
                   context,
                   mobile: 60,

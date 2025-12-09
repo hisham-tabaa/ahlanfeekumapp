@@ -125,9 +125,12 @@ class PropertyHeaderWidget extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                Share.share(
-                  'Check out this amazing property: ${property.title}\n\nLocation: ${property.address}\n\nPrice: ${property.pricePerNight.toStringAsFixed(0)} \$ per night\n\nBedrooms: ${property.bedrooms} | Bathrooms: ${property.bathrooms}',
-                  subject: property.title,
+                SharePlus.instance.share(
+                  ShareParams(
+                    text:
+                        'Check out this amazing property: ${property.title}\n\nLocation: ${property.address}\n\nPrice: ${property.pricePerNight.toStringAsFixed(0)} \$ per night\n\nBedrooms: ${property.bedrooms} | Bathrooms: ${property.bathrooms}',
+                    subject: property.title,
+                  ),
                 );
               },
               icon: Icon(Icons.share_outlined, color: AppColors.textPrimary),
