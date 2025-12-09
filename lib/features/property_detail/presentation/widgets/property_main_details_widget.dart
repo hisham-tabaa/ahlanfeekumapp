@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -36,7 +36,7 @@ class PropertyMainDetailsWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Main Details',
+            'main_details'.tr(),
             style: AppTextStyles.h4.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -52,38 +52,38 @@ class PropertyMainDetailsWidget extends StatelessWidget {
           ),
           _buildDetailRow(
             context,
-            'Price',
-            '${property.pricePerNight.toStringAsFixed(0)} S / Night',
+            'price'.tr(),
+            '${property.pricePerNight.toStringAsFixed(0)} ${'s_per_night'.tr()}',
           ),
-          _buildDetailRow(context, 'Property Type', property.propertyTypeName),
-          _buildDetailRow(context, 'Bedrooms', '${property.bedrooms} Bedrooms'),
+          _buildDetailRow(context, 'property_type'.tr(), property.propertyTypeName),
+          _buildDetailRow(context, 'bedrooms'.tr(), '${property.bedrooms} ${'bedrooms'.tr()}'),
           _buildDetailRow(
             context,
-            'Living Rooms',
-            '${property.livingrooms} Rooms',
-          ),
-          _buildDetailRow(
-            context,
-            'Bathrooms',
-            '${property.bathrooms} Bathrooms',
+            'living_rooms'.tr(),
+            '${property.livingrooms} ${'rooms'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Number Of Beds',
-            '${property.numberOfBeds} Beds',
+            'bathrooms'.tr(),
+            '${property.bathrooms} ${'bathrooms'.tr()}',
           ),
           _buildDetailRow(
             context,
-            'Maximum Guests',
-            '${property.maxGuests} Guests',
+            'number_of_beds'.tr(),
+            '${property.numberOfBeds} ${'beds'.tr()}',
           ),
-          _buildDetailRow(context, 'Floor', '${property.floor} Floor'),
-          _buildDetailRow(context, 'Posted By', property.ownerName),
-          _buildDetailRow(context, 'Governorate', property.governorateName),
+          _buildDetailRow(
+            context,
+            'maximum_guests'.tr(),
+            '${property.maxGuests} ${'guests'.tr()}',
+          ),
+          _buildDetailRow(context, 'floor'.tr(), '${property.floor} ${'floor'.tr()}'),
+          _buildDetailRow(context, 'posted_by'.tr(), property.ownerName),
+          _buildDetailRow(context, 'governorate'.tr(), property.governorateName),
           if (property.area != null)
             _buildDetailRow(
               context,
-              'Area',
+              'area'.tr(),
               '${property.area!.toStringAsFixed(0)} m²',
             ),
         ],

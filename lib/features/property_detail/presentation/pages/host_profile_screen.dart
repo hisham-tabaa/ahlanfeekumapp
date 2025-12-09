@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -12,17 +13,37 @@ import '../bloc/host_profile_bloc.dart';
 import '../bloc/host_profile_event.dart';
 import '../bloc/host_profile_state.dart';
 
-class HostProfileScreen extends StatelessWidget {
+class HostProfileScreen extends StatefulWidget {
   final String hostId;
   final String? hostName;
 
   const HostProfileScreen({super.key, required this.hostId, this.hostName});
 
   @override
+  State<HostProfileScreen> createState() => _HostProfileScreenState();
+}
+
+class _HostProfileScreenState extends State<HostProfileScreen> {
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) =>
-          getIt<HostProfileBloc>()..add(LoadHostProfile(hostId)),
+          getIt<HostProfileBloc>()..add(LoadHostProfile(widget.hostId)),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -33,7 +54,7 @@ class HostProfileScreen extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Host Profile',
+            'host_profile'.tr(),
             style: AppTextStyles.h2.copyWith(color: AppColors.textPrimary),
           ),
           centerTitle: true,
@@ -54,7 +75,7 @@ class HostProfileScreen extends StatelessWidget {
             } else if (state is HostProfileLoaded) {
               return _buildContent(context, state.hostProfile);
             }
-            return const Center(child: Text('No data available'));
+            return Center(child: Text('no_data_available'.tr()));
           },
         ),
       ),
@@ -100,10 +121,10 @@ class HostProfileScreen extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              context.read<HostProfileBloc>().add(LoadHostProfile(hostId));
+              context.read<HostProfileBloc>().add(LoadHostProfile(widget.hostId));
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: const Text('Retry'),
+            child: Text('retry'.tr()),
           ),
         ],
       ),
@@ -171,7 +192,7 @@ class HostProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Get To Know Your Host',
+          'get_to_know_your_host'.tr(),
           style: AppTextStyles.h3.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -226,7 +247,7 @@ class HostProfileScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    profile.name ?? 'Unknown Host',
+                    profile.name ?? 'unknown_host'.tr(),
                     style: AppTextStyles.h3.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -241,7 +262,7 @@ class HostProfileScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${profile.properties.length} Property Posted',
+                    'property_posted_count'.tr().replaceAll('{0}', profile.properties.length.toString()),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -298,7 +319,7 @@ class HostProfileScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Super Host',
+                      'super_host'.tr(),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: Colors.green,
                         fontWeight: FontWeight.w600,
@@ -318,7 +339,7 @@ class HostProfileScreen extends StatelessWidget {
           ),
         ),
         Text(
-          'A Great Platform To Buy, Sell, Or Even Rent Your Properties Without Any Commisions.A Great Platform To Buy, Sell, Or Even Rent Your Properties',
+          'platform_description'.tr(),
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
             height: 1.5,
@@ -337,7 +358,7 @@ class HostProfileScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Email Address',
+                'email_address'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -351,7 +372,7 @@ class HostProfileScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                'Owner Of',
+                'owner_of'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -379,7 +400,7 @@ class HostProfileScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                'Appartments',
+                'apartments'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -400,7 +421,7 @@ class HostProfileScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'All Advertisment',
+          'all_advertisements'.tr(),
           style: AppTextStyles.h3.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -426,7 +447,7 @@ class HostProfileScreen extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'No properties available',
+                'no_properties_available'.tr(),
                 style: AppTextStyles.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -711,7 +732,7 @@ class HostProfileScreen extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    property.title ?? 'Untitled Property',
+                    property.title ?? 'untitled_property'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w600,
@@ -773,7 +794,7 @@ class HostProfileScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              ' /Night',
+                              ' /${'night'.tr()}',
                               style: AppTextStyles.bodySmall.copyWith(
                                 color: AppColors.textSecondary,
                                 fontSize: ResponsiveUtils.fontSize(

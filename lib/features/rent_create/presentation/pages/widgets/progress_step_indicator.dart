@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/colors.dart';
@@ -78,7 +79,7 @@ class ProgressStepIndicator extends StatelessWidget {
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        activeStep.step.title,
+                        activeStep.step.getTranslationKey().tr(),
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.success,
                           fontSize: ResponsiveUtils.fontSize(context, mobile: 12, tablet: 14, desktop: 16),

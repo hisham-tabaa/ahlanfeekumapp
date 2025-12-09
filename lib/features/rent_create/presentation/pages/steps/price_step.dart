@@ -91,17 +91,34 @@ class _PriceStepState extends State<PriceStep> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Price',
-          style: AppTextStyles.h3.copyWith(
-            color: AppColors.primary,
-            fontSize: ResponsiveUtils.fontSize(
-              context,
-              mobile: 24,
-              tablet: 26,
-              desktop: 28,
+        RichText(
+          text: TextSpan(
+            text: 'price'.tr(),
+            style: AppTextStyles.h3.copyWith(
+              color: AppColors.primary,
+              fontSize: ResponsiveUtils.fontSize(
+                context,
+                mobile: 24,
+                tablet: 26,
+                desktop: 28,
+              ),
+              fontWeight: FontWeight.w600,
             ),
-            fontWeight: FontWeight.w600,
+            children: [
+              TextSpan(
+                text: ' *',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: ResponsiveUtils.fontSize(
+                    context,
+                    mobile: 24,
+                    tablet: 26,
+                    desktop: 28,
+                  ),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(
@@ -113,7 +130,7 @@ class _PriceStepState extends State<PriceStep> {
           ),
         ),
         Text(
-          'Price - Per Night',
+          'price_per_night'.tr(),
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textSecondary,
             fontSize: ResponsiveUtils.fontSize(
@@ -129,138 +146,240 @@ class _PriceStepState extends State<PriceStep> {
   }
 
   Widget _buildSimplePriceInput(BuildContext context, RentCreateState state) {
-    return Container(
-      height: ResponsiveUtils.size(
-        context,
-        mobile: 80,
-        tablet: 90,
-        desktop: 100,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(
-          ResponsiveUtils.radius(context, mobile: 12, tablet: 14, desktop: 16),
-        ),
-        border: Border.all(
-          color: _priceController.text.isNotEmpty
-              ? AppColors.primary
-              : Colors.grey[300]!,
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            spreadRadius: 1,
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    final isRTL = context.locale.languageCode == 'ar';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: ResponsiveUtils.size(
+            context,
+            mobile: 70,
+            tablet: 80,
+            desktop: 90,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: ResponsiveUtils.size(
-              context,
-              mobile: 60,
-              tablet: 65,
-              desktop: 70,
-            ),
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(
-                  ResponsiveUtils.radius(
-                    context,
-                    mobile: 10,
-                    tablet: 11,
-                    desktop: 12,
-                  ),
-                ),
-                bottomLeft: Radius.circular(
-                  ResponsiveUtils.radius(
-                    context,
-                    mobile: 10,
-                    tablet: 11,
-                    desktop: 12,
-                  ),
-                ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(
+              ResponsiveUtils.radius(
+                context,
+                mobile: 16,
+                tablet: 18,
+                desktop: 20,
               ),
             ),
-            child: Center(
-              child: Text(
-                '\$',
-                style: AppTextStyles.h3.copyWith(
-                  color: Colors.white,
-                  fontSize: ResponsiveUtils.fontSize(
-                    context,
-                    mobile: 24,
-                    tablet: 26,
-                    desktop: 28,
-                  ),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            border: Border.all(
+              color: _priceController.text.isNotEmpty
+                  ? AppColors.primary
+                  : Colors.grey[300]!,
+              width: 2,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withValues(alpha: 0.15),
+                spreadRadius: 0,
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-          Expanded(
-            child: TextField(
-              controller: _priceController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: AppTextStyles.h2.copyWith(
-                color: AppColors.textPrimary,
-                fontSize: ResponsiveUtils.fontSize(
+          child: Row(
+            children: [
+              // Currency symbol container
+              Container(
+                width: ResponsiveUtils.size(
                   context,
-                  mobile: 28,
-                  tablet: 30,
-                  desktop: 32,
+                  mobile: 70,
+                  tablet: 80,
+                  desktop: 90,
                 ),
-                fontWeight: FontWeight.bold,
+                height: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: isRTL
+                      ? BorderRadius.only(
+                          topRight: Radius.circular(
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 14,
+                              tablet: 16,
+                              desktop: 18,
+                            ),
+                          ),
+                          bottomRight: Radius.circular(
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 14,
+                              tablet: 16,
+                              desktop: 18,
+                            ),
+                          ),
+                        )
+                      : BorderRadius.only(
+                          topLeft: Radius.circular(
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 14,
+                              tablet: 16,
+                              desktop: 18,
+                            ),
+                          ),
+                          bottomLeft: Radius.circular(
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 14,
+                              tablet: 16,
+                              desktop: 18,
+                            ),
+                          ),
+                        ),
+                ),
+                child: Center(
+                  child: Text(
+                    '\$',
+                    style: AppTextStyles.h2.copyWith(
+                      color: Colors.white,
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 32,
+                        tablet: 36,
+                        desktop: 40,
+                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
               ),
-              decoration: InputDecoration(
-                hintStyle: AppTextStyles.h2.copyWith(
-                  color: Colors.grey[400],
-                  fontSize: ResponsiveUtils.fontSize(
-                    context,
-                    mobile: 28,
-                    tablet: 30,
-                    desktop: 32,
+              Expanded(
+                child: TextField(
+                  controller: _priceController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  textAlign: TextAlign.center,
+                  style: AppTextStyles.h1.copyWith(
+                    color: AppColors.textPrimary,
+                    fontSize: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 36,
+                      tablet: 42,
+                      desktop: 48,
+                    ),
+                    fontWeight: FontWeight.bold,
                   ),
-                  fontWeight: FontWeight.bold,
-                ),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: ResponsiveUtils.spacing(
-                    context,
-                    mobile: 16,
-                    tablet: 17,
-                    desktop: 18,
+                  decoration: InputDecoration(
+                    hintText: '0',
+                    hintStyle: AppTextStyles.h1.copyWith(
+                      color: Colors.grey[300],
+                      fontSize: ResponsiveUtils.fontSize(
+                        context,
+                        mobile: 36,
+                        tablet: 42,
+                        desktop: 48,
+                      ),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 20,
+                      ),
+                      vertical: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 18,
+                        desktop: 20,
+                      ),
+                    ),
                   ),
-                  vertical: ResponsiveUtils.spacing(
-                    context,
-                    mobile: 20,
-                    tablet: 21,
-                    desktop: 22,
-                  ),
+                  onChanged: (value) {
+                    if (value.isEmpty) {
+                      context.read<RentCreateBloc>().add(
+                        UpdatePriceEvent(null),
+                      );
+                    } else {
+                      final price = int.tryParse(value);
+                      if (price != null) {
+                        context.read<RentCreateBloc>().add(
+                          UpdatePriceEvent(price),
+                        );
+                      }
+                    }
+                  },
                 ),
               ),
-              onChanged: (value) {
-                if (value.isEmpty) {
-                  // Clear the price when field is empty
-                  context.read<RentCreateBloc>().add(UpdatePriceEvent(null));
-                } else {
-                  // Only update if the value is a valid complete number
-                  final price = int.tryParse(value);
-                  if (price != null) {
-                    context.read<RentCreateBloc>().add(UpdatePriceEvent(price));
-                  }
-                }
-              },
+            ],
+          ),
+        ),
+        SizedBox(
+          height: ResponsiveUtils.spacing(
+            context,
+            mobile: 12,
+            tablet: 14,
+            desktop: 16,
+          ),
+        ),
+        Container(
+          padding: EdgeInsets.all(
+            ResponsiveUtils.spacing(
+              context,
+              mobile: 12,
+              tablet: 14,
+              desktop: 16,
             ),
           ),
-        ],
-      ),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(
+              ResponsiveUtils.radius(
+                context,
+                mobile: 12,
+                tablet: 14,
+                desktop: 16,
+              ),
+            ),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                color: AppColors.primary,
+                size: ResponsiveUtils.fontSize(
+                  context,
+                  mobile: 18,
+                  tablet: 20,
+                  desktop: 22,
+                ),
+              ),
+              SizedBox(
+                width: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 8,
+                  tablet: 10,
+                  desktop: 12,
+                ),
+              ),
+              Expanded(
+                child: Text(
+                  'price_info_message'.tr(),
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontSize: ResponsiveUtils.fontSize(
+                      context,
+                      mobile: 12,
+                      tablet: 13,
+                      desktop: 14,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

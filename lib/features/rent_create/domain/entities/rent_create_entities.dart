@@ -68,6 +68,23 @@ enum PropertyCreationStep {
 
   final int stepNumber;
   final String title;
+
+  String getTranslationKey() {
+    switch (this) {
+      case PropertyCreationStep.propertyDetails:
+        return 'property_details';
+      case PropertyCreationStep.location:
+        return 'location';
+      case PropertyCreationStep.availability:
+        return 'available_in';
+      case PropertyCreationStep.photos:
+        return 'photos';
+      case PropertyCreationStep.price:
+        return 'price';
+      case PropertyCreationStep.review:
+        return 'review';
+    }
+  }
 }
 
 class PropertyCreationStepStatus {

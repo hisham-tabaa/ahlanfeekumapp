@@ -90,7 +90,7 @@ class _PhotosStepState extends State<PhotosStep> {
       children: [
         RichText(
           text: TextSpan(
-            text: 'Photos',
+            text: 'photos'.tr(),
             style: AppTextStyles.h3.copyWith(
               color: AppColors.primary,
               fontSize: ResponsiveUtils.fontSize(
@@ -127,7 +127,7 @@ class _PhotosStepState extends State<PhotosStep> {
           ),
         ),
         Text(
-          'Property Images',
+          'property_images'.tr(),
           style: AppTextStyles.h4.copyWith(
             color: AppColors.textPrimary,
             fontSize: ResponsiveUtils.fontSize(
@@ -177,7 +177,7 @@ class _PhotosStepState extends State<PhotosStep> {
           ),
           Expanded(
             child: Text(
-              'You Need To Add Atleast 20 Photos Of Your Property To Increase The Trust To Your Advertisment',
+              'add_atleast_20_photos_message'.tr(),
               style: AppTextStyles.bodySmall.copyWith(
                 color: Colors.red[700],
                 fontSize: ResponsiveUtils.fontSize(
@@ -328,7 +328,7 @@ class _PhotosStepState extends State<PhotosStep> {
                 ),
               ),
               child: Text(
-                'Primary',
+                'primary'.tr(),
                 style: AppTextStyles.bodySmall.copyWith(
                   color: Colors.white,
                   fontSize: ResponsiveUtils.fontSize(
@@ -570,7 +570,7 @@ class _PhotosStepState extends State<PhotosStep> {
               ),
             ),
             Text(
-              'Add Photo',
+              'add_photo'.tr(),
               style: AppTextStyles.bodySmall.copyWith(
                 color: Colors.grey[500],
                 fontSize: ResponsiveUtils.fontSize(
@@ -619,7 +619,7 @@ class _PhotosStepState extends State<PhotosStep> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Select Image Source',
+                'select_image_source'.tr(),
                 style: AppTextStyles.h4.copyWith(
                   color: AppColors.textPrimary,
                   fontSize: ResponsiveUtils.fontSize(
@@ -644,7 +644,7 @@ class _PhotosStepState extends State<PhotosStep> {
                     child: _buildImageSourceOption(
                       context: bottomSheetContext,
                       icon: Icons.camera_alt,
-                      title: 'Camera',
+                      title: 'camera'.tr(),
                       onTap: () {
                         Navigator.pop(bottomSheetContext);
                         _pickImages(
@@ -666,7 +666,7 @@ class _PhotosStepState extends State<PhotosStep> {
                     child: _buildImageSourceOption(
                       context: bottomSheetContext,
                       icon: Icons.photo_library,
-                      title: 'Gallery',
+                      title: 'gallery'.tr(),
                       onTap: () {
                         Navigator.pop(bottomSheetContext);
                         _pickImages(
@@ -792,7 +792,7 @@ class _PhotosStepState extends State<PhotosStep> {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error picking images: $e'),
+            content: Text('error_picking_image'.tr()),
             backgroundColor: Colors.red,
           ),
         );

@@ -139,7 +139,7 @@ class _LocationStepState extends State<LocationStep> {
               ),
             ),
             Text(
-              'Location',
+              'location'.tr(),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.primary,
                 fontSize: ResponsiveUtils.fontSize(
@@ -162,7 +162,7 @@ class _LocationStepState extends State<LocationStep> {
           ),
         ),
         Text(
-          'Property Location',
+          'property_location'.tr(),
           style: AppTextStyles.h3.copyWith(
             color: AppColors.textPrimary,
             fontSize: ResponsiveUtils.fontSize(
@@ -245,7 +245,7 @@ class _LocationStepState extends State<LocationStep> {
                     ),
                   ),
                   Text(
-                    'Property Location',
+                    'property_location'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       fontSize: ResponsiveUtils.fontSize(
                         context,
@@ -274,7 +274,7 @@ class _LocationStepState extends State<LocationStep> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                child: const Text('Clear'),
+                child: Text('clear'.tr()),
               ),
             ],
           ),
@@ -413,7 +413,7 @@ class _LocationStepState extends State<LocationStep> {
                             ),
                           ),
                           Text(
-                            'Edit',
+                            'edit'.tr(),
                             style: AppTextStyles.bodySmall.copyWith(
                               fontSize: ResponsiveUtils.fontSize(
                                 context,
@@ -576,7 +576,7 @@ class _LocationStepState extends State<LocationStep> {
                     ),
                   ),
                   Text(
-                    'Location Required *',
+                    'location_required'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textPrimary,
                       fontSize: ResponsiveUtils.fontSize(
@@ -597,7 +597,7 @@ class _LocationStepState extends State<LocationStep> {
                     ),
                   ),
                   Text(
-                    'Tap to select location on map',
+                    'tap_to_select_location'.tr(),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                       fontSize: ResponsiveUtils.fontSize(
@@ -674,8 +674,8 @@ class _LocationStepState extends State<LocationStep> {
           _buildTextField(
             context,
             controller: _addressController,
-            label: 'Address',
-            hintText: 'Damascus, Al Qusor',
+            label: 'address'.tr(),
+            hintText: 'address_example'.tr(),
             onChanged: (value) {
               context.read<RentCreateBloc>().add(UpdateAddressEvent(value));
             },
@@ -696,8 +696,8 @@ class _LocationStepState extends State<LocationStep> {
                 child: _buildTextField(
                   context,
                   controller: _streetController,
-                  label: 'Street, Building Number',
-                  hintText: 'Street 123',
+                  label: 'street_building_number'.tr(),
+                  hintText: 'street_example'.tr(),
                   onChanged: (value) {
                     context.read<RentCreateBloc>().add(
                       UpdateStreetEvent(value),
@@ -710,8 +710,8 @@ class _LocationStepState extends State<LocationStep> {
                 child: _buildTextField(
                   context,
                   controller: _landMarkController,
-                  label: 'Land Mark',
-                  hintText: 'Away From \'place\' 2 Km',
+                  label: 'landmark'.tr(),
+                  hintText: 'landmark_example'.tr(),
                   onChanged: (value) {
                     context.read<RentCreateBloc>().add(
                       UpdateLandMarkEvent(value),
@@ -732,8 +732,8 @@ class _LocationStepState extends State<LocationStep> {
         _buildTextField(
           context,
           controller: _addressController,
-          label: 'Address',
-          hintText: 'Damascus, Al Qusor',
+          label: 'address'.tr(),
+          hintText: 'address_example'.tr(),
           onChanged: (value) {
             context.read<RentCreateBloc>().add(UpdateAddressEvent(value));
           },
@@ -749,8 +749,8 @@ class _LocationStepState extends State<LocationStep> {
         _buildTextField(
           context,
           controller: _streetController,
-          label: 'Street, Building Number',
-          hintText: 'Street 123',
+          label: 'street_building_number'.tr(),
+          hintText: 'street_example'.tr(),
           onChanged: (value) {
             context.read<RentCreateBloc>().add(UpdateStreetEvent(value));
           },
@@ -766,8 +766,8 @@ class _LocationStepState extends State<LocationStep> {
         _buildTextField(
           context,
           controller: _landMarkController,
-          label: 'Land Mark',
-          hintText: 'Away From \'place\' 2 Km',
+          label: 'landmark'.tr(),
+          hintText: 'landmark_example'.tr(),
           onChanged: (value) {
             context.read<RentCreateBloc>().add(UpdateLandMarkEvent(value));
           },

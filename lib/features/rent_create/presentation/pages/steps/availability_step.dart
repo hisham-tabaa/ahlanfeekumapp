@@ -18,7 +18,7 @@ class AvailabilityStep extends StatefulWidget {
 
 class _AvailabilityStepState extends State<AvailabilityStep> {
   DateTime _focusedDay = DateTime.now();
-  final Set<String> _selectedWeekdays = {};
+  final Set<int> _selectedWeekdays = {}; // Store weekday indices (1-7)
   Locale? _previousLocale;
 
   @override
@@ -96,7 +96,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
   Widget _buildHeader(BuildContext context) {
     return RichText(
       text: TextSpan(
-        text: 'Available In',
+        text: 'available_in'.tr(),
         style: AppTextStyles.h3.copyWith(
           color: AppColors.primary,
           fontSize: ResponsiveUtils.fontSize(
@@ -168,7 +168,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
         child: Row(
           children: [
             Text(
-              'Modify Date',
+              'modify_date'.tr(),
               style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textPrimary,
                 fontSize: ResponsiveUtils.fontSize(
@@ -219,21 +219,23 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
   }
 
   Widget _buildWeekdaySelector(BuildContext context, RentCreateState state) {
-    const weekdays = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
+    // Weekday indices: 1=Monday, 2=Tuesday, ..., 7=Sunday
+    final weekdayIndices = [7, 1, 2, 3, 4, 5, 6]; // Sunday first for display
+    final weekdayNames = [
+      'sunday'.tr(),
+      'monday'.tr(),
+      'tuesday'.tr(),
+      'wednesday'.tr(),
+      'thursday'.tr(),
+      'friday'.tr(),
+      'saturday'.tr(),
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Available In These Days',
+          'available_in_these_days'.tr(),
           style: AppTextStyles.bodyMedium.copyWith(
             color: AppColors.textPrimary,
             fontSize: ResponsiveUtils.fontSize(
@@ -266,15 +268,18 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
             tablet: 9,
             desktop: 10,
           ),
-          children: weekdays.map((weekday) {
-            final isSelected = _selectedWeekdays.contains(weekday);
+          children: weekdayIndices.asMap().entries.map((entry) {
+            final index = entry.key;
+            final weekdayIndex = entry.value;
+            final weekdayName = weekdayNames[index];
+            final isSelected = _selectedWeekdays.contains(weekdayIndex);
             return GestureDetector(
               onTap: () {
                 setState(() {
                   if (isSelected) {
-                    _selectedWeekdays.remove(weekday);
+                    _selectedWeekdays.remove(weekdayIndex);
                   } else {
-                    _selectedWeekdays.add(weekday);
+                    _selectedWeekdays.add(weekdayIndex);
                   }
                 });
                 _updateAvailabilityBasedOnWeekdays(context);
@@ -309,7 +314,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                   ),
                 ),
                 child: Text(
-                  weekday,
+                  weekdayName,
                   style: AppTextStyles.bodySmall.copyWith(
                     color: isSelected ? Colors.white : AppColors.textPrimary,
                     fontSize: ResponsiveUtils.fontSize(
@@ -360,7 +365,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
         // Show selected dates
         if (selectedDates.isNotEmpty) ...[
           Text(
-            'Selected Dates',
+            'selected_dates'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textPrimary,
               fontSize: ResponsiveUtils.fontSize(
@@ -537,7 +542,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
         // Show unselected dates from next 7 days
         if (unselectedNext7Days.isNotEmpty) ...[
           Text(
-            'Available Next 7 Days',
+            'available_next_7_days'.tr(),
             style: AppTextStyles.bodyMedium.copyWith(
               color: AppColors.textSecondary,
               fontSize: ResponsiveUtils.fontSize(
@@ -708,7 +713,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                     ),
                   ),
                   Text(
-                    'No dates available in next 7 days',
+                    'no_dates_available_next_7_days'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: Colors.grey[600],
                       fontSize: ResponsiveUtils.fontSize(
@@ -728,7 +733,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                     ),
                   ),
                   Text(
-                    'Select weekdays or use the calendar for future dates',
+                    'select_weekdays_or_calendar'.tr(),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: Colors.grey[500],
                       fontSize: ResponsiveUtils.fontSize(
@@ -762,8 +767,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
       // Only remove if it's in next 7 days (likely added by weekday selection)
       if (date.isAfter(startOfNext7Days.subtract(const Duration(days: 1))) &&
           date.isBefore(endOfNext7Days.add(const Duration(days: 1)))) {
-        final weekdayName = _getWeekdayName(date.weekday);
-        if (!_selectedWeekdays.contains(weekdayName)) {
+        if (!_selectedWeekdays.contains(date.weekday)) {
           bloc.add(RemoveAvailableDateEvent(date));
         }
       }
@@ -775,8 +779,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
       date.isBefore(endOfNext7Days.add(const Duration(days: 1)));
       date = date.add(const Duration(days: 1))
     ) {
-      final weekdayName = _getWeekdayName(date.weekday);
-      if (_selectedWeekdays.contains(weekdayName)) {
+      if (_selectedWeekdays.contains(date.weekday)) {
         // Check if not already added
         final isAlreadySelected = bloc.state.formData.availableDates.any(
           (existingDate) => isSameDay(existingDate, date),
@@ -788,48 +791,39 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
     }
   }
 
-  String _getWeekdayName(int weekday) {
-    const weekdays = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ];
-    return weekdays[weekday - 1];
-  }
-
   String _getDayName(DateTime date) {
-    const days = [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
+    final days = [
+      'monday'.tr(),
+      'tuesday'.tr(),
+      'wednesday'.tr(),
+      'thursday'.tr(),
+      'friday'.tr(),
+      'saturday'.tr(),
+      'sunday'.tr(),
     ];
     return days[date.weekday - 1];
   }
 
   String _formatDate(DateTime date) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+    final months = [
+      'january'.tr(),
+      'february'.tr(),
+      'march'.tr(),
+      'april'.tr(),
+      'may'.tr(),
+      'june'.tr(),
+      'july'.tr(),
+      'august'.tr(),
+      'september'.tr(),
+      'october'.tr(),
+      'november'.tr(),
+      'december'.tr(),
     ];
-    return '${date.day.toString().padLeft(2, '0')} - ${months[date.month - 1]} - ${date.year}';
+    // Get first 3 characters for short month name
+    final monthShort = months[date.month - 1].length > 3
+        ? months[date.month - 1].substring(0, 3)
+        : months[date.month - 1];
+    return '${date.day.toString().padLeft(2, '0')} - $monthShort - ${date.year}';
   }
 
   void _showCalendarDialog(BuildContext context, RentCreateState state) {
@@ -877,7 +871,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Select Available Dates',
+                      'select_available_dates'.tr(),
                       style: AppTextStyles.h4.copyWith(
                         color: AppColors.textPrimary,
                         fontSize: ResponsiveUtils.fontSize(
@@ -1010,7 +1004,9 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                                   shape: BoxShape.circle,
                                 ),
                                 todayDecoration: BoxDecoration(
-                                  color: AppColors.primary.withValues(alpha: 0.3),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   shape: BoxShape.circle,
                                 ),
                                 defaultTextStyle: AppTextStyles.bodySmall
@@ -1102,7 +1098,7 @@ class _AvailabilityStepState extends State<AvailabilityStep> {
                           ),
                         ),
                         child: Text(
-                          'Done',
+                          'done'.tr(),
                           style: AppTextStyles.bodyMedium.copyWith(
                             color: Colors.white,
                             fontSize: ResponsiveUtils.fontSize(

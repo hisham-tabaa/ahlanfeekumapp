@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -69,7 +70,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Rate Property',
+                  'rate_property'.tr(),
                   style: AppTextStyles.h4.copyWith(color: AppColors.primary),
                 ),
                 IconButton(
@@ -95,7 +96,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                 child: Column(
                   children: [
                     _buildRatingRow(
-                      'Cleanliness',
+                      'cleanliness'.tr(),
                       cleanlinessRating,
                       (rating) => setState(() => cleanlinessRating = rating),
                     ),
@@ -108,7 +109,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                       ),
                     ),
                     _buildRatingRow(
-                      'Price & Value',
+                      'price_value'.tr(),
                       priceAndValueRating,
                       (rating) => setState(() => priceAndValueRating = rating),
                     ),
@@ -121,7 +122,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                       ),
                     ),
                     _buildRatingRow(
-                      'Location',
+                      'location'.tr(),
                       locationRating,
                       (rating) => setState(() => locationRating = rating),
                     ),
@@ -134,7 +135,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                       ),
                     ),
                     _buildRatingRow(
-                      'Accuracy',
+                      'accuracy'.tr(),
                       accuracyRating,
                       (rating) => setState(() => accuracyRating = rating),
                     ),
@@ -147,7 +148,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                       ),
                     ),
                     _buildRatingRow(
-                      'Attitude',
+                      'attitude'.tr(),
                       attitudeRating,
                       (rating) => setState(() => attitudeRating = rating),
                     ),
@@ -165,7 +166,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Share Your Experience',
+                          'share_your_experience'.tr(),
                           style: AppTextStyles.bodyMedium.copyWith(
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
@@ -184,8 +185,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                           maxLines: 4,
                           style: AppTextStyles.bodyMedium,
                           decoration: InputDecoration(
-                            hintText:
-                                'Tell us more about your stay (optional)...',
+                            hintText: 'tell_us_more_about_stay'.tr(),
                             hintStyle: AppTextStyles.bodyMedium.copyWith(
                               color: AppColors.textSecondary.withValues(alpha: 0.6),
                             ),
@@ -299,7 +299,7 @@ class _PropertyRatingDialogState extends State<PropertyRatingDialog> {
                   ),
                 ),
                 child: Text(
-                  'Submit Rating',
+                  'submit_rating'.tr(),
                   style: AppTextStyles.buttonText.copyWith(color: Colors.white),
                 ),
               ),

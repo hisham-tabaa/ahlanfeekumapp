@@ -257,81 +257,84 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
                   desktop: 28,
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Previous button (white with arrow)
-                  if (state.canGoPrevious)
-                    FloatingActionButton(
-                      onPressed: state.isLoading
-                          ? null
-                          : () {
-                              context.read<RentCreateBloc>().add(
-                                const PreviousStepEvent(),
-                              );
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                              );
-                            },
-                      backgroundColor: Colors.white,
-                      elevation: 4,
-                      heroTag: "previous_btn",
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        color: AppColors.textPrimary,
-                        size: ResponsiveUtils.fontSize(
-                          context,
-                          mobile: 20,
-                          tablet: 21,
-                          desktop: 22,
-                        ),
-                      ),
-                    ),
-
-                  // Continue/Create button (red with arrow)
-                  if (shouldShowButton)
-                    FloatingActionButton(
-                      onPressed: state.canGoNext && !state.isLoading
-                          ? () => _handleNextButton(context, state)
-                          : null,
-                      backgroundColor: state.canGoNext && !state.isLoading
-                          ? AppColors.primary
-                          : Colors.grey[400],
-                      elevation: 4,
-                      heroTag: "continue_btn",
-                      child: state.isLoading
-                          ? SizedBox(
-                              width: ResponsiveUtils.size(
-                                context,
-                                mobile: 20,
-                                tablet: 21,
-                                desktop: 22,
-                              ),
-                              height: ResponsiveUtils.size(
-                                context,
-                                mobile: 20,
-                                tablet: 21,
-                                desktop: 22,
-                              ),
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                              size: ResponsiveUtils.fontSize(
-                                context,
-                                mobile: 20,
-                                tablet: 21,
-                                desktop: 22,
-                              ),
+              child: Builder(
+                builder: (context) {
+                  final isRTL = context.locale.languageCode == 'ar';
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Previous button (white with arrow)
+                      if (state.canGoPrevious)
+                        FloatingActionButton(
+                          onPressed: state.isLoading
+                              ? null
+                              : () {
+                                  context.read<RentCreateBloc>().add(
+                                    const PreviousStepEvent(),
+                                  );
+                                  _pageController.previousPage(
+                                    duration: const Duration(milliseconds: 300),
+                                    curve: Curves.easeInOut,
+                                  );
+                                },
+                          backgroundColor: Colors.white,
+                          elevation: 4,
+                          heroTag: "previous_btn",
+                          child: Icon(
+                            isRTL ? Icons.arrow_forward_ios : Icons.arrow_back_ios,
+                            color: AppColors.textPrimary,
+                            size: ResponsiveUtils.fontSize(
+                              context,
+                              mobile: 20,
+                              tablet: 21,
+                              desktop: 22,
                             ),
-                    ),
+                          ),
+                        ),
+
+                      // Continue/Create button (red with arrow)
+                      if (shouldShowButton)
+                        FloatingActionButton(
+                          onPressed: state.canGoNext && !state.isLoading
+                              ? () => _handleNextButton(context, state)
+                              : null,
+                          backgroundColor: state.canGoNext && !state.isLoading
+                              ? AppColors.primary
+                              : Colors.grey[400],
+                          elevation: 4,
+                          heroTag: "continue_btn",
+                          child: state.isLoading
+                              ? SizedBox(
+                                  width: ResponsiveUtils.size(
+                                    context,
+                                    mobile: 20,
+                                    tablet: 21,
+                                    desktop: 22,
+                                  ),
+                                  height: ResponsiveUtils.size(
+                                    context,
+                                    mobile: 20,
+                                    tablet: 21,
+                                    desktop: 22,
+                                  ),
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Icon(
+                                  isRTL ? Icons.arrow_back_ios : Icons.arrow_forward_ios,
+                                  color: Colors.white,
+                                  size: ResponsiveUtils.fontSize(
+                                    context,
+                                    mobile: 20,
+                                    tablet: 21,
+                                    desktop: 22,
+                                  ),
+                                ),
+                        ),
 
                   // Show permission message if user doesn't have access on review step
                   if (isReviewStep && !hasPermission)
@@ -369,7 +372,9 @@ class _RentCreateFlowScreenState extends State<RentCreateFlowScreen> {
                         ),
                       ),
                     ),
-                ],
+                    ],
+                  );
+                },
               ),
             );
           },

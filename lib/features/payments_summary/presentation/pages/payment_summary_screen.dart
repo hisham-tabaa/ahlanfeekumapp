@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utils/responsive_utils.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
@@ -16,6 +17,7 @@ class PaymentSummaryScreen extends StatefulWidget {
 
 class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
   int selectedYear = DateTime.now().year;
+  Locale? _previousLocale;
 
   @override
   void initState() {
@@ -23,16 +25,26 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     _loadPaymentSummary();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
+
   void _loadPaymentSummary() {
     final startDate = '$selectedYear-01-01';
     final endDate = '$selectedYear-12-31';
-    
+
     context.read<PaymentSummaryBloc>().add(
-          LoadPaymentSummaryEvent(
-            startDate: startDate,
-            endDate: endDate,
-          ),
-        );
+      LoadPaymentSummaryEvent(startDate: startDate, endDate: endDate),
+    );
   }
 
   @override
@@ -40,7 +52,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('My Performance'),
+        title: Text('my_performance'.tr()),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
@@ -67,7 +79,11 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                    const Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       state.message,
@@ -77,7 +93,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: _loadPaymentSummary,
-                      child: const Text('Retry'),
+                      child: Text('retry'.tr()),
                     ),
                   ],
                 ),
@@ -92,13 +108,13 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
               onRefresh: () async {
                 final startDate = '$selectedYear-01-01';
                 final endDate = '$selectedYear-12-31';
-                
+
                 context.read<PaymentSummaryBloc>().add(
-                      RefreshPaymentSummaryEvent(
-                        startDate: startDate,
-                        endDate: endDate,
-                      ),
-                    );
+                  RefreshPaymentSummaryEvent(
+                    startDate: startDate,
+                    endDate: endDate,
+                  ),
+                );
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -115,7 +131,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                   children: [
                     // "My Profits" Title
                     Text(
-                      'My Profits',
+                      'my_profits'.tr(),
                       style: AppTextStyles.h3.copyWith(
                         fontSize: ResponsiveUtils.fontSize(
                           context,
@@ -127,7 +143,14 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 20,
+                        desktop: 24,
+                      ),
+                    ),
 
                     // Total Payout Card
                     Container(
@@ -151,7 +174,10 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              border: Border.all(color: const Color(0xFF4CAF50), width: 2),
+                              border: Border.all(
+                                color: const Color(0xFF4CAF50),
+                                width: 2,
+                              ),
                             ),
                             child: const Icon(
                               Icons.attach_money,
@@ -161,7 +187,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            'Total Payout',
+                            'total_payout'.tr(),
                             style: AppTextStyles.bodySmall.copyWith(
                               color: AppColors.textSecondary,
                               fontSize: ResponsiveUtils.fontSize(
@@ -190,14 +216,21 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 24,
+                        tablet: 28,
+                        desktop: 32,
+                      ),
+                    ),
 
                     // Payment Chart Header with Year Selector
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Payment Chart',
+                          'payment_chart'.tr(),
                           style: AppTextStyles.h3.copyWith(
                             fontSize: ResponsiveUtils.fontSize(
                               context,
@@ -209,7 +242,10 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
@@ -226,7 +262,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                               ),
                               dropdownColor: Colors.white,
                               items: List.generate(5, (index) {
-                                final year =DateTime.now().year - index;
+                                final year = DateTime.now().year - index;
                                 return DropdownMenuItem(
                                   value: year,
                                   child: Text(year.toString()),
@@ -246,7 +282,14 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                       ],
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 20,
+                        desktop: 24,
+                      ),
+                    ),
 
                     // Monthly Breakdown Chart
                     Container(
@@ -268,7 +311,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
                               child: Padding(
                                 padding: const EdgeInsets.all(32.0),
                                 child: Text(
-                                  'No payments found for this year',
+                                  'no_payments_found_for_year'.tr(),
                                   style: AppTextStyles.bodyMedium.copyWith(
                                     color: AppColors.textSecondary,
                                   ),
@@ -293,7 +336,7 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
     final maxAmount = monthlyPayments.values.isNotEmpty
         ? monthlyPayments.values.reduce((a, b) => a > b ? a : b)
         : 0.0;
-    
+
     final peakEntry = monthlyPayments.entries.firstWhere(
       (e) => e.value == maxAmount,
       orElse: () => monthlyPayments.entries.first,
@@ -393,7 +436,10 @@ class _PaymentSummaryScreenState extends State<PaymentSummaryScreen> {
             ),
             const SizedBox(width: 8),
             Text(
-              'Peak Value = ${peakEntry.key.toUpperCase()}, \$${peakEntry.value.toStringAsFixed(2)}',
+              'peak_value'
+                  .tr()
+                  .replaceAll('{0}', peakEntry.key.toUpperCase())
+                  .replaceAll('{1}', '\$${peakEntry.value.toStringAsFixed(2)}'),
               style: AppTextStyles.bodySmall.copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,

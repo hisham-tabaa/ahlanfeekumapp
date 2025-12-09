@@ -33,6 +33,21 @@ class SettingsMenuScreen extends StatefulWidget {
 }
 
 class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
+  Locale? _previousLocale;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,7 +137,7 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    profile?.name ?? 'User',
+                                    profile?.name ?? 'user'.tr(),
                                     style: AppTextStyles.h3.copyWith(
                                       fontWeight: FontWeight.w600,
                                       fontSize: ResponsiveUtils.fontSize(
@@ -511,7 +526,7 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
               (route) => false,
             );
 
-            context.showSnackBar('Logged out successfully');
+            context.showSnackBar('logged_out_successfully'.tr());
           } else if (state is AuthError) {
             Navigator.of(dialogContext).pop();
             context.showSnackBar(state.message, isError: true);
@@ -529,18 +544,18 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
             ),
           ),
           title: Text(
-            'Log Out',
+            'log_out'.tr(),
             style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.w600),
           ),
           content: Text(
-            'Are you sure you want to log out?',
+            'are_you_sure_logout'.tr(),
             style: AppTextStyles.bodyMedium,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
               child: Text(
-                'Cancel',
+                'cancel'.tr(),
                 style: TextStyle(color: AppColors.textSecondary),
               ),
             ),
@@ -562,7 +577,7 @@ class _SettingsMenuScreenState extends State<SettingsMenuScreen> {
                     context.read<AuthBloc>().add(const LogoutEvent());
                   },
                   child: Text(
-                    'Log Out',
+                    'log_out'.tr(),
                     style: TextStyle(
                       color: Colors.red,
                       fontWeight: FontWeight.w600,
@@ -766,7 +781,7 @@ class _LanguageTile extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    isArabic ? 'العربية' : 'English',
+                    isArabic ? 'arabic'.tr() : 'english'.tr(),
                     style: AppTextStyles.bodySmall.copyWith(
                       color: AppColors.textSecondary,
                       fontSize: ResponsiveUtils.fontSize(
@@ -837,7 +852,7 @@ class _LanguageTile extends StatelessWidget {
             _buildLanguageOption(
               dialogContext,
               context,
-              'English',
+              'english'.tr(),
               '🇬🇧',
               const Locale('en'),
               currentLocale.languageCode == 'en',
@@ -847,7 +862,7 @@ class _LanguageTile extends StatelessWidget {
             _buildLanguageOption(
               dialogContext,
               context,
-              'العربية',
+              'arabic'.tr(),
               '🇸🇦',
               const Locale('ar'),
               currentLocale.languageCode == 'ar',

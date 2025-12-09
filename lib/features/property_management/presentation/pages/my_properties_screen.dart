@@ -19,10 +19,25 @@ class MyPropertiesScreen extends StatefulWidget {
 }
 
 class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
+  Locale? _previousLocale;
+
   @override
   void initState() {
     super.initState();
     context.read<PropertyManagementBloc>().add(const LoadHostPropertiesEvent());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
   }
 
   @override
@@ -126,7 +141,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                     ),
                   ),
                   Text(
-                    'No properties yet',
+                    'no_properties_yet'.tr(),
                     style: AppTextStyles.h3.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -140,7 +155,7 @@ class _MyPropertiesScreenState extends State<MyPropertiesScreen> {
                     ),
                   ),
                   Text(
-                    'Start listing your first property',
+                    'start_listing_first_property'.tr(),
                     style: AppTextStyles.bodyMedium.copyWith(
                       color: AppColors.textSecondary,
                     ),
@@ -402,7 +417,7 @@ class _PropertyCard extends StatelessWidget {
                     children: [
                       // Price
                       Text(
-                        '\$${property.price.toStringAsFixed(0)}/night',
+                        '\$${property.price.toStringAsFixed(0)}/${'night'.tr()}',
                         style: AppTextStyles.h3.copyWith(
                           color: AppColors.primary,
                           fontSize: ResponsiveUtils.fontSize(
@@ -444,7 +459,7 @@ class _PropertyCard extends StatelessWidget {
                       // Bookings
                       if (property.totalBookings != null)
                         Text(
-                          '${property.totalBookings} bookings',
+                          'bookings_count'.tr().replaceAll('{0}', property.totalBookings.toString()),
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
                           ),
@@ -489,7 +504,7 @@ class _PropertyCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      property.isActive ? 'Active' : 'Inactive',
+                      property.isActive ? 'active'.tr() : 'inactive'.tr(),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: property.isActive ? Colors.green : Colors.red,
                         fontWeight: FontWeight.w600,

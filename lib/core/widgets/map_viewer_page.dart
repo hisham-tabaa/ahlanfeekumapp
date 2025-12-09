@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../theming/colors.dart';
 import '../../theming/text_styles.dart';
 import '../utils/responsive_utils.dart';
@@ -26,12 +27,26 @@ class MapViewerPage extends StatefulWidget {
 class _MapViewerPageState extends State<MapViewerPage> {
   late final MapController _mapController;
   late LatLng _location;
+  Locale? _previousLocale;
 
   @override
   void initState() {
     super.initState();
     _mapController = MapController();
     _location = LatLng(widget.latitude, widget.longitude);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = context.locale;
+    if (_previousLocale != null && _previousLocale != currentLocale) {
+      setState(() {
+        _previousLocale = currentLocale;
+      });
+    } else {
+      _previousLocale = currentLocale;
+    }
   }
 
   @override
@@ -44,7 +59,7 @@ class _MapViewerPageState extends State<MapViewerPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.title ?? 'Property Location',
+          widget.title ?? 'property_location'.tr(),
           style: AppTextStyles.h3.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w600,
@@ -210,7 +225,7 @@ class _MapViewerPageState extends State<MapViewerPage> {
                       ),
                     ),
                     Text(
-                      'Lat: ${widget.latitude.toStringAsFixed(6)}, Lng: ${widget.longitude.toStringAsFixed(6)}',
+                      'coordinates'.tr().replaceAll('{0}', widget.latitude.toStringAsFixed(6)).replaceAll('{1}', widget.longitude.toStringAsFixed(6)),
                       style: AppTextStyles.bodySmall.copyWith(
                         color: AppColors.textSecondary,
                         fontSize: ResponsiveUtils.fontSize(

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/error/exceptions.dart';
+import '../../../../core/network/dio_factory.dart';
 import '../models/property_detail_response.dart';
 import '../models/reservation_request.dart';
 import '../models/host_profile_response.dart';
@@ -78,6 +79,10 @@ class PropertyDetailRemoteDataSourceImpl
 
       // Check if response indicates success
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Invalidate caches after successful favorite add
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('home-data');
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('property-with-details');
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('favorites');
         return true;
       } else {
         return false;
@@ -110,6 +115,10 @@ class PropertyDetailRemoteDataSourceImpl
 
       // Check if response indicates success
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Invalidate caches after successful favorite remove
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('home-data');
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('property-with-details');
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('favorites');
         return true;
       } else {
         return false;
@@ -240,6 +249,10 @@ class PropertyDetailRemoteDataSourceImpl
 
       // Handle different response formats
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Invalidate caches after successful rating
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('property-with-details');
+        DioFactory.performanceInterceptor?.invalidateCacheForPath('home-data');
+        
         if (response.data is String) {
           return PropertyRatingResponse(
             success: true,
