@@ -8,10 +8,16 @@ import 'performance_interceptor.dart';
 
 class DioFactory {
   static Dio? _dio;
-  static final StreamController<bool> _authErrorController = StreamController<bool>.broadcast();
-  
+  static PerformanceInterceptor? _performanceInterceptor;
+  static final StreamController<bool> _authErrorController =
+      StreamController<bool>.broadcast();
+
   // Stream to notify when authentication error occurs
   static Stream<bool> get authErrorStream => _authErrorController.stream;
+
+  // Access to performance interceptor for cache management
+  static PerformanceInterceptor? get performanceInterceptor =>
+      _performanceInterceptor;
 
   static Dio getDio() {
     Duration timeOut = const Duration(seconds: 30);
@@ -31,10 +37,11 @@ class DioFactory {
       }
 
       // Add performance interceptor for caching and optimization
-      _dio!.interceptors.add(PerformanceInterceptor(
+      _performanceInterceptor = PerformanceInterceptor(
         cacheDuration: const Duration(minutes: 5),
         maxCacheSize: 50,
-      ));
+      );
+      _dio!.interceptors.add(_performanceInterceptor!);
 
       if (kDebugMode) {
         _dio!.interceptors.add(
@@ -89,22 +96,19 @@ class DioFactory {
                 }
               } else {
                 // For endpoints that require authentication, we should handle this
-                if (_requiresAuthentication(options.path)) {
-                }
+                if (_requiresAuthentication(options.path)) {}
               }
 
               // Print final headers after all modifications
               if (kDebugMode) {
                 print('🔍 Final Headers: ${options.headers}');
               }
-            } catch (e) {
-            }
+            } catch (e) {}
 
             handler.next(options);
           },
           onError: (error, handler) {
             if (error.response != null) {
-
               // Handle authentication and authorization errors
               if (error.response?.statusCode == 403) {
                 _handleAuthenticationError();
@@ -166,11 +170,10 @@ class DioFactory {
         sharedPreferences.remove(AppConstants.refreshTokenKey);
         sharedPreferences.remove(AppConstants.userDataKey);
         sharedPreferences.remove(AppConstants.isLoggedInKey);
-        
+
         // Notify listeners about authentication error
         _authErrorController.add(true);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }

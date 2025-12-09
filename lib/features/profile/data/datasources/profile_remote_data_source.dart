@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/network/dio_factory.dart';
 import '../../../../core/utils/file_upload_helper.dart';
 import '../models/profile_response.dart';
 import '../models/update_profile_request.dart';
@@ -29,8 +30,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       final response = await _dio.get(endpoint);
       return ProfileResponse.fromJson(response.data as Map<String, dynamic>);
     } catch (error) {
-      if (error is DioException && error.response != null) {
-      }
+      if (error is DioException && error.response != null) {}
       rethrow;
     }
   }
@@ -77,9 +77,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           },
         ),
       );
+
+      // Invalidate profile cache after successful update
+      DioFactory.performanceInterceptor?.invalidateCacheForPath('user-profile');
     } catch (error) {
-      if (error is DioException && error.response != null) {
-      }
+      if (error is DioException && error.response != null) {}
       rethrow;
     }
   }
@@ -100,8 +102,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         ),
       );
     } catch (error) {
-      if (error is DioException && error.response != null) {
-      }
+      if (error is DioException && error.response != null) {}
       rethrow;
     }
   }
@@ -128,8 +129,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           )
           .toList();
     } catch (error) {
-      if (error is DioException && error.response != null) {
-      }
+      if (error is DioException && error.response != null) {}
       rethrow;
     }
   }
@@ -156,8 +156,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
           )
           .toList();
     } catch (error) {
-      if (error is DioException && error.response != null) {
-      }
+      if (error is DioException && error.response != null) {}
       rethrow;
     }
   }

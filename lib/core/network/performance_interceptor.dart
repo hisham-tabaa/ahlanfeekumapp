@@ -113,6 +113,13 @@ class PerformanceInterceptor extends Interceptor {
   void clearCache() {
     _cache.clear();
   }
+
+  void invalidateCacheForPath(String path) {
+    _cache.removeWhere((key, _) => key.contains(path));
+    if (kDebugMode) {
+      print('🗑️ Cache invalidated for path: $path');
+    }
+  }
 }
 
 class CacheEntry {
