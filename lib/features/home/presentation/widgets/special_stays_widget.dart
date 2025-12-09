@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/home_entities.dart';
+import '../bloc/home_bloc.dart';
+import '../bloc/home_event.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -142,12 +145,16 @@ class SpecialStaysWidget extends StatelessWidget {
                 );
 
                 return GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(
+                  onTap: () async {
+                    await Navigator.pushNamed(
                       context,
                       '/property-detail',
                       arguments: property.id,
                     );
+                    // Refresh home data when returning from property detail
+                    if (context.mounted) {
+                      context.read<HomeBloc>().add(const RefreshHomeDataEvent());
+                    }
                   },
                   child: Container(
                     width: cardWidth,

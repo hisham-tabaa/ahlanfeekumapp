@@ -2205,7 +2205,7 @@ class _PropertyDetailViewState extends State<_PropertyDetailView> {
         propertyId: propertyId,
         onSubmit: (request) {
           context.read<PropertyDetailBloc>().add(RatePropertyEvent(request));
-          Navigator.of(dialogContext).pop();
+          // Dialog already pops itself, no need to pop here
         },
       ),
     );

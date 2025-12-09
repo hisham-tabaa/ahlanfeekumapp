@@ -111,12 +111,17 @@ class PropertyDetailBloc
   ) async {
     final result = await _ratePropertyUseCase(event.request);
 
-    result.fold((error) => emit(state.copyWith(errorMessage: error)), (_) {
-      // Rating submitted successfully
-      // Optionally reload property details to get updated ratings
-      if (state.propertyDetail != null) {
-        add(LoadPropertyDetailEvent(state.propertyDetail!.id));
-      }
-    });
+    result.fold(
+      (error) {
+        emit(state.copyWith(errorMessage: error));
+      },
+      (_) {
+        // Rating submitted successfully
+        // Reload property details to get updated ratings
+        if (state.propertyDetail != null) {
+          add(LoadPropertyDetailEvent(state.propertyDetail!.id));
+        }
+      },
+    );
   }
 }
