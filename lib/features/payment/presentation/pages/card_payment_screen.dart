@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../core/utils/responsive_utils.dart';
@@ -38,6 +39,9 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   String? _errorMessage;
   String _selectedCountry = 'Sweden';
   final bool _cardSelected = true;
+  bool _stripeInitialized = false;
+  String? _initializationError;
+  bool _isBusinessPurchase = false;
 
   final List<String> _countries = [
     'Sweden',
@@ -62,6 +66,37 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
   void initState() {
     super.initState();
     _cardHolderController.text = widget.name ?? '';
+    _initializeStripe();
+  }
+
+  Future<void> _initializeStripe() async {
+    try {
+      // Verify Stripe is initialized
+      if (Stripe.publishableKey.isEmpty) {
+        setState(() {
+          _initializationError =
+              'Stripe is not initialized. Please check your configuration.';
+          _stripeInitialized = false;
+        });
+        return;
+      }
+
+      // For web, ensure Stripe.js is loaded
+      if (kIsWeb) {
+        // Give Stripe.js time to load if needed
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+
+      setState(() {
+        _stripeInitialized = true;
+        _initializationError = null;
+      });
+    } catch (e) {
+      setState(() {
+        _initializationError = 'Failed to initialize Stripe: $e';
+        _stripeInitialized = false;
+      });
+    }
   }
 
   @override
@@ -125,12 +160,22 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                 // Card Selection Header
                 _buildCardSelectionHeader(isDark),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 // Card Information Section
                 _buildSectionTitle('card_information'.tr(), isDark),
                 const SizedBox(height: 12),
-                _buildCardInformationSection(isDark),
+                if (_initializationError != null)
+                  _buildErrorSection(_initializationError!, isDark)
+                else if (_stripeInitialized)
+                  _buildCardInformationSection(isDark)
+                else
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
 
                 const SizedBox(height: 24),
 
@@ -139,12 +184,17 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
                 const SizedBox(height: 12),
                 _buildCardholderNameField(isDark),
 
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
 
                 // Billing Address Section
                 _buildSectionTitle('billing_address'.tr(), isDark),
                 const SizedBox(height: 12),
                 _buildBillingAddressSection(isDark),
+
+                const SizedBox(height: 24),
+
+                // Business Purchase Checkbox
+                _buildBusinessPurchaseCheckbox(isDark),
 
                 // Error message
                 if (_errorMessage != null) ...[
@@ -220,7 +270,7 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
 
   Widget _buildCardSelectionHeader(bool isDark) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -262,10 +312,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
           const SizedBox(width: 12),
           Icon(
             Icons.credit_card,
-            size: 20,
+            size: 22,
             color: isDark ? Colors.grey[400] : Colors.grey[600],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 10),
           Text(
             'Card',
             style: TextStyle(
@@ -283,9 +333,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     return Text(
       title,
       style: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: isDark ? Colors.grey[400] : Colors.grey[700],
+        fontSize: 15,
+        fontWeight: FontWeight.w600,
+        color: isDark ? Colors.white : Colors.black87,
+        letterSpacing: -0.2,
       ),
     );
   }
@@ -294,47 +345,71 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          width: 1,
         ),
       ),
       child: Column(
         children: [
-          // Stripe Card Form
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: CardFormField(
-              controller: _cardController,
-              countryCode: 'US',
-              style: CardFormStyle(
-                backgroundColor: isDark ? Colors.grey[850] : Colors.white,
-                textColor: isDark ? Colors.white : Colors.black87,
-                placeholderColor: isDark ? Colors.grey[500] : Colors.grey[400],
-                borderColor: Colors.transparent,
-                borderRadius: 8,
-                fontSize: 16,
-              ),
+          // Stripe Card Form with icon
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Credit card icon
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Icon(
+                    Icons.credit_card_outlined,
+                    size: 22,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Card form field
+                Expanded(
+                  child: SizedBox(
+                    height: kIsWeb ? 56 : 50,
+                    child: CardFormField(
+                      controller: _cardController,
+                      countryCode: 'US',
+                      style: CardFormStyle(
+                        backgroundColor: Colors.transparent,
+                        textColor: isDark ? Colors.white : Colors.black87,
+                        placeholderColor: isDark
+                            ? Colors.grey[500]
+                            : Colors.grey[400],
+                        borderColor: Colors.transparent,
+                        borderRadius: 0,
+                        fontSize: 16,
+                        cursorColor: AppColors.primary,
+                        textErrorColor: Colors.red[400],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
+          ),
+          // Divider
+          Container(
+            height: 1,
+            color: isDark ? Colors.grey[700] : Colors.grey[200],
           ),
           // Card brand icons row
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: isDark ? Colors.grey[700]! : Colors.grey[200]!,
-                ),
-              ),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _buildCardBrandIcon('assets/icons/visa.png', 'Visa'),
+                _buildCardBrandIcon('Visa', const Color(0xFF1A1F71)),
                 const SizedBox(width: 8),
-                _buildCardBrandIcon('assets/icons/mastercard.png', 'MC'),
+                _buildCardBrandIcon('MC', const Color(0xFFEB001B)),
                 const SizedBox(width: 8),
-                _buildCardBrandIcon('assets/icons/amex.png', 'Amex'),
+                _buildCardBrandIcon('AMEX', const Color(0xFF006FCF)),
               ],
             ),
           ),
@@ -343,23 +418,21 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     );
   }
 
-  Widget _buildCardBrandIcon(String assetPath, String fallbackText) {
+  Widget _buildCardBrandIcon(String text, Color color) {
     return Container(
-      width: 36,
-      height: 24,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
       ),
-      child: Center(
-        child: Text(
-          fallbackText,
-          style: TextStyle(
-            fontSize: 8,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey[600],
-          ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: color,
+          letterSpacing: 0.5,
         ),
       ),
     );
@@ -369,9 +442,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.white,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          width: 1,
         ),
       ),
       child: TextFormField(
@@ -379,16 +453,23 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
         style: TextStyle(
           color: isDark ? Colors.white : Colors.black87,
           fontSize: 16,
+          fontWeight: FontWeight.w400,
         ),
         decoration: InputDecoration(
           hintText: 'Full name on card',
           hintStyle: TextStyle(
             color: isDark ? Colors.grey[500] : Colors.grey[400],
+            fontWeight: FontWeight.w400,
+          ),
+          prefixIcon: Icon(
+            Icons.person_outline,
+            size: 20,
+            color: isDark ? Colors.grey[500] : Colors.grey[400],
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
-            vertical: 14,
+            vertical: 16,
           ),
         ),
         validator: (value) {
@@ -408,9 +489,10 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
         Container(
           decoration: BoxDecoration(
             color: isDark ? Colors.grey[850] : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             border: Border.all(
               color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+              width: 1,
             ),
           ),
           child: DropdownButtonFormField<String>(
@@ -419,12 +501,13 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 4,
+                vertical: 16,
               ),
             ),
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black87,
               fontSize: 16,
+              fontWeight: FontWeight.w400,
             ),
             dropdownColor: isDark ? Colors.grey[850] : Colors.white,
             icon: Icon(
@@ -442,22 +525,31 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
           ),
         ),
 
+        // Divider
+        Container(
+          height: 1,
+          color: isDark ? Colors.grey[700] : Colors.grey[200],
+        ),
+
         // Address field
         Container(
           decoration: BoxDecoration(
             color: isDark ? Colors.grey[850] : Colors.white,
             borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(8),
+              bottom: Radius.circular(12),
             ),
             border: Border(
               left: BorderSide(
                 color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                width: 1,
               ),
               right: BorderSide(
                 color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                width: 1,
               ),
               bottom: BorderSide(
                 color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                width: 1,
               ),
             ),
           ),
@@ -466,16 +558,18 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
             style: TextStyle(
               color: isDark ? Colors.white : Colors.black87,
               fontSize: 16,
+              fontWeight: FontWeight.w400,
             ),
             decoration: InputDecoration(
               hintText: 'address'.tr(),
               hintStyle: TextStyle(
                 color: isDark ? Colors.grey[500] : Colors.grey[400],
+                fontWeight: FontWeight.w400,
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
-                vertical: 14,
+                vertical: 16,
               ),
             ),
           ),
@@ -498,12 +592,85 @@ class _CardPaymentScreenState extends State<CardPaymentScreen> {
               style: TextStyle(
                 color: AppColors.primary,
                 fontSize: 14,
+                fontWeight: FontWeight.w400,
                 decoration: TextDecoration.underline,
+                decorationColor: AppColors.primary,
               ),
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBusinessPurchaseCheckbox(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.grey[850] : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+          width: 1,
+        ),
+      ),
+      child: CheckboxListTile(
+        value: _isBusinessPurchase,
+        onChanged: (value) {
+          setState(() {
+            _isBusinessPurchase = value ?? false;
+          });
+        },
+        title: Text(
+          "I'm purchasing as a business",
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black87,
+            fontSize: 16,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
+        activeColor: AppColors.primary,
+        checkColor: Colors.white,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        controlAffinity: ListTileControlAffinity.leading,
+        dense: true,
+      ),
+    );
+  }
+
+  Widget _buildErrorSection(String error, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red[50],
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red[200]!),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.error_outline, color: Colors.red[700], size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Initialization Error',
+                  style: TextStyle(
+                    color: Colors.red[700],
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  error,
+                  style: TextStyle(color: Colors.red[600], fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

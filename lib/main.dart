@@ -57,7 +57,15 @@ void main() async {
 
     // Initialize Stripe (works on both web and mobile)
     Stripe.publishableKey = AppConstants.stripePublishableKey;
-    await Stripe.instance.applySettings();
+    // Apply settings for both web and mobile
+    try {
+      await Stripe.instance.applySettings();
+    } catch (e) {
+      // On web, applySettings might not be needed, but we try anyway
+      if (kDebugMode) {
+        print('Stripe initialization: $e');
+      }
+    }
 
     // Set up web error handling
     if (kIsWeb) {
