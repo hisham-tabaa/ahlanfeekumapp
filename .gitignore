@@ -54,3 +54,6 @@ app.*.map.json
 android/app/upload-certificate.pem
 android/key.properties
 ios/Runner/GoogleService-Info.plist.enc
+
+# Ignore scratch / notebook files
+*.ipynb

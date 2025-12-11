@@ -60,10 +60,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
         if (widget.securityCode != null) {
           if (securityCode == null || securityCode.isEmpty) {
-            context.showSnackBar(
-              'enter_security_code'.tr(),
-              isError: true,
-            );
+            context.showSnackBar('enter_security_code'.tr(), isError: true);
             return;
           }
 
@@ -109,57 +106,117 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           child: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(
-                horizontal: ResponsiveUtils.spacing(context, mobile: 24, tablet: 32, desktop: 48),
+                horizontal: ResponsiveUtils.spacing(
+                  context,
+                  mobile: 24,
+                  tablet: 32,
+                  desktop: 48,
+                ),
               ),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 20, tablet: 24, desktop: 32)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 20,
+                        tablet: 24,
+                        desktop: 32,
+                      ),
+                    ),
 
                     // Back Button
                     IconButton(
                       onPressed: () => context.pop(),
                       icon: Icon(
                         Icons.arrow_back_ios,
-                        size: ResponsiveUtils.size(context, mobile: 24, tablet: 26, desktop: 28),
+                        size: ResponsiveUtils.size(
+                          context,
+                          mobile: 24,
+                          tablet: 26,
+                          desktop: 28,
+                        ),
                         color: AppColors.textPrimary,
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 40,
+                        tablet: 48,
+                        desktop: 56,
+                      ),
+                    ),
 
                     // Password Icon
                     Center(
                       child: Container(
-                        width: ResponsiveUtils.size(context, mobile: 120, tablet: 140, desktop: 160),
-                        height: ResponsiveUtils.size(context, mobile: 120, tablet: 140, desktop: 160),
+                        width: ResponsiveUtils.size(
+                          context,
+                          mobile: 120,
+                          tablet: 140,
+                          desktop: 160,
+                        ),
+                        height: ResponsiveUtils.size(
+                          context,
+                          mobile: 120,
+                          tablet: 140,
+                          desktop: 160,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color.fromARGB(255, 255, 255, 255),
                           borderRadius: BorderRadius.circular(
-                            ResponsiveUtils.radius(context, mobile: 20, tablet: 24, desktop: 28),
+                            ResponsiveUtils.radius(
+                              context,
+                              mobile: 20,
+                              tablet: 24,
+                              desktop: 28,
+                            ),
                           ),
                         ),
                         child: Center(
                           child: SvgPicture.asset(
                             'assets/images/password_54727411.svg',
-                            width: ResponsiveUtils.size(context, mobile: 60, tablet: 70, desktop: 80),
-                            height: ResponsiveUtils.size(context, mobile: 60, tablet: 70, desktop: 80),
-                    // applies color filter
+                            width: ResponsiveUtils.size(
+                              context,
+                              mobile: 60,
+                              tablet: 70,
+                              desktop: 80,
+                            ),
+                            height: ResponsiveUtils.size(
+                              context,
+                              mobile: 60,
+                              tablet: 70,
+                              desktop: 80,
+                            ),
                           ),
                         ),
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 32, tablet: 40, desktop: 48)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 32,
+                        tablet: 40,
+                        desktop: 48,
+                      ),
+                    ),
 
                     // Title
                     Center(
                       child: Text(
                         'change_password'.tr(),
                         style: AppTextStyles.h2.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(context, mobile: 24, tablet: 28, desktop: 32),
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 24,
+                            tablet: 28,
+                            desktop: 32,
+                          ),
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w600,
                         ),
@@ -167,32 +224,63 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 16, tablet: 20, desktop: 24)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 16,
+                        tablet: 20,
+                        desktop: 24,
+                      ),
+                    ),
 
                     // Subtitle
                     Center(
                       child: Text(
                         'change_password_subtitle'.tr(),
                         style: AppTextStyles.bodyMedium.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(context, mobile: 14, tablet: 16, desktop: 18),
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 14,
+                            tablet: 16,
+                            desktop: 18,
+                          ),
                           color: AppColors.textSecondary,
                         ),
                         textAlign: TextAlign.center,
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 40,
+                        tablet: 48,
+                        desktop: 56,
+                      ),
+                    ),
 
                     if (widget.securityCode != null) ...[
                       Text(
                         'security_code'.tr(),
                         style: AppTextStyles.bodyMedium.copyWith(
-                          fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
+                          fontSize: ResponsiveUtils.fontSize(
+                            context,
+                            mobile: 16,
+                            tablet: 18,
+                            desktop: 20,
+                          ),
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 8,
+                          tablet: 10,
+                          desktop: 12,
+                        ),
+                      ),
                       CustomTextField(
                         controller: _securityCodeController,
                         hintText: 'enter_4_digit_code'.tr(),
@@ -210,20 +298,39 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         },
                       ),
 
-                      SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                      SizedBox(
+                        height: ResponsiveUtils.spacing(
+                          context,
+                          mobile: 24,
+                          tablet: 28,
+                          desktop: 32,
+                        ),
+                      ),
                     ],
 
                     // New Password Label
                     Text(
                       'new_password'.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
-                        fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
+                        fontSize: ResponsiveUtils.fontSize(
+                          context,
+                          mobile: 16,
+                          tablet: 18,
+                          desktop: 20,
+                        ),
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 8,
+                        tablet: 10,
+                        desktop: 12,
+                      ),
+                    ),
 
                     // New Password Field
                     CustomTextField(
@@ -254,19 +361,38 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       },
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 24, tablet: 28, desktop: 32)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 24,
+                        tablet: 28,
+                        desktop: 32,
+                      ),
+                    ),
 
                     // Repeat Password Label
                     Text(
                       'repeat_new_password'.tr(),
                       style: AppTextStyles.bodyMedium.copyWith(
-                        fontSize: ResponsiveUtils.fontSize(context, mobile: 16, tablet: 18, desktop: 20),
+                        fontSize: ResponsiveUtils.fontSize(
+                          context,
+                          mobile: 16,
+                          tablet: 18,
+                          desktop: 20,
+                        ),
                         color: AppColors.textPrimary,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 8, tablet: 10, desktop: 12)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 8,
+                        tablet: 10,
+                        desktop: 12,
+                      ),
+                    ),
 
                     // Confirm Password Field
                     CustomTextField(
@@ -297,7 +423,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       },
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 60, tablet: 70, desktop: 80)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 60,
+                        tablet: 70,
+                        desktop: 80,
+                      ),
+                    ),
 
                     // Change Button
                     BlocBuilder<AuthBloc, AuthState>(
@@ -314,7 +447,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       },
                     ),
 
-                    SizedBox(height: ResponsiveUtils.spacing(context, mobile: 40, tablet: 48, desktop: 56)),
+                    SizedBox(
+                      height: ResponsiveUtils.spacing(
+                        context,
+                        mobile: 40,
+                        tablet: 48,
+                        desktop: 56,
+                      ),
+                    ),
                   ],
                 ),
               ),
