@@ -1,11 +1,11 @@
-import 'dart:io';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../core/utils/responsive_utils.dart';
+import '../../../../../core/utils/universal_io.dart';
+import '../../../../../core/widgets/platform_image.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../bloc/rent_create_bloc.dart';
 import '../../bloc/rent_create_event.dart';
@@ -274,19 +274,13 @@ class _PhotosStepState extends State<PhotosStep> {
             borderRadius: BorderRadius.circular(
               ResponsiveUtils.radius(context, mobile: 6, tablet: 7, desktop: 8),
             ),
-            child: kIsWeb && xFile != null
-                ? Image.network(
-                    xFile.path,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  )
-                : Image.file(
-                    image,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+            child: PlatformImage(
+              file: image,
+              xFile: xFile,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
           Positioned(
             top: ResponsiveUtils.spacing(
@@ -412,19 +406,13 @@ class _PhotosStepState extends State<PhotosStep> {
             borderRadius: BorderRadius.circular(
               ResponsiveUtils.radius(context, mobile: 6, tablet: 7, desktop: 8),
             ),
-            child: kIsWeb && xFile != null
-                ? Image.network(
-                    xFile.path,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  )
-                : Image.file(
-                    image,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+            child: PlatformImage(
+              file: image,
+              xFile: xFile,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
           Positioned(
             top: ResponsiveUtils.spacing(
@@ -775,8 +763,7 @@ class _PhotosStepState extends State<PhotosStep> {
           final files = images.map((xfile) => File(xfile.path)).toList();
           // Pass both Files (for mobile preview) and XFiles (for web compatibility)
           bloc.add(AddPhotosEvent(files, photoFiles: images));
-        } else {
-        }
+        } else {}
       } else {
         // Pick single image from camera
         final XFile? image = await picker.pickImage(source: source);
@@ -785,8 +772,7 @@ class _PhotosStepState extends State<PhotosStep> {
           final file = File(image.path);
           // Pass both File (for mobile preview) and XFile (for web compatibility)
           bloc.add(AddPhotosEvent([file], photoFiles: [image]));
-        } else {
-        }
+        } else {}
       }
     } catch (e) {
       if (context.mounted) {

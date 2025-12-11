@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../core/utils/universal_io.dart';
 
 abstract class RentCreateEvent extends Equatable {
   const RentCreateEvent();

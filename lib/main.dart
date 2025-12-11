@@ -55,7 +55,7 @@ void main() async {
       await FCMService.initialize();
     }
 
-    // Initialize Stripe
+    // Initialize Stripe (works on both web and mobile)
     Stripe.publishableKey = AppConstants.stripePublishableKey;
     await Stripe.instance.applySettings();
 
@@ -467,8 +467,7 @@ class RoleProtectedRentCreateScreen extends StatelessWidget {
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     if (kDebugMode) {
-      debugPrint('🔧 Navigating to: ${settings.name}');
-      debugPrint('🔧 Route arguments: ${settings.arguments}');
+
     }
 
     switch (settings.name) {

@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../core/utils/universal_io.dart';
 import '../../domain/entities/rent_create_entities.dart';
 import '../../domain/usecases/create_property_usecase.dart';
 import 'rent_create_event.dart';

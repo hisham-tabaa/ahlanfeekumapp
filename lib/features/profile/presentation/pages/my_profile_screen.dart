@@ -5,10 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'dart:io';
+import 'dart:io' as io show File;
 
 import '../../../../core/utils/extensions.dart';
 import '../../../../core/utils/responsive_utils.dart';
+import '../../../../core/utils/universal_io.dart';
 import '../../../../theming/colors.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../auth/presentation/widgets/custom_button.dart';
@@ -446,11 +447,11 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                         backgroundColor: AppColors.primary.withValues(
                           alpha: 0.1,
                         ),
-                        backgroundImage: _imageFile != null
-                            ? (kIsWeb && _profilePhotoFile != null
-                                      ? NetworkImage(_profilePhotoFile!.path)
-                                      : FileImage(_imageFile!))
+                        backgroundImage: kIsWeb && _profilePhotoFile != null
+                            ? NetworkImage(_profilePhotoFile!.path)
                                   as ImageProvider
+                            : !kIsWeb && _imageFile != null
+                            ? FileImage(io.File(_imageFile!.path))
                             : profile?.profilePhotoUrl != null
                             ? CachedNetworkImageProvider(
                                 profile!.profilePhotoUrl!,

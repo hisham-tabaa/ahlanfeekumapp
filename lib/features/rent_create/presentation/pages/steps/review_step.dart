@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -6,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../../../../../theming/colors.dart';
 import '../../../../../core/utils/responsive_utils.dart';
+import '../../../../../core/widgets/platform_image.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../../../../core/widgets/map_viewer_page.dart';
 import '../../bloc/rent_create_bloc.dart';
@@ -132,28 +132,13 @@ class _ReviewStepState extends State<ReviewStep> {
               },
               itemCount: images.length,
               itemBuilder: (context, index) {
-                // Use web-compatible image loading
-                if (kIsWeb && index < imageFiles.length) {
-                  return Image.network(
-                    imageFiles[index].path,
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    errorBuilder: (context, error, stackTrace) {
-                      // Fallback to file if network fails
-                      return Image.file(
-                        images[index],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      );
-                    },
-                  );
-                } else {
-                  return Image.file(
-                    images[index],
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                  );
-                }
+                // Use platform-compatible image loading
+                return PlatformImage(
+                  file: index < images.length ? images[index] : null,
+                  xFile: index < imageFiles.length ? imageFiles[index] : null,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                );
               },
             )
           else

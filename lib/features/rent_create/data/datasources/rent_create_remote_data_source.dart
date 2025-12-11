@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/utils/file_upload_helper.dart';
+import '../../../../core/utils/universal_io.dart';
 import '../models/create_property_request.dart';
 import '../models/create_property_response.dart';
 

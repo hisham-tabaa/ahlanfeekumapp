@@ -1,11 +1,12 @@
-import 'dart:io';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io' as io show File;
 
 import '../../../../core/utils/responsive_utils.dart';
+import '../../../../core/utils/universal_io.dart';
 import '../../../../theming/text_styles.dart';
 import '../../../../theming/colors.dart';
 import '../widgets/custom_button.dart';
@@ -161,17 +162,19 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                           color: Colors.white,
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.grey.shade300),
-                          image: state.profilePhotoPath != null
+                          image: state.profilePhotoPath != null && !kIsWeb
                               ? DecorationImage(
-                                  image: kIsWeb
-                                      ? NetworkImage(state.profilePhotoPath!)
-                                            as ImageProvider
-                                      : FileImage(
-                                          File(state.profilePhotoPath!),
-                                        ),
+                                  image: FileImage(
+                                    io.File(File(state.profilePhotoPath!).path),
+                                  ),
                                   fit: BoxFit.cover,
                                 )
-                              : null,
+                              : state.profilePhotoPath != null && kIsWeb
+                                  ? DecorationImage(
+                                      image: NetworkImage(state.profilePhotoPath!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
                         ),
                         child: Stack(
                           children: [
