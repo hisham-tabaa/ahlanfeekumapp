@@ -134,6 +134,7 @@ class _PhoneFieldState extends State<PhoneField> {
                         controller: _controller,
                         keyboardType: TextInputType.phone,
                         readOnly: widget.readOnly,
+                        textDirection: TextDirection.ltr, // Force LTR for phone numbers
                         style: AppTextStyles.bodyMedium.copyWith(
                           color: widget.readOnly
                               ? Colors.grey.shade600

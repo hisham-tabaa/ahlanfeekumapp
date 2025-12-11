@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 import '../../../../../theming/colors.dart';
 import '../../../../../core/utils/responsive_utils.dart';
 import '../../../../../theming/text_styles.dart';
@@ -256,6 +257,7 @@ class _PriceStepState extends State<PriceStep> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   textAlign: TextAlign.center,
+                  textDirection: ui.TextDirection.ltr, // Force LTR for numeric input
                   style: AppTextStyles.h1.copyWith(
                     color: AppColors.textPrimary,
                     fontSize: ResponsiveUtils.fontSize(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'dart:ui' as ui;
 import '../../../../../theming/colors.dart';
 import '../../../../../theming/text_styles.dart';
 import '../../../../../core/utils/responsive_utils.dart';
@@ -852,6 +853,7 @@ class _PropertyDetailsStepState extends State<PropertyDetailsStep> {
           child: TextField(
             controller: _areaController,
             keyboardType: TextInputType.number,
+            textDirection: ui.TextDirection.ltr, // Force LTR for numeric input
             onChanged: (value) {
               final intValue = int.tryParse(value);
               context.read<RentCreateBloc>().add(UpdateAreaEvent(intValue));

@@ -326,6 +326,7 @@ class _SetProfileScreenState extends State<SetProfileScreen> {
                       labelText: 'Email Address',
                       hintText: 'Enter Email',
                       keyboardType: TextInputType.emailAddress,
+                      forceLTR: true, // Force LTR for email addresses
                       onChanged: cubit.setEmail,
                       readOnly:
                           !needsEmail, // Only editable if user registered with phone

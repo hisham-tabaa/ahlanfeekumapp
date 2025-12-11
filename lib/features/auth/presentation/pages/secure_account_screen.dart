@@ -160,6 +160,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                   labelText: 'password'.tr(),
                   hintText: 'password'.tr(),
                   obscureText: _obscure1,
+                  forceLTR: true, // Force LTR for passwords
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscure1
@@ -182,6 +183,7 @@ class _SecureAccountScreenState extends State<SecureAccountScreen> {
                   labelText: 'repeat_password'.tr(),
                   hintText: 'repeat_password'.tr(),
                   obscureText: _obscure2,
+                  forceLTR: true, // Force LTR for passwords
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscure2

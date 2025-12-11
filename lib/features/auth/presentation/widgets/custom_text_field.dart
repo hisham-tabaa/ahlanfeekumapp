@@ -22,6 +22,7 @@ class CustomTextField extends StatefulWidget {
   final FocusNode? focusNode;
   final TextInputAction? textInputAction;
   final void Function(String)? onFieldSubmitted;
+  final bool forceLTR; // Force left-to-right for emails, passwords, numbers
 
   const CustomTextField({
     super.key,
@@ -42,6 +43,7 @@ class CustomTextField extends StatefulWidget {
     this.focusNode,
     this.textInputAction,
     this.onFieldSubmitted,
+    this.forceLTR = false,
   });
 
   @override
@@ -135,6 +137,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           focusNode: widget.focusNode,
           textInputAction: widget.textInputAction,
           onFieldSubmitted: widget.onFieldSubmitted,
+          textDirection: widget.forceLTR ? TextDirection.ltr : null,
           style: AppTextStyles.inputText.copyWith(fontSize: inputFontSize),
           decoration: InputDecoration(
             hintText: widget.hintText,
