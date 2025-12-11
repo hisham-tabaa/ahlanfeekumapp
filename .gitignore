@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Security: Never commit certificates, keys, or keystores
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+android/app/upload-certificate.pem
+android/key.properties
+ios/Runner/GoogleService-Info.plist.enc
